@@ -59,6 +59,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // HtmlText
+    implementation("de.charlex.compose:html-text-material3:3.0.0-beta02")
+
     // kotlinx.serialization
     implementation(libs.kotlinx.serialization.json)
 
