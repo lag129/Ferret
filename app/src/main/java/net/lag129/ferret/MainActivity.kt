@@ -1,6 +1,5 @@
 package net.lag129.ferret
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -15,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import net.lag129.ferret.compose.StatusCard
 import net.lag129.ferret.ui.theme.FerretTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,7 +30,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val viewModel: ViewModel by viewModels()
 
-                    Greeting(
+                    TimelineScreen(
                         viewModel = viewModel,
                         modifier = Modifier
                             .fillMaxSize()
@@ -40,13 +42,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("LocalContextResourcesRead")
 @Composable
-fun Greeting(
+fun TimelineScreen(
     viewModel: ViewModel,
     modifier: Modifier = Modifier
 ) {
     val statuses by viewModel.uiState.collectAsState()
-    
-    Napier.d("Fetched ${statuses.size} statuses")
+
+    LazyColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        items(
+            items = statuses,
+            key = { status -> status.id }
+        ) { status ->
+            StatusCard(status.content)
+        }
+    }
 }
