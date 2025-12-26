@@ -59,6 +59,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // androidx.compose.material
+    implementation("androidx.compose.material:material:1.9.5")
+    implementation("androidx.compose.material:material-icons-core")
+
     // HtmlText
     implementation("de.charlex.compose:html-text-material3:3.0.0-beta02")
 
