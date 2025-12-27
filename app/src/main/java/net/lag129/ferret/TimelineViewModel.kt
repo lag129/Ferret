@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.api.entity.Status
 
-class ViewModel(application: Application) : AndroidViewModel(application) {
+class TimelineViewModel(application: Application) : AndroidViewModel(application) {
 
     private val resources = application.resources
 
@@ -61,6 +61,20 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
                 _uiState.value = statuses
             }.onFailure { error ->
                 Napier.e("Failed to fetch home timeline", error)
+            }
+        }
+    }
+
+    fun fetchNextHomeTimeline(
+        maxId: String
+    ) {
+        viewModelScope.launch {
+            val statuses = repository.getHomeTimeline(maxId)
+
+            statuses.onSuccess { statuses ->
+                _uiState.value += statuses
+            }.onFailure { error ->
+                Napier.e("Failed to fetch next home timeline", error)
             }
         }
     }
