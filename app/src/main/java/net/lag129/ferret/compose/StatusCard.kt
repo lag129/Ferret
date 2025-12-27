@@ -33,7 +33,7 @@ fun StatusCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 24.dp)
+            .padding(top = 16.dp, bottom = 24.dp)
     ) {
         AsyncImage(
             model = avatarUrl,
@@ -43,7 +43,7 @@ fun StatusCard(
                 .clip(RoundedCornerShape(30))
         )
 
-        Spacer(modifier = Modifier.padding(4.dp))
+        Spacer(modifier = Modifier.padding(6.dp))
 
         Column {
             Row(

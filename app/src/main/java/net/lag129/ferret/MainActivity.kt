@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -70,18 +72,27 @@ fun TimelineScreen(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
         items(
             items = statuses,
             key = { status -> status.id }
         ) { status ->
-            StatusCard(
-                displayName = status.account.displayName,
-                userName = status.account.acct,
-                avatarUrl = status.account.avatar,
-                content = status.content
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                StatusCard(
+                    displayName = status.account.displayName,
+                    userName = status.account.acct,
+                    avatarUrl = status.account.avatar,
+                    content = status.content
+                )
+
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    thickness = 0.2.dp
+                )
+            }
         }
 
         val isLast = statuses.isEmpty()
