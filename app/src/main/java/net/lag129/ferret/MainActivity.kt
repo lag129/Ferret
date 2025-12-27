@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import net.lag129.ferret.compose.StatusCard
@@ -63,13 +64,19 @@ fun TimelineScreen(
     val statuses by viewModel.uiState.collectAsState()
 
     LazyColumn(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         items(
             items = statuses,
             key = { status -> status.id }
         ) { status ->
-            StatusCard(status.content)
+            StatusCard(
+                displayName = status.account.displayName,
+                userName = status.account.acct,
+                content = status.content
+            )
         }
     }
 }
