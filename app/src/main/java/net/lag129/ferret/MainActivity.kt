@@ -75,6 +75,7 @@ fun TimelineScreen(
             StatusCard(
                 displayName = status.account.displayName,
                 userName = status.account.acct,
+                avatarUrl = status.account.avatar,
                 content = status.content
             )
         }

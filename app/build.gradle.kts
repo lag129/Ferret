@@ -63,6 +63,11 @@ dependencies {
     implementation("androidx.compose.material:material:1.9.5")
     implementation("androidx.compose.material:material-icons-core")
 
+    // Coil3
+    implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+    implementation("io.coil-kt.coil3:coil-network-ktor3:3.3.0")
+    implementation("io.coil-kt.coil3:coil-gif:3.3.0")
+
     // HtmlText
     implementation("de.charlex.compose:html-text-material3:3.0.0-beta02")
 
