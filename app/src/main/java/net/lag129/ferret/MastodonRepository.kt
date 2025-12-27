@@ -9,7 +9,6 @@ import net.lag129.ferret.api.entity.Status
 interface MastodonRepository {
 
     suspend fun getHomeTimeline(
-        id: String,
         maxId: String? = null,
         sinceId: String? = null,
         limit: Int? = 20
@@ -19,13 +18,12 @@ interface MastodonRepository {
 class MastodonRepositoryImpl(private val client: HttpClient) : MastodonRepository {
 
     override suspend fun getHomeTimeline(
-        id: String,
         maxId: String?,
         sinceId: String?,
         limit: Int?
     ): Result<List<Status>> {
         return runCatching {
-            client.get("/api/v1/accounts/$id/statuses") {
+            client.get("/api/v1/timelines/home") {
                 parameter("max_id", maxId)
                 parameter("since_id", sinceId)
                 parameter("limit", limit)

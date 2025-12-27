@@ -55,7 +55,7 @@ class ViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun fetchHomeTimeline() {
         viewModelScope.launch {
-            val statuses = repository.getHomeTimeline(resources.getString(R.string.id))
+            val statuses = repository.getHomeTimeline()
 
             statuses.onSuccess { statuses ->
                 _uiState.value = statuses
