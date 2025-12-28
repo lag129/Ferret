@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -62,6 +63,12 @@ dependencies {
     // androidx.compose.material
     implementation("androidx.compose.material:material:1.9.5")
     implementation("androidx.compose.material:material-icons-core")
+
+    // androidx.datastore:datastore-preferences
+    implementation("androidx.datastore:datastore-preferences:1.2.0")
+
+    // androidx.navigation
+    implementation("androidx.navigation:navigation-compose:2.9.6")
 
     // Coil3
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
