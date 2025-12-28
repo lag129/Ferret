@@ -61,22 +61,22 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // androidx.compose.material
-    implementation("androidx.compose.material:material:1.9.5")
-    implementation("androidx.compose.material:material-icons-core")
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icons.core)
 
     // androidx.datastore:datastore-preferences
-    implementation("androidx.datastore:datastore-preferences:1.2.0")
+    implementation(libs.androidx.datastore.preferences)
 
     // androidx.navigation
-    implementation("androidx.navigation:navigation-compose:2.9.6")
+    implementation(libs.androidx.navigation.compose)
 
     // Coil3
-    implementation("io.coil-kt.coil3:coil-compose:3.3.0")
-    implementation("io.coil-kt.coil3:coil-network-ktor3:3.3.0")
-    implementation("io.coil-kt.coil3:coil-gif:3.3.0")
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.ktor3)
+    implementation(libs.coil.gif)
 
     // HtmlText
-    implementation("de.charlex.compose:html-text-material3:3.0.0-beta02")
+    implementation(libs.html.text.material3)
 
     // kotlinx.serialization
     implementation(libs.kotlinx.serialization.json)
@@ -90,4 +90,7 @@ dependencies {
 
     // Napier
     implementation(libs.napier)
+
+    // Compose Lint
+    lintChecks(libs.compose.lint.checks)
 }
