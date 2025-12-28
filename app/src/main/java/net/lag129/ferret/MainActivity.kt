@@ -100,7 +100,8 @@ fun TimelineScreen(
                     displayName = status.account.displayName,
                     userName = status.account.acct,
                     avatarUrl = status.account.avatar,
-                    content = status.content
+                    content = status.content,
+                    card = status.card
                 )
 
                 HorizontalDivider(

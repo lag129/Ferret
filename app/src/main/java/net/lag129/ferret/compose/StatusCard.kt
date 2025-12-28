@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import de.charlex.compose.htmltext.material3.HtmlText
+import net.lag129.ferret.api.entity.PreviewCard
 import net.lag129.ferret.ui.theme.FerretTheme
 
 @Composable
@@ -28,6 +29,7 @@ fun StatusCard(
     userName: String,
     avatarUrl: String,
     content: String,
+    card: PreviewCard? = null,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -54,6 +56,7 @@ fun StatusCard(
                     fontWeight = FontWeight.Bold,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
+                    modifier = Modifier.alignByBaseline()
                 )
 
                 Spacer(modifier = Modifier.padding(4.dp))
@@ -62,14 +65,26 @@ fun StatusCard(
                     text = "@$userName",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
-                    fontWeight = FontWeight.ExtraLight,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
+                    modifier = Modifier.alignByBaseline()
                 )
             }
 
             SelectionContainer {
                 HtmlText(text = content)
+            }
+
+            if (card != null) {
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                LinkPreviewCard(
+                    url = card.url,
+                    imageUrl = card.image,
+                    title = card.title,
+                    desc = card.description,
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }

@@ -68,8 +68,8 @@ data class Status(
     // @SerialName("poll")
     // val poll: Poll? = null,
 
-    // @SerialName("card")
-    // val card: PreviewCard? = null,
+    @SerialName("card")
+    val card: PreviewCard? = null,
 
     @SerialName("language")
     val language: String? = null,

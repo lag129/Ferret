@@ -78,6 +78,9 @@ dependencies {
     // HtmlText
     implementation(libs.html.text.material3)
 
+    // kotlinx.collections.immutable
+    implementation(libs.kotlinx.collections.immutable)
+
     // kotlinx.serialization
     implementation(libs.kotlinx.serialization.json)
 
