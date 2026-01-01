@@ -13,14 +13,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import de.charlex.compose.htmltext.material3.HtmlText
 import net.lag129.ferret.api.entity.PreviewCard
+import net.lag129.ferret.htmlToAnnotatedString
 import net.lag129.ferret.ui.theme.FerretTheme
 
 @Composable
@@ -29,8 +31,8 @@ fun StatusCard(
     userName: String,
     avatarUrl: String,
     content: String,
-    card: PreviewCard? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    card: PreviewCard? = null
 ) {
     Row(
         modifier = modifier
@@ -72,7 +74,13 @@ fun StatusCard(
             }
 
             SelectionContainer {
-                HtmlText(text = content)
+                Text(
+                    text = htmlToAnnotatedString(content),
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineBreak = LineBreak.Paragraph
+                    ),
+                )
             }
 
             if (card != null) {
@@ -92,7 +100,7 @@ fun StatusCard(
 
 @Preview
 @Composable
-fun StatusCardPreview() {
+private fun StatusCardPreview() {
     FerretTheme {
         StatusCard(
             displayName = "ユーザー",
