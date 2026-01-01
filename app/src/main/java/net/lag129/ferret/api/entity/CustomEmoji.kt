@@ -17,6 +17,12 @@ data class CustomEmoji(
     @SerialName("visible_in_picker")
     val visibleInPicker: Boolean,
 
+    @SerialName("width")
+    val width: Int? = null,
+
+    @SerialName("height")
+    val height: Int? = null,
+
     @SerialName("category")
     val category: String? = null
 )

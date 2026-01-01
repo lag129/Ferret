@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,7 +22,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import net.lag129.ferret.api.entity.CustomEmoji
 import net.lag129.ferret.api.entity.PreviewCard
+import net.lag129.ferret.createEmojiInlineContent
+import net.lag129.ferret.emojisToAnnotatedString
 import net.lag129.ferret.htmlToAnnotatedString
 import net.lag129.ferret.ui.theme.FerretTheme
 
@@ -32,7 +36,8 @@ fun StatusCard(
     avatarUrl: String,
     content: String,
     modifier: Modifier = Modifier,
-    card: PreviewCard? = null
+    card: PreviewCard? = null,
+    emojis: List<CustomEmoji>? = null
 ) {
     Row(
         modifier = modifier
@@ -74,8 +79,29 @@ fun StatusCard(
             }
 
             SelectionContainer {
+                val annotatedString = emojis?.let {
+                    emojisToAnnotatedString(
+                        htmlToAnnotatedString(content),
+                        it
+                    )
+                } ?: run {
+                    htmlToAnnotatedString(content)
+                }
+
+                val inlineContent = mutableMapOf<String, InlineTextContent>()
+
+                emojis?.let {
+                    inlineContent.putAll(
+                        createEmojiInlineContent(
+                            it,
+                            size = 20
+                        )
+                    )
+                }
+
                 Text(
-                    text = htmlToAnnotatedString(content),
+                    text = annotatedString,
+                    inlineContent = inlineContent,
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineBreak = LineBreak.Paragraph

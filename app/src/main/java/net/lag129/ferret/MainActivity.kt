@@ -101,7 +101,8 @@ fun TimelineScreen(
                     userName = status.account.acct,
                     avatarUrl = status.account.avatar,
                     content = status.content,
-                    card = status.card
+                    card = status.card,
+                    emojis = status.emojis
                 )
 
                 HorizontalDivider(
@@ -122,10 +123,14 @@ fun TimelineScreen(
 }
 
 @Composable
-fun LoadingIndicator(viewModel: TimelineViewModel, maxId: String) {
+fun LoadingIndicator(
+    viewModel: TimelineViewModel,
+    maxId: String,
+    modifier: Modifier = Modifier
+) {
     LinearProgressIndicator(
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     )
 
     LaunchedEffect(Unit) {
