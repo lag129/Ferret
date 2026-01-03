@@ -1,5 +1,8 @@
 package net.lag129.ferret.compose
 
+import android.annotation.SuppressLint
+import android.text.format.DateUtils
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,17 +31,25 @@ import net.lag129.ferret.createEmojiInlineContent
 import net.lag129.ferret.emojisToAnnotatedString
 import net.lag129.ferret.htmlToAnnotatedString
 import net.lag129.ferret.ui.theme.FerretTheme
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Composable
 fun StatusCard(
     displayName: String,
     userName: String,
     avatarUrl: String,
+    createdAt: String,
     content: String,
     modifier: Modifier = Modifier,
     card: PreviewCard? = null,
-    emojis: List<CustomEmoji>? = null
+    @SuppressLint("ComposeUnstableCollections")
+    displayNameEmojis: List<CustomEmoji>? = null,
+    @SuppressLint("ComposeUnstableCollections")
+    emojis: List<CustomEmoji>? = null,
 ) {
+    val now = Clock.System.now().toEpochMilliseconds()
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -56,23 +67,58 @@ fun StatusCard(
 
         Column {
             Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = displayName,
-                    fontWeight = FontWeight.Bold,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    modifier = Modifier.alignByBaseline()
-                )
+                Row(
+                    modifier = Modifier.weight(1f, fill = false)
+                ) {
+                    val annotatedString = displayNameEmojis?.let {
+                        emojisToAnnotatedString(
+                            htmlToAnnotatedString(displayName),
+                            it
+                        )
+                    } ?: run {
+                        htmlToAnnotatedString(content)
+                    }
 
-                Spacer(modifier = Modifier.padding(4.dp))
+                    val inlineContent = mutableMapOf<String, InlineTextContent>()
+
+                    displayNameEmojis?.let {
+                        inlineContent.putAll(
+                            createEmojiInlineContent(it, 20)
+                        )
+                    }
+
+                    Text(
+                        text = annotatedString,
+                        inlineContent = inlineContent,
+                        fontWeight = FontWeight.Bold,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        modifier = Modifier.alignByBaseline()
+                    )
+
+                    Spacer(modifier = Modifier.padding(4.dp))
+
+                    Text(
+                        text = "@$userName",
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 14.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        modifier = Modifier.alignByBaseline()
+                    )
+                }
+
+                val createdAt = Instant.parse(createdAt).toEpochMilliseconds()
 
                 Text(
-                    text = "@$userName",
+                    text = DateUtils.getRelativeTimeSpanString(
+                        createdAt, now, 0
+                    ).toString(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
-                    overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                     modifier = Modifier.alignByBaseline()
                 )
@@ -92,10 +138,7 @@ fun StatusCard(
 
                 emojis?.let {
                     inlineContent.putAll(
-                        createEmojiInlineContent(
-                            it,
-                            size = 20
-                        )
+                        createEmojiInlineContent(it, 20)
                     )
                 }
 
@@ -131,6 +174,7 @@ private fun StatusCardPreview() {
         StatusCard(
             displayName = "ユーザー",
             userName = "user@example.com",
+            createdAt = "2026-01-01T12:00:00Z",
             avatarUrl = "",
             content = "<p>ダミーテキスト<p>"
         )

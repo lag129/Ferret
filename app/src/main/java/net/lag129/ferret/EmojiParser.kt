@@ -1,5 +1,6 @@
 package net.lag129.ferret
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
@@ -17,6 +18,7 @@ import net.lag129.ferret.api.entity.CustomEmoji
 @Composable
 fun emojisToAnnotatedString(
     annotatedString: AnnotatedString,
+    @SuppressLint("ComposeUnstableCollections")
     emojis: List<CustomEmoji>
 ): AnnotatedString {
     val plainText = annotatedString.text
@@ -57,6 +59,7 @@ fun emojisToAnnotatedString(
 
 @Composable
 fun createEmojiInlineContent(
+    @SuppressLint("ComposeUnstableCollections")
     emojis: List<CustomEmoji>,
     size: Int = 20
 ): Map<String, InlineTextContent> {

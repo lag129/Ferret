@@ -99,9 +99,11 @@ fun TimelineScreen(
                 StatusCard(
                     displayName = status.account.displayName,
                     userName = status.account.acct,
+                    createdAt = status.createdAt,
                     avatarUrl = status.account.avatar,
                     content = status.content,
                     card = status.card,
+                    displayNameEmojis = status.account.emojis,
                     emojis = status.emojis
                 )
 
