@@ -99,4 +99,7 @@ dependencies {
 
     // Compose Lint
     lintChecks(libs.compose.lint.checks)
+
+    // LeakCanary
+    debugImplementation(libs.leakcanary.android)
 }
