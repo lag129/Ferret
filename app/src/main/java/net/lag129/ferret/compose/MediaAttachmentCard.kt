@@ -28,6 +28,7 @@ import net.lag129.ferret.api.entity.Attachment
 fun MediaAttachmentCard(
     @SuppressLint("ComposeUnstableCollections")
     mediaAttachments: List<Attachment>,
+    modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
     val attachmentsSize = mediaAttachments.size
@@ -36,22 +37,26 @@ fun MediaAttachmentCard(
         0 -> return
         1 -> SingleMediaAttachmentCard(
             media = mediaAttachments[0],
-            onMediaClick = onMediaClick
+            onMediaClick = onMediaClick,
+            modifier = modifier
         )
 
         2 -> DoubleMediaAttachmentCard(
             media = mediaAttachments,
-            onMediaClick = onMediaClick
+            onMediaClick = onMediaClick,
+            modifier = modifier
         )
 
         3 -> ThreeMediaLayout(
             media = mediaAttachments,
-            onMediaClick = onMediaClick
+            onMediaClick = onMediaClick,
+            modifier = modifier
         )
 
         else -> FourMediaLayout(
             media = mediaAttachments.take(4),
-            onMediaClick = onMediaClick
+            onMediaClick = onMediaClick,
+            modifier = modifier
         )
     }
 }

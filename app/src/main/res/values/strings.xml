@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Ferret</string>
+    <string name="sensitive">sensitive</string>
 </resources>

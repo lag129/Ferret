@@ -10,6 +10,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,8 +28,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
@@ -37,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import net.lag129.ferret.R
 import net.lag129.ferret.api.entity.Attachment
 import net.lag129.ferret.api.entity.CustomEmoji
 import net.lag129.ferret.api.entity.PreviewCard
@@ -58,6 +63,7 @@ data class StatusCardData(
     val displayNameEmojis: List<CustomEmoji>? = null,
     val emojis: List<CustomEmoji>? = null,
     val mediaAttachments: List<Attachment>? = null,
+    val sensitive: Boolean,
     val spoilerText: String
 )
 
@@ -105,7 +111,7 @@ fun StatusCard(
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
-    val (displayName, userName, avatarUrl, createdAt, content, card, displayNameEmojis, emojis, mediaAttachments, spoilerText) = data
+    val (displayName, userName, avatarUrl, createdAt, content, card, displayNameEmojis, emojis, mediaAttachments, sensitive, spoilerText) = data
 
     val now = Clock.System.now().toEpochMilliseconds()
 
@@ -212,10 +218,35 @@ fun StatusCard(
             if (!mediaAttachments.isNullOrEmpty()) {
                 Spacer(modifier = Modifier.padding(8.dp))
 
-                MediaAttachmentCard(
-                    mediaAttachments = mediaAttachments,
-                    onMediaClick = onMediaClick
-                )
+                if (sensitive) {
+                    var isBlurred by remember { mutableStateOf(true) }
+
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        MediaAttachmentCard(
+                            mediaAttachments = mediaAttachments,
+                            onMediaClick = onMediaClick,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .blur(radius = if (isBlurred) 40.dp else 0.dp)
+                        )
+
+                        if (isBlurred) {
+                            Text(
+                                text = stringResource(R.string.sensitive),
+                                color = MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
+                    }
+                } else {
+                    MediaAttachmentCard(
+                        mediaAttachments = mediaAttachments,
+                        onMediaClick = onMediaClick,
+                    )
+                }
             }
 
             if (card != null) {
@@ -244,6 +275,7 @@ private fun StatusCardPreview() {
                 createdAt = "2026-01-01T12:00:00Z",
                 avatarUrl = "",
                 content = "<p>ダミーテキスト<p>",
+                sensitive = false,
                 spoilerText = "",
             )
         )

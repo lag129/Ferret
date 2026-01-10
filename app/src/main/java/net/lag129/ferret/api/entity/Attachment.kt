@@ -51,9 +51,9 @@ sealed class Attachment {
         override val blurHash: String? = null,
 
         @SerialName("meta")
-        val meta: Meta = Meta()
+        val meta: Meta? = null,
 
-    ) : Attachment() {
+        ) : Attachment() {
 
         @Serializable
         data class Meta(
@@ -137,6 +137,34 @@ sealed class Attachment {
     @Serializable
     @SerialName("audio")
     data class Audio(
+        @SerialName("id")
+        override val attachmentId: String,
+
+        @SerialName("url")
+        override val url: String,
+
+        @SerialName("preview_url")
+        override val previewUrl: String? = null,
+
+        @SerialName("remote_url")
+        override val remoteUrl: String? = null,
+
+        @SerialName("preview_remote_url")
+        override val previewRemoteUrl: String? = null,
+
+        @SerialName("text_url")
+        override val textUrl: String? = null,
+
+        @SerialName("description")
+        override val description: String? = null,
+
+        @SerialName("blurhash")
+        override val blurHash: String? = null,
+    ) : Attachment() {}
+
+    @Serializable
+    @SerialName("unknown")
+    data class Unknown(
         @SerialName("id")
         override val attachmentId: String,
 
