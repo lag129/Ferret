@@ -13,11 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import net.lag129.ferret.api.entity.Attachment
 
 @Composable
@@ -203,8 +207,17 @@ private fun MediaImage(
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
 ) {
+    val context = LocalContext.current
+
+    val imageRequest = remember(media.url) {
+        ImageRequest.Builder(context)
+            .data(media.url)
+            .crossfade(true)
+            .build()
+    }
+
     AsyncImage(
-        model = media.url,
+        model = imageRequest,
         contentDescription = media.description,
         contentScale = ContentScale.Crop,
         modifier = modifier

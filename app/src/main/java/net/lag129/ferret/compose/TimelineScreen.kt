@@ -47,7 +47,8 @@ fun TimelineScreen(
                         card = status.card,
                         displayNameEmojis = status.account.emojis,
                         emojis = status.emojis,
-                        mediaAttachments = status.mediaAttachments
+                        mediaAttachments = status.mediaAttachments,
+                        spoilerText = status.spoilerText
                     ),
                     onMediaClick = onNavigate
                 )

@@ -1,6 +1,14 @@
 package net.lag129.ferret.compose
 
+import android.annotation.SuppressLint
 import android.text.format.DateUtils
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
@@ -45,8 +57,47 @@ data class StatusCardData(
     val card: PreviewCard? = null,
     val displayNameEmojis: List<CustomEmoji>? = null,
     val emojis: List<CustomEmoji>? = null,
-    val mediaAttachments: List<Attachment>? = null
+    val mediaAttachments: List<Attachment>? = null,
+    val spoilerText: String
 )
+
+@Composable
+private fun ContentBox(
+    content: String,
+    modifier: Modifier = Modifier,
+    @SuppressLint("ComposeUnstableCollections")
+    emojis: List<CustomEmoji>? = null
+) {
+    SelectionContainer(
+        modifier = modifier
+    ) {
+        val annotatedString = emojis?.let {
+            emojisToAnnotatedString(
+                htmlToAnnotatedString(content),
+                it
+            )
+        } ?: run {
+            htmlToAnnotatedString(content)
+        }
+
+        val inlineContent = mutableMapOf<String, InlineTextContent>()
+
+        emojis?.let {
+            inlineContent.putAll(
+                createEmojiInlineContent(it, 20)
+            )
+        }
+
+        Text(
+            text = annotatedString,
+            inlineContent = inlineContent,
+            style = TextStyle(
+                fontSize = 16.sp,
+                lineBreak = LineBreak.Paragraph
+            ),
+        )
+    }
+}
 
 @Composable
 fun StatusCard(
@@ -54,7 +105,7 @@ fun StatusCard(
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
-    val (displayName, userName, avatarUrl, createdAt, content, card, displayNameEmojis, emojis, mediaAttachments) = data
+    val (displayName, userName, avatarUrl, createdAt, content, card, displayNameEmojis, emojis, mediaAttachments, spoilerText) = data
 
     val now = Clock.System.now().toEpochMilliseconds()
 
@@ -132,31 +183,29 @@ fun StatusCard(
                 )
             }
 
-            SelectionContainer {
-                val annotatedString = emojis?.let {
-                    emojisToAnnotatedString(
-                        htmlToAnnotatedString(content),
-                        it
-                    )
-                } ?: run {
-                    htmlToAnnotatedString(content)
-                }
+            var isSpoilerTextClicked by remember { mutableStateOf(false) }
 
-                val inlineContent = mutableMapOf<String, InlineTextContent>()
-
-                emojis?.let {
-                    inlineContent.putAll(
-                        createEmojiInlineContent(it, 20)
-                    )
-                }
-
+            if (spoilerText.isNotBlank()) {
                 Text(
-                    text = annotatedString,
-                    inlineContent = inlineContent,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        lineBreak = LineBreak.Paragraph
-                    ),
+                    text = spoilerText,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .background(MaterialTheme.colorScheme.errorContainer)
+                        .clickable { isSpoilerTextClicked = !isSpoilerTextClicked }
+                )
+            }
+
+            AnimatedVisibility(
+                visible = spoilerText.isBlank() || isSpoilerTextClicked,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut()
+            ) {
+                ContentBox(
+                    content = content,
+                    emojis = emojis
                 )
             }
 
@@ -194,7 +243,8 @@ private fun StatusCardPreview() {
                 userName = "user@example.com",
                 createdAt = "2026-01-01T12:00:00Z",
                 avatarUrl = "",
-                content = "<p>ダミーテキスト<p>"
+                content = "<p>ダミーテキスト<p>",
+                spoilerText = "",
             )
         )
     }
