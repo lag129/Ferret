@@ -21,6 +21,7 @@ material = "1.10.0"
 napier = "2.7.1"
 material3 = "1.4.0"
 navigationCompose = "2.9.6"
+zoomableImageCoil3 = "0.18.0"
 
 [libraries]
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
@@ -57,6 +58,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
+zoomable-image-coil3 = { module = "me.saket.telephoto:zoomable-image-coil3", version.ref = "zoomableImageCoil3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

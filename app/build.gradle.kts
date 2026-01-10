@@ -97,6 +97,9 @@ dependencies {
     // Napier
     implementation(libs.napier)
 
+    // Telephoto
+    implementation(libs.zoomable.image.coil3)
+
     // Compose Lint
     lintChecks(libs.compose.lint.checks)
 

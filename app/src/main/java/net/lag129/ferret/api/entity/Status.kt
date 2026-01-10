@@ -29,8 +29,8 @@ data class Status(
     @SerialName("spoiler_text")
     val spoilerText: String,
 
-    // @SerialName("media_attachments")
-    // val mediaAttachments: List<MediaAttachment>,
+    @SerialName("media_attachments")
+    val mediaAttachments: List<Attachment>,
 
     @SerialName("application")
     val application: Application? = null,

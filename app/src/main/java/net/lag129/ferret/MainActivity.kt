@@ -25,12 +25,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
+import io.ktor.http.decodeURLQueryComponent
+import io.ktor.http.encodeURLParameter
+import net.lag129.ferret.compose.MediaScreen
 import net.lag129.ferret.compose.StatusCard
+import net.lag129.ferret.compose.StatusCardData
 import net.lag129.ferret.ui.theme.FerretTheme
 
 class MainActivity : ComponentActivity() {
@@ -65,11 +71,40 @@ class MainActivity : ComponentActivity() {
 
                             TimelineScreen(
                                 viewModel = timelineViewModel,
+                                onNavigate = { mediaUrl, description ->
+                                    val encodedUrl = mediaUrl.encodeURLParameter()
+                                    val encodedDesc = description?.encodeURLParameter() ?: ""
+                                    navController.navigate("media/$encodedUrl?description=$encodedDesc")
+                                },
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(innerPadding)
                             )
                         }
+                    }
+
+                    composable(
+                        route = "media/{mediaUrl}?description={description}",
+                        arguments = listOf(
+                            navArgument("mediaUrl") { type = NavType.StringType },
+                            navArgument("description") {
+                                type = NavType.StringType
+                                nullable = true
+                                defaultValue = null
+                            }
+                        )
+                    ) { backStackEntry ->
+                        val encodedUrl = backStackEntry.arguments?.getString("mediaUrl") ?: ""
+                        val encodedDescription = backStackEntry.arguments?.getString("description")
+
+                        val mediaUrl = encodedUrl.decodeURLQueryComponent()
+                        val description = encodedDescription?.decodeURLQueryComponent()
+
+                        MediaScreen(
+                            mediaUrl = mediaUrl,
+                            description = description,
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
                 }
             }
@@ -80,6 +115,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TimelineScreen(
     viewModel: TimelineViewModel,
+    onNavigate: (mediaUrl: String, description: String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val statuses by viewModel.uiState.collectAsState()
@@ -97,14 +133,18 @@ fun TimelineScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 StatusCard(
-                    displayName = status.account.displayName,
-                    userName = status.account.acct,
-                    createdAt = status.createdAt,
-                    avatarUrl = status.account.avatar,
-                    content = status.content,
-                    card = status.card,
-                    displayNameEmojis = status.account.emojis,
-                    emojis = status.emojis
+                    data = StatusCardData(
+                        displayName = status.account.displayName,
+                        userName = status.account.acct,
+                        createdAt = status.createdAt,
+                        avatarUrl = status.account.avatar,
+                        content = status.content,
+                        card = status.card,
+                        displayNameEmojis = status.account.emojis,
+                        emojis = status.emojis,
+                        mediaAttachments = status.mediaAttachments
+                    ),
+                    onMediaClick = onNavigate
                 )
 
                 HorizontalDivider(

@@ -1,7 +1,7 @@
 package net.lag129.ferret.compose
 
-import android.annotation.SuppressLint
 import android.text.format.DateUtils
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
@@ -25,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import net.lag129.ferret.api.entity.Attachment
 import net.lag129.ferret.api.entity.CustomEmoji
 import net.lag129.ferret.api.entity.PreviewCard
 import net.lag129.ferret.createEmojiInlineContent
@@ -34,20 +36,27 @@ import net.lag129.ferret.ui.theme.FerretTheme
 import kotlin.time.Clock
 import kotlin.time.Instant
 
+@Immutable
+data class StatusCardData(
+    val displayName: String,
+    val userName: String,
+    val avatarUrl: String,
+    val createdAt: String,
+    val content: String,
+    val card: PreviewCard? = null,
+    val displayNameEmojis: List<CustomEmoji>? = null,
+    val emojis: List<CustomEmoji>? = null,
+    val mediaAttachments: List<Attachment>? = null
+)
+
 @Composable
 fun StatusCard(
-    displayName: String,
-    userName: String,
-    avatarUrl: String,
-    createdAt: String,
-    content: String,
+    data: StatusCardData,
     modifier: Modifier = Modifier,
-    card: PreviewCard? = null,
-    @SuppressLint("ComposeUnstableCollections")
-    displayNameEmojis: List<CustomEmoji>? = null,
-    @SuppressLint("ComposeUnstableCollections")
-    emojis: List<CustomEmoji>? = null,
+    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
+    val (displayName, userName, avatarUrl, createdAt, content, card, displayNameEmojis, emojis, mediaAttachments) = data
+
     val now = Clock.System.now().toEpochMilliseconds()
 
     Row(
@@ -163,6 +172,27 @@ fun StatusCard(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+
+            if (!mediaAttachments.isNullOrEmpty()) {
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                val media = mediaAttachments[0]
+
+                AsyncImage(
+                    model = media.url,
+                    contentDescription = media.description,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            onClick = {
+                                onMediaClick?.invoke(
+                                    media.url,
+                                    media.description
+                                )
+                            }
+                        )
+                )
+            }
         }
     }
 }
@@ -172,11 +202,13 @@ fun StatusCard(
 private fun StatusCardPreview() {
     FerretTheme {
         StatusCard(
-            displayName = "ユーザー",
-            userName = "user@example.com",
-            createdAt = "2026-01-01T12:00:00Z",
-            avatarUrl = "",
-            content = "<p>ダミーテキスト<p>"
+            StatusCardData(
+                displayName = "ユーザー",
+                userName = "user@example.com",
+                createdAt = "2026-01-01T12:00:00Z",
+                avatarUrl = "",
+                content = "<p>ダミーテキスト<p>"
+            )
         )
     }
 }
