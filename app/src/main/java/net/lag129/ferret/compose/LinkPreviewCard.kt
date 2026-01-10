@@ -1,7 +1,6 @@
 package net.lag129.ferret.compose
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,10 +37,10 @@ import net.lag129.ferret.ui.theme.FerretTheme
 @Composable
 fun LinkPreviewCard(
     url: String,
-    imageUrl: String? = null,
     title: String,
     desc: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    imageUrl: String? = null
 ) {
     var isClicked by remember { mutableStateOf(false) }
 
@@ -48,6 +49,7 @@ fun LinkPreviewCard(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        shape = RoundedCornerShape(10.dp),
         modifier = modifier.fillMaxWidth()
     ) {
         Row(
@@ -71,7 +73,7 @@ fun LinkPreviewCard(
                     .padding(8.dp)
             ) {
                 Text(
-                    text = Uri.parse(url).host ?: url,
+                    text = url.toUri().host ?: url,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 10.sp,
                 )
@@ -106,7 +108,7 @@ fun LinkPreviewCard(
 
 @Preview
 @Composable
-fun LinkPreviewCardPreview() {
+private fun LinkPreviewCardPreview() {
     FerretTheme {
         LinkPreviewCard(
             url = "https://www.example.com",

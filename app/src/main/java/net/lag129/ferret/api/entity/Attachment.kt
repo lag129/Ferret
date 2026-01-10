@@ -77,4 +77,88 @@ sealed class Attachment {
             val small: Meta? = null
         )
     }
+
+    @Serializable
+    @SerialName("gifv")
+    data class Gifv(
+        @SerialName("id")
+        override val attachmentId: String,
+
+        @SerialName("url")
+        override val url: String,
+
+        @SerialName("preview_url")
+        override val previewUrl: String? = null,
+
+        @SerialName("remote_url")
+        override val remoteUrl: String? = null,
+
+        @SerialName("preview_remote_url")
+        override val previewRemoteUrl: String? = null,
+
+        @SerialName("text_url")
+        override val textUrl: String? = null,
+
+        @SerialName("description")
+        override val description: String? = null,
+
+        @SerialName("blurhash")
+        override val blurHash: String? = null,
+    ) : Attachment() {}
+
+    @Serializable
+    @SerialName("video")
+    data class Video(
+        @SerialName("id")
+        override val attachmentId: String,
+
+        @SerialName("url")
+        override val url: String,
+
+        @SerialName("preview_url")
+        override val previewUrl: String? = null,
+
+        @SerialName("remote_url")
+        override val remoteUrl: String? = null,
+
+        @SerialName("preview_remote_url")
+        override val previewRemoteUrl: String? = null,
+
+        @SerialName("text_url")
+        override val textUrl: String? = null,
+
+        @SerialName("description")
+        override val description: String? = null,
+
+        @SerialName("blurhash")
+        override val blurHash: String? = null,
+    ) : Attachment() {}
+
+    @Serializable
+    @SerialName("audio")
+    data class Audio(
+        @SerialName("id")
+        override val attachmentId: String,
+
+        @SerialName("url")
+        override val url: String,
+
+        @SerialName("preview_url")
+        override val previewUrl: String? = null,
+
+        @SerialName("remote_url")
+        override val remoteUrl: String? = null,
+
+        @SerialName("preview_remote_url")
+        override val previewRemoteUrl: String? = null,
+
+        @SerialName("text_url")
+        override val textUrl: String? = null,
+
+        @SerialName("description")
+        override val description: String? = null,
+
+        @SerialName("blurhash")
+        override val blurHash: String? = null,
+    ) : Attachment() {}
 }

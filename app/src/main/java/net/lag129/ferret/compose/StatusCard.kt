@@ -1,7 +1,6 @@
 package net.lag129.ferret.compose
 
 import android.text.format.DateUtils
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -161,6 +160,15 @@ fun StatusCard(
                 )
             }
 
+            if (!mediaAttachments.isNullOrEmpty()) {
+                Spacer(modifier = Modifier.padding(8.dp))
+
+                MediaAttachmentCard(
+                    mediaAttachments = mediaAttachments,
+                    onMediaClick = onMediaClick
+                )
+            }
+
             if (card != null) {
                 Spacer(modifier = Modifier.padding(8.dp))
 
@@ -170,27 +178,6 @@ fun StatusCard(
                     title = card.title,
                     desc = card.description,
                     modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            if (!mediaAttachments.isNullOrEmpty()) {
-                Spacer(modifier = Modifier.padding(8.dp))
-
-                val media = mediaAttachments[0]
-
-                AsyncImage(
-                    model = media.url,
-                    contentDescription = media.description,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            onClick = {
-                                onMediaClick?.invoke(
-                                    media.url,
-                                    media.description
-                                )
-                            }
-                        )
                 )
             }
         }

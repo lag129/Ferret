@@ -82,10 +82,9 @@ class MainActivity : ComponentActivity() {
                         )
                     ) { backStackEntry ->
                         val encodedUrl = backStackEntry.arguments?.getString("mediaUrl") ?: ""
-                        val encodedDescription = backStackEntry.arguments?.getString("description")
-
                         val mediaUrl = encodedUrl.decodeURLQueryComponent()
-                        val description = encodedDescription?.decodeURLQueryComponent()
+
+                        val description = backStackEntry.arguments?.getString("description")
 
                         MediaScreen(
                             mediaUrl = mediaUrl,
