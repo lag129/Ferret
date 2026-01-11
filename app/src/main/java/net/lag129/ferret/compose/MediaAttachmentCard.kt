@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -69,7 +70,9 @@ private fun SingleMediaAttachmentCard(
 ) {
     MediaImage(
         media = media,
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .aspectRatio(ratio = 1.618f)
+            .fillMaxWidth(),
         onMediaClick = onMediaClick
     )
 }
@@ -213,6 +216,7 @@ private fun MediaImage(
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
 ) {
     val context = LocalContext.current
+    val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
 
     val imageRequest = remember(media.url) {
         ImageRequest.Builder(context)
@@ -225,6 +229,7 @@ private fun MediaImage(
         model = imageRequest,
         contentDescription = media.description,
         contentScale = ContentScale.Crop,
+        placeholder = ColorPainter(surfaceVariant),
         modifier = modifier
             .clip(RoundedCornerShape(10.dp))
             .border(
