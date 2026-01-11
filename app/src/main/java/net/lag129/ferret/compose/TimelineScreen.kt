@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.lag129.ferret.TimelineViewModel
@@ -37,20 +38,26 @@ fun TimelineScreen(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
+                val statusData = remember(status.id) {
+                    (status.reblog ?: status).let { targetStatus ->
+                        StatusCardData(
+                            displayName = targetStatus.account.displayName,
+                            userName = targetStatus.account.acct,
+                            createdAt = targetStatus.createdAt,
+                            avatarUrl = targetStatus.account.avatar,
+                            content = targetStatus.content,
+                            card = targetStatus.card,
+                            displayNameEmojis = targetStatus.account.emojis,
+                            emojis = targetStatus.emojis,
+                            mediaAttachments = targetStatus.mediaAttachments,
+                            sensitive = targetStatus.sensitive,
+                            spoilerText = targetStatus.spoilerText
+                        )
+                    }
+                }
+
                 StatusCard(
-                    data = StatusCardData(
-                        displayName = status.account.displayName,
-                        userName = status.account.acct,
-                        createdAt = status.createdAt,
-                        avatarUrl = status.account.avatar,
-                        content = status.content,
-                        card = status.card,
-                        displayNameEmojis = status.account.emojis,
-                        emojis = status.emojis,
-                        mediaAttachments = status.mediaAttachments,
-                        sensitive = status.sensitive,
-                        spoilerText = status.spoilerText
-                    ),
+                    data = statusData,
                     onMediaClick = onNavigate
                 )
 
