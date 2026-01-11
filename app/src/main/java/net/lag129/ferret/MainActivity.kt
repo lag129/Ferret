@@ -5,6 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.core.EaseOutQuint
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -79,7 +83,17 @@ class MainActivity : ComponentActivity() {
                                 nullable = true
                                 defaultValue = null
                             }
-                        )
+                        ),
+                        enterTransition = {
+                            fadeIn(
+                                animationSpec = tween(durationMillis = 300, easing = EaseOutQuint)
+                            )
+                        },
+                        popExitTransition = {
+                            fadeOut(
+                                animationSpec = tween(durationMillis = 300, easing = EaseOutQuint)
+                            )
+                        }
                     ) { backStackEntry ->
                         val encodedUrl = backStackEntry.arguments?.getString("mediaUrl") ?: ""
                         val mediaUrl = encodedUrl.decodeURLQueryComponent()
