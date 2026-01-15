@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,35 +73,32 @@ private fun ContentBox(
     @SuppressLint("ComposeUnstableCollections")
     emojis: List<CustomEmoji>? = null
 ) {
-    SelectionContainer(
-        modifier = modifier
-    ) {
-        val annotatedString = emojis?.let {
-            emojisToAnnotatedString(
-                htmlToAnnotatedString(content),
-                it
-            )
-        } ?: run {
-            htmlToAnnotatedString(content)
-        }
+    val annotatedString = emojis?.let {
+        emojisToAnnotatedString(
+            htmlToAnnotatedString(content),
+            it
+        )
+    } ?: run {
+        htmlToAnnotatedString(content)
+    }
 
-        val inlineContent = mutableMapOf<String, InlineTextContent>()
-
-        emojis?.let {
-            inlineContent.putAll(
-                createEmojiInlineContent(it, 20)
-            )
-        }
-
-        Text(
-            text = annotatedString,
-            inlineContent = inlineContent,
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineBreak = LineBreak.Paragraph
-            ),
+    val inlineContent = mutableMapOf<String, InlineTextContent>()
+    emojis?.let {
+        inlineContent.putAll(
+            createEmojiInlineContent(it, 20)
         )
     }
+
+    Text(
+        text = annotatedString,
+        fontWeight = FontWeight.Light,
+        inlineContent = inlineContent,
+        style = TextStyle(
+            fontSize = 16.sp,
+            lineBreak = LineBreak.Paragraph
+        ),
+        modifier = modifier
+    )
 }
 
 @Composable

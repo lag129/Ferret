@@ -38,9 +38,8 @@ fun emojisToAnnotatedString(
             append(annotatedString.subSequence(lastIndex, matchResult.range.first))
 
             if (emoji != null) {
-                append(" ")
                 appendInlineContent(shortcode, shortcode)
-                append(" ")
+                append("\u0020")
             } else {
                 append(
                     annotatedString.subSequence(
