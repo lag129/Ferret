@@ -9,14 +9,24 @@ import androidx.compose.animation.core.EaseOutQuint
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,10 +37,12 @@ import io.github.aakira.napier.Napier
 import io.ktor.http.decodeURLQueryComponent
 import io.ktor.http.encodeURLParameter
 import net.lag129.ferret.compose.MediaScreen
+import net.lag129.ferret.compose.NavigationBarItems
 import net.lag129.ferret.compose.TimelineScreen
 import net.lag129.ferret.ui.theme.FerretTheme
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,16 +50,28 @@ class MainActivity : ComponentActivity() {
         Napier.base(DebugAntilog())
 
         setContent {
+            val navController = rememberNavController()
+            val scrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
+
             FerretTheme {
-
-                val navController = rememberNavController()
-
                 NavHost(
                     navController = navController,
                     startDestination = "home"
                 ) {
                     composable("home") {
                         Scaffold(
+                            bottomBar = {
+                                BottomAppBar(
+                                    scrollBehavior = scrollBehavior,
+                                    modifier = Modifier
+                                        .background(Color.Transparent)
+                                        .padding(start = 16.dp, end = 16.dp, bottom = 32.dp)
+                                        .height(64.dp)
+                                        .clip(RoundedCornerShape(16.dp))
+                                ) {
+                                    NavigationBarItems()
+                                }
+                            },
                             floatingActionButton = {
                                 FloatingActionButton(
                                     onClick = {}
@@ -55,8 +79,10 @@ class MainActivity : ComponentActivity() {
                                     Icon(Icons.Filled.Edit, "Edit")
                                 }
                             },
-                            modifier = Modifier.fillMaxSize()
-                        ) { innerPadding ->
+                            modifier = Modifier
+                                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                                .fillMaxSize(),
+                        ) { _ ->
 
                             val timelineViewModel: TimelineViewModel by viewModels()
 
@@ -67,9 +93,7 @@ class MainActivity : ComponentActivity() {
                                     val encodedDesc = description?.encodeURLParameter() ?: ""
                                     navController.navigate("media/$encodedUrl?description=$encodedDesc")
                                 },
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(innerPadding)
+                                modifier = Modifier.fillMaxSize()
                             )
                         }
                     }
