@@ -4,31 +4,32 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Application {
-    abstract val id: String
-    abstract val name: String
-    abstract val website: String?
-    abstract val scopes: List<String>
-    abstract val redirectUris: List<String>
-}
+data class Application(
+
+    @SerialName("name")
+    val name: String,
+
+    @SerialName("website")
+    val website: String? = null
+)
 
 @Serializable
 data class CredentialApplication(
 
     @SerialName("id")
-    override val id: String,
+    val id: String,
 
     @SerialName("name")
-    override val name: String,
+    val name: String,
 
     @SerialName("website")
-    override val website: String? = null,
+    val website: String? = null,
 
     @SerialName("scopes")
-    override val scopes: List<String>,
+    val scopes: List<String>,
 
     @SerialName("redirect_uris")
-    override val redirectUris: List<String>,
+    val redirectUris: List<String>,
 
     @SerialName("client_id")
     val clientId: String,
@@ -38,4 +39,4 @@ data class CredentialApplication(
 
     @SerialName("client_secret_expires_at")
     val clientSecretExpiresAt: Int
-) : Application()
+)
