@@ -26,10 +26,10 @@ data class CredentialApplication(
     val website: String? = null,
 
     @SerialName("scopes")
-    val scopes: List<String>,
+    val scopes: List<String>? = null,
 
     @SerialName("redirect_uris")
-    val redirectUris: List<String>,
+    val redirectUris: List<String>? = null,
 
     @SerialName("client_id")
     val clientId: String,
@@ -38,5 +38,5 @@ data class CredentialApplication(
     val clientSecret: String,
 
     @SerialName("client_secret_expires_at")
-    val clientSecretExpiresAt: Int
+    val clientSecretExpiresAt: Int? = null
 )

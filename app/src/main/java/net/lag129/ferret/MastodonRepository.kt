@@ -2,8 +2,10 @@ package net.lag129.ferret
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.http.parameters
 import net.lag129.ferret.api.entity.CredentialApplication
 import net.lag129.ferret.api.entity.Status
 import net.lag129.ferret.api.entity.Token
@@ -19,7 +21,7 @@ interface MastodonRepository {
     suspend fun registerClientApp(
         clientName: String,
         redirectUris: String,
-        scopes: String? = null,
+        scopes: String,
         website: String? = null
     ): Result<CredentialApplication>
 
@@ -50,16 +52,19 @@ class MastodonRepositoryImpl(private val client: HttpClient) : MastodonRepositor
     override suspend fun registerClientApp(
         clientName: String,
         redirectUris: String,
-        scopes: String?,
+        scopes: String,
         website: String?
     ): Result<CredentialApplication> {
         return runCatching {
-            client.get("/api/v1/apps") {
-                parameter("client_name", clientName)
-                parameter("redirect_uris", redirectUris)
-                scopes?.let { parameter("scopes", it) }
-                website?.let { parameter("website", it) }
-            }.body()
+            client.submitForm(
+                url = "/api/v1/apps",
+                formParameters = parameters {
+                    append("client_name", clientName)
+                    append("redirect_uris", redirectUris)
+                    append("scopes", scopes)
+                    website?.let { append("website", it) }
+                }
+            ).body()
         }
     }
 
@@ -70,13 +75,16 @@ class MastodonRepositoryImpl(private val client: HttpClient) : MastodonRepositor
         redirectUri: String
     ): Result<Token> {
         return runCatching {
-            client.get("/oauth/token") {
-                parameter("grant_type", "authorization_code")
-                parameter("code", code)
-                parameter("client_id", clientId)
-                parameter("client_secret", clientSecret)
-                parameter("redirect_uri", redirectUri)
-            }.body()
+            client.submitForm(
+                url = "/oauth/token",
+                formParameters = parameters {
+                    append("grant_type", "authorization_code")
+                    append("code", code)
+                    append("client_id", clientId)
+                    append("client_secret", clientSecret)
+                    append("redirect_uri", redirectUri)
+                }
+            ).body()
         }
     }
 }

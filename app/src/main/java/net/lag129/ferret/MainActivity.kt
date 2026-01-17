@@ -1,5 +1,6 @@
 package net.lag129.ferret
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,11 +23,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,12 +39,16 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import io.ktor.http.decodeURLQueryComponent
 import io.ktor.http.encodeURLParameter
+import net.lag129.ferret.compose.LoginScreen
 import net.lag129.ferret.compose.MediaScreen
 import net.lag129.ferret.compose.NavigationBarItems
 import net.lag129.ferret.compose.TimelineScreen
 import net.lag129.ferret.ui.theme.FerretTheme
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var authViewModel: AuthViewModel
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,15 +56,38 @@ class MainActivity : ComponentActivity() {
 
         Napier.base(DebugAntilog())
 
+        val preferencesViewModel: PreferencesViewModel by viewModels()
+        authViewModel = AuthViewModel(preferencesViewModel)
+
+        handleIntent(intent)
+
         setContent {
             val navController = rememberNavController()
             val scrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
 
+            val isLoggedIn by preferencesViewModel.isLoggedIn.collectAsStateWithLifecycle()
+
             FerretTheme {
                 NavHost(
                     navController = navController,
-                    startDestination = "home"
+                    startDestination = if (isLoggedIn) "home" else "login"
                 ) {
+                    composable("login") {
+                        Scaffold(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            LoginScreen(
+                                authViewModel = authViewModel,
+                                onLoggedIn = {
+                                    navController.navigate("home") {
+                                        popUpTo("login") { inclusive = true }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    }
+
                     composable("home") {
                         Scaffold(
                             bottomBar = {
@@ -131,6 +161,22 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        val uri = intent?.data ?: return
+
+        if (uri.scheme == "ferret" && uri.host == "oauth") {
+            val code = uri.getQueryParameter("code")
+            if (code != null) {
+                authViewModel.obtainAccessToken(code)
             }
         }
     }
