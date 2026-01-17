@@ -31,7 +31,7 @@ fun emojisToAnnotatedString(
     return buildAnnotatedString {
         var lastIndex = 0
 
-        for (matchResult in shortcodePattern.findAll(plainText)) {
+        shortcodePattern.findAll(plainText).forEach { matchResult ->
             val shortcode = matchResult.groupValues[1]
             val emoji = emojiMap[shortcode]
 
@@ -39,7 +39,7 @@ fun emojisToAnnotatedString(
 
             if (emoji != null) {
                 appendInlineContent(shortcode, shortcode)
-                append("\u0020")
+                append("\u200B")
             } else {
                 append(
                     annotatedString.subSequence(

@@ -16,8 +16,8 @@ class PreferencesViewModel(
     val bearerToken = _bearerToken.asStateFlow()
 
     init {
-        getServerName()
-        getBearerToken()
+//        getServerName()
+//        getBearerToken()
     }
 
     fun setServerName(serverName: String) {
@@ -32,17 +32,17 @@ class PreferencesViewModel(
         }
     }
 
-    fun getServerName() {
-        viewModelScope.launch {
-            val serverName = preferencesRepository.readServerName()
-            _serverName.emit(serverName)
-        }
-    }
+//    fun getServerName() {
+//        viewModelScope.launch {
+//            val serverName = preferencesRepository.serverName
+//            _serverName.emit(serverName)
+//        }
+//    }
 
-    fun getBearerToken() {
-        viewModelScope.launch {
-            val bearerToken = preferencesRepository.readBearerToken()
-            _bearerToken.emit(bearerToken)
-        }
-    }
+//    fun getBearerToken() {
+//        viewModelScope.launch {
+//            val bearerToken = preferencesRepository.readBearerToken()
+//            _bearerToken.emit(bearerToken)
+//        }
+//    }
 }
