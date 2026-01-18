@@ -47,7 +47,7 @@ import net.lag129.ferret.ui.theme.FerretTheme
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var authViewModel: AuthViewModel
+    private val authViewModel: AuthViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,17 +55,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         Napier.base(DebugAntilog())
-
-        val preferencesViewModel: PreferencesViewModel by viewModels()
-        authViewModel = AuthViewModel(preferencesViewModel)
-
         handleIntent(intent)
+
+        val preferencesRepository = PreferencesRepositoryImpl(application)
 
         setContent {
             val navController = rememberNavController()
             val scrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
 
-            val isLoggedIn by preferencesViewModel.isLoggedIn.collectAsStateWithLifecycle()
+            val serverName by preferencesRepository.serverName
+                .collectAsStateWithLifecycle(initialValue = "")
+            val bearerToken by preferencesRepository.bearerToken
+                .collectAsStateWithLifecycle(initialValue = "")
+
+            val isLoggedIn = serverName.isNotEmpty() && bearerToken.isNotEmpty()
 
             FerretTheme {
                 NavHost(

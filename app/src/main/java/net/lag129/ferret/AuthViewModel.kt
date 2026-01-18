@@ -1,6 +1,7 @@
 package net.lag129.ferret
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -11,12 +12,13 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 class AuthViewModel(
-    private val preferencesViewModel: PreferencesViewModel,
-) : ViewModel() {
+    application: Application
+) : AndroidViewModel(application) {
 
     sealed class AuthState {
         object Idle : AuthState()
@@ -25,6 +27,8 @@ class AuthViewModel(
         object Success : AuthState()
         data class Error(val message: String) : AuthState()
     }
+
+    private val preferencesRepository = PreferencesRepositoryImpl(application)
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
@@ -50,6 +54,12 @@ class AuthViewModel(
                 clientId = credentialApp.clientId
                 clientSecret = credentialApp.clientSecret
 
+                preferencesRepository.saveTemporaryAuthData(
+                    serverName = serverName,
+                    clientId = clientId,
+                    clientSecret = clientSecret
+                )
+
                 val oauthUrl = buildOAuthUrl(
                     serverName = serverName,
                     clientId = clientId
@@ -63,10 +73,17 @@ class AuthViewModel(
     }
 
     fun obtainAccessToken(code: String) {
-        val client = createHttpClient(currentServerName)
-        val repository = MastodonRepositoryImpl(client)
-
         viewModelScope.launch {
+            if (currentServerName.isEmpty() || clientId.isEmpty() || clientSecret.isEmpty()) {
+                val tempAuthData = preferencesRepository.temporaryAuthData.first()
+                currentServerName = tempAuthData?.serverName ?: ""
+                clientId = tempAuthData?.clientId ?: ""
+                clientSecret = tempAuthData?.clientSecret ?: ""
+            }
+
+            val client = createHttpClient(currentServerName)
+            val repository = MastodonRepositoryImpl(client)
+            
             val result = repository.obtainAccessToken(
                 code = code,
                 clientId = clientId,
@@ -74,8 +91,9 @@ class AuthViewModel(
                 redirectUri = REDIRECT_URI
             )
             result.onSuccess { token ->
-                preferencesViewModel.setServerName(currentServerName)
-                preferencesViewModel.setBearerToken(token.accessToken)
+                preferencesRepository.saveServerName(currentServerName)
+                preferencesRepository.saveBearerToken(token.accessToken)
+                preferencesRepository.clearTemporaryAuthData()
                 _authState.value = AuthState.Success
                 Napier.d("Obtained access token: $token")
             }.onFailure { error ->
