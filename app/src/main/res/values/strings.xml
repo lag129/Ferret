@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Ferret</string>
     <string name="sensitive">sensitive</string>
+    <string name="now">now</string>
+    <string name="minute_abbreviation">%sm</string>
+    <string name="hour_abbreviation">%sh</string>
 </resources>

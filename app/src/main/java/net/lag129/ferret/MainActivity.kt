@@ -43,12 +43,14 @@ import net.lag129.ferret.compose.MediaScreen
 import net.lag129.ferret.compose.NavigationBarItems
 import net.lag129.ferret.compose.TimelineScreen
 import net.lag129.ferret.ui.theme.FerretTheme
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
+    private val preferencesRepository = get<PreferencesRepository>()
     private val authViewModel: AuthViewModel by viewModel()
+    private val timelineViewModel: TimelineViewModel by viewModel()
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,8 +59,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         handleIntent(intent)
         Napier.base(DebugAntilog())
-
-        val preferencesRepository = PreferencesRepositoryImpl(application)
 
         setContent {
             val navController = rememberNavController()
@@ -119,9 +119,6 @@ class MainActivity : ComponentActivity() {
                                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                                 .fillMaxSize(),
                         ) { innerPadding ->
-
-                            val timelineViewModel: TimelineViewModel = koinViewModel()
-
                             TimelineScreen(
                                 viewModel = timelineViewModel,
                                 onNavigate = { mediaUrl, description ->

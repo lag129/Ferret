@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Ferret</string>
     <string name="sensitive">閲覧注意</string>
+    <string name="now">たった今</string>
+    <string name="minute_abbreviation">%s分</string>
+    <string name="hour_abbreviation">%s時間</string>
 </resources>

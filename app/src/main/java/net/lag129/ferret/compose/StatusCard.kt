@@ -1,7 +1,6 @@
 package net.lag129.ferret.compose
 
 import android.annotation.SuppressLint
-import android.text.format.DateUtils
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -48,6 +47,8 @@ import net.lag129.ferret.createEmojiInlineContent
 import net.lag129.ferret.emojisToAnnotatedString
 import net.lag129.ferret.htmlToAnnotatedString
 import net.lag129.ferret.ui.theme.FerretTheme
+import net.lag129.ferret.utils.DateUtils
+import org.koin.compose.koinInject
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -109,7 +110,8 @@ fun StatusCard(
 ) {
     val (displayName, userName, avatarUrl, createdAt, content, card, displayNameEmojis, emojis, mediaAttachments, sensitive, spoilerText) = data
 
-    val now = Clock.System.now().toEpochMilliseconds()
+    val currentTime = Clock.System.now().toEpochMilliseconds()
+    val dateUtils: DateUtils = koinInject()
 
     Row(
         modifier = modifier
@@ -172,12 +174,13 @@ fun StatusCard(
                     )
                 }
 
-                val createdAt = Instant.parse(createdAt).toEpochMilliseconds()
+                val postedTime = Instant.parse(createdAt).toEpochMilliseconds()
 
                 Text(
-                    text = DateUtils.getRelativeTimeSpanString(
-                        createdAt, now, 0
-                    ).toString(),
+                    text = dateUtils.getRelativeTimeSpanString(
+                        currentTime,
+                        postedTime
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
                     maxLines = 1,
