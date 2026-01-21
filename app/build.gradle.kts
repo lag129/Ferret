@@ -42,6 +42,12 @@ android {
     }
 }
 
+android.testOptions {
+    unitTests.all {
+        it.useJUnitPlatform()
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -86,9 +92,20 @@ dependencies {
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.compose.viewmodel.navigation)
     implementation(libs.koin.ktor)
+    implementation(libs.koin.test)
+    testImplementation(libs.koin.test.junit4)
+    testImplementation(libs.koin.android.test)
+
+    // Kotest
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotest.extensions.koin)
 
     // kotlinx.collections.immutable
     implementation(libs.kotlinx.collections.immutable)
+
+    // kotlinx.datetime
+    implementation(libs.kotlinx.datetime)
 
     // kotlinx.serialization
     implementation(libs.kotlinx.serialization.json)

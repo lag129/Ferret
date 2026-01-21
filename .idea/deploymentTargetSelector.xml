@@ -16,9 +16,6 @@
       <SelectionState runConfigName="StatusCardPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="PostScreenPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="HtmlTextBoxPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
