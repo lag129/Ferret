@@ -44,6 +44,7 @@ import net.lag129.ferret.compose.MediaScreen
 import net.lag129.ferret.compose.NavigationBarItems
 import net.lag129.ferret.compose.TimelineScreen
 import net.lag129.ferret.ui.theme.FerretTheme
+import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -52,10 +53,10 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
-        Napier.base(DebugAntilog())
+        enableEdgeToEdge()
         handleIntent(intent)
+        Napier.base(DebugAntilog())
 
         val preferencesRepository = PreferencesRepositoryImpl(application)
 
@@ -119,7 +120,7 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxSize(),
                         ) { innerPadding ->
 
-                            val timelineViewModel: TimelineViewModel by viewModels()
+                            val timelineViewModel: TimelineViewModel = koinViewModel()
 
                             TimelineScreen(
                                 viewModel = timelineViewModel,
