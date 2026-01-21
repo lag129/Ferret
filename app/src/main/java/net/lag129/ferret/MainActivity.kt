@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
                     composable("login") {
                         Scaffold(
                             modifier = Modifier.fillMaxSize()
-                        ) {
+                        ) { innerPadding ->
                             LoginScreen(
                                 authViewModel = authViewModel,
                                 onLoggedIn = {
@@ -86,7 +86,9 @@ class MainActivity : ComponentActivity() {
                                         popUpTo("login") { inclusive = true }
                                     }
                                 },
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding)
                             )
                         }
                     }
@@ -115,7 +117,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .nestedScroll(scrollBehavior.nestedScrollConnection)
                                 .fillMaxSize(),
-                        ) { _ ->
+                        ) { innerPadding ->
 
                             val timelineViewModel: TimelineViewModel by viewModels()
 
@@ -126,7 +128,9 @@ class MainActivity : ComponentActivity() {
                                     val encodedDesc = description?.encodeURLParameter() ?: ""
                                     navController.navigate("media/$encodedUrl?description=$encodedDesc")
                                 },
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(innerPadding)
                             )
                         }
                     }
