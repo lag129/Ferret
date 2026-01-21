@@ -1,7 +1,6 @@
 package net.lag129.ferret
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -21,9 +20,9 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.api.entity.Status
 
-class TimelineViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val preferencesRepository = PreferencesRepositoryImpl(application)
+class TimelineViewModel(
+    private val preferencesRepository: PreferencesRepository
+) : ViewModel() {
 
     private var client: HttpClient? = null
     private var mastodonRepository: MastodonRepository? = null

@@ -1,7 +1,6 @@
 package net.lag129.ferret
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
 import io.ktor.client.HttpClient
@@ -17,8 +16,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 
 class AuthViewModel(
-    application: Application
-) : AndroidViewModel(application) {
+    private val preferencesRepository: PreferencesRepository
+) : ViewModel() {
 
     sealed class AuthState {
         object Idle : AuthState()
@@ -27,8 +26,6 @@ class AuthViewModel(
         object Success : AuthState()
         data class Error(val message: String) : AuthState()
     }
-
-    private val preferencesRepository = PreferencesRepositoryImpl(application)
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
@@ -83,7 +80,7 @@ class AuthViewModel(
 
             val client = createHttpClient(currentServerName)
             val repository = MastodonRepositoryImpl(client)
-            
+
             val result = repository.obtainAccessToken(
                 code = code,
                 clientId = clientId,
