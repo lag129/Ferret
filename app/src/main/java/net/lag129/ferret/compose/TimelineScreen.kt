@@ -21,7 +21,7 @@ import net.lag129.ferret.TimelineViewModel
 @Composable
 fun TimelineScreen(
     viewModel: TimelineViewModel,
-    onNavigate: (mediaUrl: String, description: String?) -> Unit,
+    navigateToMediaScreen: (mediaUrl: String, description: String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val statuses by viewModel.uiState.collectAsState()
@@ -58,7 +58,7 @@ fun TimelineScreen(
 
                 StatusCard(
                     data = statusData,
-                    onMediaClick = onNavigate
+                    onMediaClick = navigateToMediaScreen
                 )
 
                 HorizontalDivider(

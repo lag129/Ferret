@@ -24,6 +24,7 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.compose.LoginScreen
+import net.lag129.ferret.compose.MediaScreen
 import net.lag129.ferret.compose.TimelineScreen
 import net.lag129.ferret.ui.theme.FerretTheme
 import org.koin.android.ext.android.get
@@ -37,6 +38,9 @@ private data object Home : NavKey
 
 @Serializable
 private data object Login : NavKey
+
+@Serializable
+private data class Media(val url: String, val description: String?) : NavKey
 
 class MainActivity : ComponentActivity() {
 
@@ -86,7 +90,11 @@ class MainActivity : ComponentActivity() {
                             Scaffold { innerPadding ->
                                 TimelineScreen(
                                     viewModel = timelineViewModel,
-                                    onNavigate = { _, _ -> },
+                                    navigateToMediaScreen = { mediaUrl, description ->
+                                        authBackStack.backStack.add(
+                                            Media(mediaUrl, description)
+                                        )
+                                    },
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(innerPadding)
@@ -103,6 +111,13 @@ class MainActivity : ComponentActivity() {
                                         .padding(innerPadding)
                                 )
                             }
+                        }
+                        entry<Media> { key ->
+                            MediaScreen(
+                                mediaUrl = key.url,
+                                description = key.description,
+                                modifier = Modifier.fillMaxSize()
+                            )
                         }
                     }
                 )
