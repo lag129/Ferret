@@ -5,16 +5,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
@@ -24,6 +28,9 @@ import net.lag129.ferret.compose.TimelineScreen
 import net.lag129.ferret.ui.theme.FerretTheme
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
+
+@Serializable
+private data object Splash : NavKey
 
 @Serializable
 private data object Home : NavKey
@@ -37,7 +44,6 @@ class MainActivity : ComponentActivity() {
     private val authViewModel: AuthViewModel by viewModel()
     private val timelineViewModel: TimelineViewModel by viewModel()
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,20 +52,36 @@ class MainActivity : ComponentActivity() {
         Napier.base(DebugAntilog())
 
         setContent {
-            val serverName by preferencesRepository.serverName
-                .collectAsStateWithLifecycle(initialValue = "")
-            val bearerToken by preferencesRepository.bearerToken
-                .collectAsStateWithLifecycle(initialValue = "")
+            val serverName by preferencesRepository.serverName.collectAsStateWithLifecycle(
+                initialValue = null
+            )
+            val bearerToken by preferencesRepository.bearerToken.collectAsStateWithLifecycle(
+                initialValue = null
+            )
 
-            val isLoggedIn = serverName.isNotEmpty() && bearerToken.isNotEmpty()
+            val authBackStack = remember { AuthBackStack() }
 
-            val backStack = rememberNavBackStack(Home)
+            LaunchedEffect(serverName, bearerToken) {
+                if (serverName != null && bearerToken != null) {
+                    val hasValidCredentials =
+                        serverName!!.isNotBlank() && bearerToken!!.isNotBlank()
+                    authBackStack.restoreLoginState(hasValidCredentials)
+                }
+            }
 
             FerretTheme {
                 NavDisplay(
-                    backStack = backStack,
-                    onBack = { backStack.removeLastOrNull() },
+                    backStack = authBackStack.backStack,
+                    onBack = { authBackStack.removeLast() },
                     entryProvider = entryProvider {
+                        entry<Splash> {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
                         entry<Home> {
                             Scaffold { innerPadding ->
                                 TimelineScreen(
@@ -75,7 +97,7 @@ class MainActivity : ComponentActivity() {
                             Scaffold { innerPadding ->
                                 LoginScreen(
                                     authViewModel = authViewModel,
-                                    onLoggedIn = {},
+                                    onLoggedIn = { authBackStack.onLoginSuccess() },
                                     modifier = Modifier
                                         .fillMaxSize()
                                         .padding(innerPadding)
@@ -102,5 +124,26 @@ class MainActivity : ComponentActivity() {
                 authViewModel.obtainAccessToken(code)
             }
         }
+    }
+}
+
+private class AuthBackStack {
+    private var isRestored = false
+    val backStack = mutableStateListOf<NavKey>(Splash)
+
+    fun restoreLoginState(hasValidCredentials: Boolean) {
+        if (isRestored) return
+        isRestored = true
+        backStack.clear()
+        backStack.add(if (hasValidCredentials) Home else Login)
+    }
+
+    fun onLoginSuccess() {
+        backStack.clear()
+        backStack.add(Home)
+    }
+
+    fun removeLast() {
+        backStack.removeLastOrNull()
     }
 }
