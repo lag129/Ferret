@@ -79,7 +79,7 @@ fun TimelineScreen(
 }
 
 @Composable
-fun LoadingIndicator(
+private fun LoadingIndicator(
     viewModel: TimelineViewModel,
     maxId: String,
     modifier: Modifier = Modifier
