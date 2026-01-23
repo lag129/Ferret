@@ -46,6 +46,7 @@ fun TimelineScreen(
                             createdAt = targetStatus.createdAt,
                             avatarUrl = targetStatus.account.avatar,
                             content = targetStatus.content,
+                            account = targetStatus.account,
                             card = targetStatus.card,
                             displayNameEmojis = targetStatus.account.emojis,
                             emojis = targetStatus.emojis,

@@ -35,30 +35,32 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import kotlinx.serialization.Serializable
 import net.lag129.ferret.R
+import net.lag129.ferret.api.entity.Account
 import net.lag129.ferret.api.entity.Attachment
 import net.lag129.ferret.api.entity.CustomEmoji
 import net.lag129.ferret.api.entity.PreviewCard
 import net.lag129.ferret.createEmojiInlineContent
 import net.lag129.ferret.emojisToAnnotatedString
 import net.lag129.ferret.htmlToAnnotatedString
-import net.lag129.ferret.ui.theme.FerretTheme
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 import kotlin.time.Clock
 import kotlin.time.Instant
 
 @Immutable
+@Serializable
 data class StatusCardData(
     val displayName: String,
     val userName: String,
     val avatarUrl: String,
     val createdAt: String,
     val content: String,
+    val account: Account,
     val card: PreviewCard? = null,
     val displayNameEmojis: List<CustomEmoji>? = null,
     val emojis: List<CustomEmoji>? = null,
@@ -108,8 +110,6 @@ fun StatusCard(
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
-    val (displayName, userName, avatarUrl, createdAt, content, card, displayNameEmojis, emojis, mediaAttachments, sensitive, spoilerText) = data
-
     val currentTime = Clock.System.now().toEpochMilliseconds()
     val dateUtils: DateUtils = koinInject()
 
@@ -119,8 +119,8 @@ fun StatusCard(
             .padding(top = 16.dp, bottom = 24.dp)
     ) {
         AsyncImage(
-            model = avatarUrl,
-            contentDescription = displayName,
+            model = data.avatarUrl,
+            contentDescription = data.displayName,
             modifier = Modifier
                 .width(40.dp)
                 .clip(RoundedCornerShape(30))
@@ -136,18 +136,18 @@ fun StatusCard(
                 Row(
                     modifier = Modifier.weight(1f, fill = false)
                 ) {
-                    val annotatedString = displayNameEmojis?.let {
+                    val annotatedString = data.displayNameEmojis?.let {
                         emojisToAnnotatedString(
-                            htmlToAnnotatedString(displayName),
+                            htmlToAnnotatedString(data.displayName),
                             it
                         )
                     } ?: run {
-                        htmlToAnnotatedString(content)
+                        htmlToAnnotatedString(data.content)
                     }
 
                     val inlineContent = mutableMapOf<String, InlineTextContent>()
 
-                    displayNameEmojis?.let {
+                    data.displayNameEmojis?.let {
                         inlineContent.putAll(
                             createEmojiInlineContent(it, 20)
                         )
@@ -165,7 +165,7 @@ fun StatusCard(
                     Spacer(modifier = Modifier.padding(4.dp))
 
                     Text(
-                        text = "@$userName",
+                        text = "@${data.userName}",
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontSize = 14.sp,
                         overflow = TextOverflow.Ellipsis,
@@ -174,7 +174,7 @@ fun StatusCard(
                     )
                 }
 
-                val postedTime = Instant.parse(createdAt).toEpochMilliseconds()
+                val postedTime = Instant.parse(data.createdAt).toEpochMilliseconds()
 
                 Text(
                     text = dateUtils.getRelativeTimeSpanString(
@@ -190,9 +190,9 @@ fun StatusCard(
 
             var isSpoilerTextClicked by remember { mutableStateOf(false) }
 
-            if (spoilerText.isNotBlank()) {
+            if (data.spoilerText.isNotBlank()) {
                 Text(
-                    text = spoilerText,
+                    text = data.spoilerText,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.error,
@@ -204,20 +204,20 @@ fun StatusCard(
             }
 
             AnimatedVisibility(
-                visible = spoilerText.isBlank() || isSpoilerTextClicked,
+                visible = data.spoilerText.isBlank() || isSpoilerTextClicked,
                 enter = expandVertically() + fadeIn(),
                 exit = shrinkVertically() + fadeOut()
             ) {
                 ContentBox(
-                    content = content,
-                    emojis = emojis
+                    content = data.content,
+                    emojis = data.emojis
                 )
             }
 
-            if (!mediaAttachments.isNullOrEmpty()) {
+            if (!data.mediaAttachments.isNullOrEmpty()) {
                 Spacer(modifier = Modifier.padding(8.dp))
 
-                if (sensitive) {
+                if (data.sensitive) {
                     var isBlurred by remember { mutableStateOf(true) }
 
                     Box(
@@ -225,7 +225,7 @@ fun StatusCard(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         MediaAttachmentCard(
-                            mediaAttachments = mediaAttachments,
+                            mediaAttachments = data.mediaAttachments,
                             onMediaClick = onMediaClick,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
@@ -242,41 +242,23 @@ fun StatusCard(
                     }
                 } else {
                     MediaAttachmentCard(
-                        mediaAttachments = mediaAttachments,
+                        mediaAttachments = data.mediaAttachments,
                         onMediaClick = onMediaClick,
                     )
                 }
             }
 
-            if (card != null) {
+            if (data.card != null) {
                 Spacer(modifier = Modifier.padding(8.dp))
 
                 LinkPreviewCard(
-                    url = card.url,
-                    imageUrl = card.image,
-                    title = card.title,
-                    desc = card.description,
+                    url = data.card.url,
+                    imageUrl = data.card.image,
+                    title = data.card.title,
+                    desc = data.card.description,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
         }
-    }
-}
-
-@Preview
-@Composable
-private fun StatusCardPreview() {
-    FerretTheme {
-        StatusCard(
-            StatusCardData(
-                displayName = "ユーザー",
-                userName = "user@example.com",
-                createdAt = "2026-01-01T12:00:00Z",
-                avatarUrl = "",
-                content = "<p>ダミーテキスト<p>",
-                sensitive = false,
-                spoilerText = "",
-            )
-        )
     }
 }
