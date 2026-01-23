@@ -16,15 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
 import net.lag129.ferret.api.entity.Attachment
 
 @Composable
@@ -237,17 +234,10 @@ private fun SharedTransitionScope.MediaImage(
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
 ) {
-    val context = LocalContext.current
     val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
 
-    val imageRequest = remember(media.url) {
-        ImageRequest.Builder(context)
-            .data(media.url)
-            .build()
-    }
-
     AsyncImage(
-        model = imageRequest,
+        model = media.url,
         contentDescription = media.description,
         contentScale = ContentScale.Crop,
         placeholder = ColorPainter(surfaceVariant),

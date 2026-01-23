@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -128,14 +127,14 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             entry<Media> { key ->
-                                Surface(
-                                    modifier = Modifier.fillMaxSize()
-                                ) {
+                                Scaffold { innerPadding ->
                                     MediaScreen(
                                         mediaUrl = key.url,
                                         description = key.description,
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                        modifier = Modifier.fillMaxSize()
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(innerPadding)
                                     )
                                 }
                             }
