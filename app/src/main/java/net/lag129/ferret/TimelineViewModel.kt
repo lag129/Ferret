@@ -9,6 +9,7 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.cache.storage.FileStorage
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.api.entity.Status
+import java.io.File
 
 class TimelineViewModel(
     private val preferencesRepository: PreferencesRepository
@@ -57,7 +59,10 @@ class TimelineViewModel(
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
-            install(HttpCache)
+            install(HttpCache) {
+                privateStorage(FileStorage(File("build/cache")))
+                publicStorage(FileStorage(File("build/cache/public")))
+            }
         }
     }
 
