@@ -2,6 +2,8 @@ package net.lag129.ferret.compose
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -104,11 +106,14 @@ private fun ContentBox(
     )
 }
 
+@SuppressLint("ComposeParameterOrder")
 @Composable
-fun StatusCard(
+fun SharedTransitionScope.StatusCard(
     data: StatusCardData,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
+    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null,
+    onProfileClick: ((account: Account) -> Unit)? = null
 ) {
     val currentTime = Clock.System.now().toEpochMilliseconds()
     val dateUtils: DateUtils = koinInject()
@@ -124,6 +129,9 @@ fun StatusCard(
             modifier = Modifier
                 .width(40.dp)
                 .clip(RoundedCornerShape(30))
+                .clickable {
+                    onProfileClick?.invoke(data.account)
+                }
         )
 
         Spacer(modifier = Modifier.padding(6.dp))
@@ -227,6 +235,7 @@ fun StatusCard(
                         MediaAttachmentCard(
                             mediaAttachments = data.mediaAttachments,
                             onMediaClick = onMediaClick,
+                            animatedVisibilityScope = animatedVisibilityScope,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
                                 .blur(radius = if (isBlurred) 40.dp else 0.dp)
@@ -244,6 +253,7 @@ fun StatusCard(
                     MediaAttachmentCard(
                         mediaAttachments = data.mediaAttachments,
                         onMediaClick = onMediaClick,
+                        animatedVisibilityScope = animatedVisibilityScope
                     )
                 }
             }

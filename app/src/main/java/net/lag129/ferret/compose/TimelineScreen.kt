@@ -1,5 +1,7 @@
 package net.lag129.ferret.compose
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,11 +19,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.lag129.ferret.TimelineViewModel
+import net.lag129.ferret.api.entity.Account
 
 @Composable
-fun TimelineScreen(
+fun SharedTransitionScope.TimelineScreen(
     viewModel: TimelineViewModel,
     navigateToMediaScreen: (mediaUrl: String, description: String?) -> Unit,
+    navigateToProfileScreen: (account: Account) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     val statuses by viewModel.uiState.collectAsState()
@@ -59,7 +64,9 @@ fun TimelineScreen(
 
                 StatusCard(
                     data = statusData,
-                    onMediaClick = navigateToMediaScreen
+                    onMediaClick = navigateToMediaScreen,
+                    onProfileClick = navigateToProfileScreen,
+                    animatedVisibilityScope = animatedVisibilityScope
                 )
 
                 HorizontalDivider(

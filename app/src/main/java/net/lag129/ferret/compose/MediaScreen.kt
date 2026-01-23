@@ -1,44 +1,44 @@
 package net.lag129.ferret.compose
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import coil3.compose.AsyncImage
 import coil3.imageLoader
 import coil3.request.ImageRequest
-import coil3.request.crossfade
-import me.saket.telephoto.zoomable.coil3.ZoomableAsyncImage
-import net.lag129.ferret.ui.theme.FerretTheme
 
 @Composable
-fun MediaScreen(
+fun SharedTransitionScope.MediaScreen(
     mediaUrl: String,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     description: String? = null
 ) {
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        ZoomableAsyncImage(
+        AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(mediaUrl)
-                .crossfade(1_000)
                 .build(),
             imageLoader = LocalContext.current.imageLoader,
             contentDescription = description ?: "",
-            modifier = Modifier.fillMaxSize()
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun MediaScreenPreview() {
-    FerretTheme {
-        MediaScreen(
-            mediaUrl = ""
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .fillMaxSize()
+                .sharedElement(
+                    sharedContentState = rememberSharedContentState(key = mediaUrl),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 300)
+                    }
+                )
         )
     }
 }
