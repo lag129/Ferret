@@ -36,10 +36,14 @@ class ProfileViewModel(
             val statuses = mastodonRepository.getAccountStatuses(accountId, maxId)
 
             statuses.onSuccess { statuses ->
-                _uiState.value = statuses
+                _uiState.value += statuses
             }.onFailure { error ->
                 Napier.e("Failed to fetch next account statuses", error)
             }
         }
+    }
+
+    fun clearStatuses() {
+        _uiState.value = emptyList()
     }
 }

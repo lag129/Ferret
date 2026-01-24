@@ -45,6 +45,8 @@ val appModule = module {
 
     viewModel { TimelineViewModel(get()) }
 
+    viewModel { ProfileViewModel(get()) }
+
     viewModel { AuthViewModel(get()) }
 
     single<DateUtils> { DateUtilsImpl(get()) }

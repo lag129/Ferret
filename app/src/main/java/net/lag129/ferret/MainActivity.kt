@@ -53,6 +53,7 @@ class MainActivity : ComponentActivity() {
 
     private val preferencesRepository = get<PreferencesRepository>()
     private val authViewModel: AuthViewModel by viewModel()
+    private val profileViewModel: ProfileViewModel by viewModel()
     private val timelineViewModel: TimelineViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,6 +143,18 @@ class MainActivity : ComponentActivity() {
                                 Scaffold { innerPadding ->
                                     ProfileScreen(
                                         data = key.account,
+                                        viewModel = profileViewModel,
+                                        navigateToProfileScreen = { account ->
+                                            authBackStack.backStack.add(
+                                                Profile(account)
+                                            )
+                                        },
+                                        navigateToMediaScreen = { mediaUrl, description ->
+                                            authBackStack.backStack.add(
+                                                Media(mediaUrl, description)
+                                            )
+                                        },
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(innerPadding)
