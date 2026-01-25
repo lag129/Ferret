@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -88,7 +88,7 @@ fun SharedTransitionScope.StatusCard(
             model = data.avatarUrl,
             contentDescription = data.displayName,
             modifier = Modifier
-                .width(40.dp)
+                .size(40.dp)
                 .clip(RoundedCornerShape(30))
                 .clickable {
                     onProfileClick?.invoke(data.account)
@@ -133,10 +133,7 @@ fun SharedTransitionScope.StatusCard(
                 val postedTime = Instant.parse(data.createdAt).toEpochMilliseconds()
 
                 Text(
-                    text = dateUtils.getRelativeTimeSpanString(
-                        currentTime,
-                        postedTime
-                    ),
+                    text = dateUtils.getRelativeTimeSpanString(currentTime, postedTime),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
                     maxLines = 1,

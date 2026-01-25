@@ -16,7 +16,15 @@ class ProfileViewModel(
     private val _uiState = MutableStateFlow(listOf<Status>())
     val uiState: StateFlow<List<Status>> = _uiState.asStateFlow()
 
+    private var currentAccountId: String? = null
+
     fun fetchAccountStatuses(accountId: String) {
+        if (currentAccountId == accountId) {
+            return
+        }
+        currentAccountId = accountId
+        clearStatuses()
+
         viewModelScope.launch {
             val statuses = mastodonRepository.getAccountStatuses(accountId)
 
@@ -43,7 +51,7 @@ class ProfileViewModel(
         }
     }
 
-    fun clearStatuses() {
+    private fun clearStatuses() {
         _uiState.value = emptyList()
     }
 }
