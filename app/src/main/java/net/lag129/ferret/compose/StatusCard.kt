@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,9 +45,6 @@ import net.lag129.ferret.api.entity.Account
 import net.lag129.ferret.api.entity.Attachment
 import net.lag129.ferret.api.entity.CustomEmoji
 import net.lag129.ferret.api.entity.PreviewCard
-import net.lag129.ferret.createEmojiInlineContent
-import net.lag129.ferret.emojisToAnnotatedString
-import net.lag129.ferret.htmlToAnnotatedString
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 import kotlin.time.Clock
@@ -70,41 +66,6 @@ data class StatusCardData(
     val sensitive: Boolean,
     val spoilerText: String
 )
-
-@Composable
-private fun ContentBox(
-    content: String,
-    modifier: Modifier = Modifier,
-    @SuppressLint("ComposeUnstableCollections")
-    emojis: List<CustomEmoji>? = null
-) {
-    val annotatedString = emojis?.let {
-        emojisToAnnotatedString(
-            htmlToAnnotatedString(content),
-            it
-        )
-    } ?: run {
-        htmlToAnnotatedString(content)
-    }
-
-    val inlineContent = mutableMapOf<String, InlineTextContent>()
-    emojis?.let {
-        inlineContent.putAll(
-            createEmojiInlineContent(it, 20)
-        )
-    }
-
-    Text(
-        text = annotatedString,
-        fontWeight = FontWeight.Light,
-        inlineContent = inlineContent,
-        style = TextStyle(
-            fontSize = 16.sp,
-            lineBreak = LineBreak.Paragraph
-        ),
-        modifier = modifier
-    )
-}
 
 @SuppressLint("ComposeParameterOrder")
 @Composable
@@ -144,30 +105,17 @@ fun SharedTransitionScope.StatusCard(
                 Row(
                     modifier = Modifier.weight(1f, fill = false)
                 ) {
-                    val annotatedString = data.displayNameEmojis?.let {
-                        emojisToAnnotatedString(
-                            htmlToAnnotatedString(data.displayName),
-                            it
-                        )
-                    } ?: run {
-                        htmlToAnnotatedString(data.content)
-                    }
-
-                    val inlineContent = mutableMapOf<String, InlineTextContent>()
-
-                    data.displayNameEmojis?.let {
-                        inlineContent.putAll(
-                            createEmojiInlineContent(it, 20)
-                        )
-                    }
-
-                    Text(
-                        text = annotatedString,
-                        inlineContent = inlineContent,
+                    HtmlText(
+                        body = data.displayName,
+                        emojis = data.displayNameEmojis,
                         fontWeight = FontWeight.Bold,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
-                        modifier = Modifier.alignByBaseline()
+                        modifier = Modifier
+                            .alignByBaseline()
+                            .clickable {
+                                onProfileClick?.invoke(data.account)
+                            }
                     )
 
                     Spacer(modifier = Modifier.padding(4.dp))
@@ -216,9 +164,15 @@ fun SharedTransitionScope.StatusCard(
                 enter = expandVertically() + fadeIn(),
                 exit = shrinkVertically() + fadeOut()
             ) {
-                ContentBox(
-                    content = data.content,
-                    emojis = data.emojis
+                HtmlText(
+                    body = data.content,
+                    emojis = data.emojis,
+                    fontWeight = FontWeight.Light,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        lineBreak = LineBreak.Paragraph
+                    ),
+                    modifier = Modifier
                 )
             }
 
