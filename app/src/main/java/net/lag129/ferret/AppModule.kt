@@ -1,11 +1,13 @@
 package net.lag129.ferret
 
+import android.content.Context
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.cache.storage.FileStorage
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
@@ -16,6 +18,7 @@ import net.lag129.ferret.utils.DateUtils
 import net.lag129.ferret.utils.DateUtilsImpl
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
+import java.io.File
 
 val appModule = module {
 
@@ -35,7 +38,11 @@ val appModule = module {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
-            install(HttpCache)
+            install(HttpCache) {
+                val context = get<Context>()
+                publicStorage(FileStorage(File(context.cacheDir, "ktor_cache")))
+                privateStorage(FileStorage(File(context.cacheDir, "ktor_private_cache")))
+            }
         }
     }
 
