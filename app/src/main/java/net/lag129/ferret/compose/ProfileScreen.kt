@@ -59,10 +59,6 @@ fun SharedTransitionScope.ProfileScreen(
             ProfileTopBar(data)
         }
 
-        stickyHeader {
-            Text("sticky header")
-        }
-
         items(
             items = statuses,
             key = { status -> status.id }
