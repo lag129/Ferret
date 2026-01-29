@@ -64,6 +64,7 @@ class AuthViewModel(
 
                 _authState.value = AuthState.Redirect(oauthUrl)
             }.onFailure { error ->
+                _authState.value = AuthState.Error(error.message ?: "")
                 Napier.e("Failed to register client app", error)
             }
         }

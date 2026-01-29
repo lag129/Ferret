@@ -1,6 +1,7 @@
 package net.lag129.ferret.compose
 
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,6 +46,11 @@ fun LoginScreen(
 
             is AuthViewModel.AuthState.Success -> {
                 onLoggedIn()
+            }
+
+            is AuthViewModel.AuthState.Error -> {
+                val message = (authState as AuthViewModel.AuthState.Error).message
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
 
             else -> {}
