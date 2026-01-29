@@ -85,8 +85,8 @@ dependencies {
     implementation(libs.coil.network.ktor3)
     implementation(libs.coil.gif)
 
-    // HtmlText
-    implementation(libs.html.text.material3)
+    // DataStore Crypto
+    implementation(libs.datastore.crypto.preferences)
 
     // Koin
     implementation(platform(libs.koin.bom))

@@ -2,8 +2,8 @@
 agp = "9.0.0"
 coil = "3.3.0"
 composeLintChecks = "1.4.2"
+datastoreCrypto = "0.2.0"
 datastorePreferences = "1.2.0"
-htmlTextMaterial3 = "3.0.0-beta02"
 kotest = "6.1.0"
 kotlin = "2.3.0"
 coreKtx = "1.17.0"
@@ -39,7 +39,7 @@ coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" 
 coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
 compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "composeLintChecks" }
-html-text-material3 = { module = "de.charlex.compose:html-text-material3", version.ref = "htmlTextMaterial3" }
+datastore-crypto-preferences = { module = "com.cybozu.datastore.crypto:datastore-crypto-preferences", version.ref = "datastoreCrypto" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
