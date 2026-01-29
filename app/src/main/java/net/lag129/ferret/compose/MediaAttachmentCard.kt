@@ -1,6 +1,9 @@
 package net.lag129.ferret.compose
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,22 +16,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import net.lag129.ferret.api.entity.Attachment
 
 @Composable
-fun MediaAttachmentCard(
+fun SharedTransitionScope.MediaAttachmentCard(
     @SuppressLint("ComposeUnstableCollections")
     mediaAttachments: List<Attachment>,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
@@ -38,24 +38,28 @@ fun MediaAttachmentCard(
         0 -> return
         1 -> SingleMediaAttachmentCard(
             media = mediaAttachments[0],
+            animatedVisibilityScope = animatedVisibilityScope,
             onMediaClick = onMediaClick,
             modifier = modifier
         )
 
         2 -> DoubleMediaAttachmentCard(
             media = mediaAttachments,
+            animatedVisibilityScope = animatedVisibilityScope,
             onMediaClick = onMediaClick,
             modifier = modifier
         )
 
         3 -> ThreeMediaLayout(
             media = mediaAttachments,
+            animatedVisibilityScope = animatedVisibilityScope,
             onMediaClick = onMediaClick,
             modifier = modifier
         )
 
         else -> FourMediaLayout(
             media = mediaAttachments.take(4),
+            animatedVisibilityScope = animatedVisibilityScope,
             onMediaClick = onMediaClick,
             modifier = modifier
         )
@@ -63,13 +67,15 @@ fun MediaAttachmentCard(
 }
 
 @Composable
-private fun SingleMediaAttachmentCard(
+private fun SharedTransitionScope.SingleMediaAttachmentCard(
     media: Attachment,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
     MediaImage(
         media = media,
+        animatedVisibilityScope = animatedVisibilityScope,
         modifier = modifier
             .aspectRatio(ratio = 1.618f)
             .fillMaxWidth(),
@@ -78,9 +84,10 @@ private fun SingleMediaAttachmentCard(
 }
 
 @Composable
-private fun DoubleMediaAttachmentCard(
+private fun SharedTransitionScope.DoubleMediaAttachmentCard(
     @SuppressLint("ComposeUnstableCollections")
     media: List<Attachment>,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
@@ -91,6 +98,7 @@ private fun DoubleMediaAttachmentCard(
     ) {
         MediaImage(
             media = media[0],
+            animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -101,6 +109,7 @@ private fun DoubleMediaAttachmentCard(
 
         MediaImage(
             media = media[1],
+            animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -110,9 +119,10 @@ private fun DoubleMediaAttachmentCard(
 }
 
 @Composable
-private fun ThreeMediaLayout(
+private fun SharedTransitionScope.ThreeMediaLayout(
     @SuppressLint("ComposeUnstableCollections")
     media: List<Attachment>,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
 ) {
@@ -123,6 +133,7 @@ private fun ThreeMediaLayout(
     ) {
         MediaImage(
             media = media[0],
+            animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -138,6 +149,7 @@ private fun ThreeMediaLayout(
         ) {
             MediaImage(
                 media = media[1],
+                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onMediaClick = onMediaClick
             )
@@ -146,6 +158,7 @@ private fun ThreeMediaLayout(
 
             MediaImage(
                 media = media[2],
+                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onMediaClick = onMediaClick
             )
@@ -154,9 +167,10 @@ private fun ThreeMediaLayout(
 }
 
 @Composable
-private fun FourMediaLayout(
+private fun SharedTransitionScope.FourMediaLayout(
     @SuppressLint("ComposeUnstableCollections")
     media: List<Attachment>,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
 ) {
@@ -172,6 +186,7 @@ private fun FourMediaLayout(
         ) {
             MediaImage(
                 media = media[0],
+                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onMediaClick = onMediaClick
             )
@@ -180,6 +195,7 @@ private fun FourMediaLayout(
 
             MediaImage(
                 media = media[1],
+                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onMediaClick = onMediaClick
             )
@@ -194,6 +210,7 @@ private fun FourMediaLayout(
         ) {
             MediaImage(
                 media = media[2],
+                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onMediaClick = onMediaClick
             )
@@ -202,6 +219,7 @@ private fun FourMediaLayout(
 
             MediaImage(
                 media = media[3],
+                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onMediaClick = onMediaClick
             )
@@ -210,23 +228,16 @@ private fun FourMediaLayout(
 }
 
 @Composable
-private fun MediaImage(
+private fun SharedTransitionScope.MediaImage(
     media: Attachment,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
 ) {
-    val context = LocalContext.current
     val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
 
-    val imageRequest = remember(media.url) {
-        ImageRequest.Builder(context)
-            .data(media.url)
-            .crossfade(true)
-            .build()
-    }
-
     AsyncImage(
-        model = imageRequest,
+        model = media.url,
         contentDescription = media.description,
         contentScale = ContentScale.Crop,
         placeholder = ColorPainter(surfaceVariant),
@@ -239,5 +250,12 @@ private fun MediaImage(
             .clickable {
                 onMediaClick?.invoke(media.url, media.description)
             }
+            .sharedElement(
+                sharedContentState = rememberSharedContentState(key = media.url),
+                animatedVisibilityScope = animatedVisibilityScope,
+                boundsTransform = { _, _ ->
+                    tween(durationMillis = 300)
+                }
+            )
     )
 }

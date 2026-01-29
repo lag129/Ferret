@@ -9,40 +9,49 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import net.lag129.ferret.api.entity.Status
 
-class TimelineViewModel(
-    private val mastodonRepository: MastodonRepository,
+class ProfileViewModel(
+    private val mastodonRepository: MastodonRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(listOf<Status>())
     val uiState: StateFlow<List<Status>> = _uiState.asStateFlow()
 
-    init {
-        fetchHomeTimeline()
-    }
+    private var currentAccountId: String? = null
 
-    private fun fetchHomeTimeline() {
+    fun fetchAccountStatuses(accountId: String) {
+        if (currentAccountId == accountId) {
+            return
+        }
+        currentAccountId = accountId
+        clearStatuses()
+
         viewModelScope.launch {
-            val statuses = mastodonRepository.getHomeTimeline()
+            val statuses = mastodonRepository.getAccountStatuses(accountId)
 
             statuses.onSuccess { statuses ->
                 _uiState.value = statuses
             }.onFailure { error ->
-                Napier.e("Failed to fetch home timeline", error)
+                Napier.e("Failed to fetch account statuses", error)
             }
         }
     }
 
-    fun fetchNextHomeTimeline(
+    fun fetchNextAccountStatuses(
+        accountId: String,
         maxId: String
     ) {
         viewModelScope.launch {
-            val statuses = mastodonRepository.getHomeTimeline(maxId)
+            val statuses = mastodonRepository.getAccountStatuses(accountId, maxId)
 
             statuses.onSuccess { statuses ->
                 _uiState.value += statuses
             }.onFailure { error ->
-                Napier.e("Failed to fetch next home timeline", error)
+                Napier.e("Failed to fetch next account statuses", error)
             }
         }
+    }
+
+    private fun clearStatuses() {
+        _uiState.value = emptyList()
     }
 }

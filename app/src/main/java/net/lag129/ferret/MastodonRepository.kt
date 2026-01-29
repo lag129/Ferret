@@ -18,6 +18,13 @@ interface MastodonRepository {
         limit: Int? = 20
     ): Result<List<Status>>
 
+    suspend fun getAccountStatuses(
+        accountId: String,
+        maxId: String? = null,
+        sinceId: String? = null,
+        limit: Int? = 20
+    ): Result<List<Status>>
+
     suspend fun registerClientApp(
         clientName: String,
         redirectUris: String,
@@ -42,6 +49,21 @@ class MastodonRepositoryImpl(private val client: HttpClient) : MastodonRepositor
     ): Result<List<Status>> {
         return runCatching {
             client.get("/api/v1/timelines/home") {
+                parameter("max_id", maxId)
+                parameter("since_id", sinceId)
+                parameter("limit", limit)
+            }.body()
+        }
+    }
+
+    override suspend fun getAccountStatuses(
+        accountId: String,
+        maxId: String?,
+        sinceId: String?,
+        limit: Int?
+    ): Result<List<Status>> {
+        return runCatching {
+            client.get("/api/v1/accounts/${accountId}/statuses") {
                 parameter("max_id", maxId)
                 parameter("since_id", sinceId)
                 parameter("limit", limit)

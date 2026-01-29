@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,12 +20,15 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.Serializable
+import net.lag129.ferret.api.entity.Account
 import net.lag129.ferret.compose.LoginScreen
 import net.lag129.ferret.compose.MediaScreen
+import net.lag129.ferret.compose.ProfileScreen
 import net.lag129.ferret.compose.TimelineScreen
 import net.lag129.ferret.ui.theme.FerretTheme
 import org.koin.android.ext.android.get
@@ -42,10 +46,14 @@ private data object Login : NavKey
 @Serializable
 private data class Media(val url: String, val description: String?) : NavKey
 
+@Serializable
+private data class Profile(val account: Account) : NavKey
+
 class MainActivity : ComponentActivity() {
 
     private val preferencesRepository = get<PreferencesRepository>()
     private val authViewModel: AuthViewModel by viewModel()
+    private val profileViewModel: ProfileViewModel by viewModel()
     private val timelineViewModel: TimelineViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,53 +82,88 @@ class MainActivity : ComponentActivity() {
             }
 
             FerretTheme {
-                NavDisplay(
-                    backStack = authBackStack.backStack,
-                    onBack = { authBackStack.removeLast() },
-                    entryProvider = entryProvider {
-                        entry<Splash> {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                CircularProgressIndicator()
+                SharedTransitionLayout {
+                    NavDisplay(
+                        backStack = authBackStack.backStack,
+                        onBack = { authBackStack.removeLast() },
+                        entryProvider = entryProvider {
+                            entry<Splash> {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                            entry<Home> {
+                                Scaffold { innerPadding ->
+                                    TimelineScreen(
+                                        viewModel = timelineViewModel,
+                                        navigateToMediaScreen = { mediaUrl, description ->
+                                            authBackStack.backStack.add(
+                                                Media(mediaUrl, description)
+                                            )
+                                        },
+                                        navigateToProfileScreen = { account ->
+                                            authBackStack.backStack.add(
+                                                Profile(account)
+                                            )
+                                        },
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(innerPadding)
+                                    )
+                                }
+                            }
+                            entry<Login> {
+                                Scaffold { innerPadding ->
+                                    LoginScreen(
+                                        authViewModel = authViewModel,
+                                        onLoggedIn = { authBackStack.onLoginSuccess() },
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(innerPadding)
+                                    )
+                                }
+                            }
+                            entry<Media> { key ->
+                                Scaffold { innerPadding ->
+                                    MediaScreen(
+                                        mediaUrl = key.url,
+                                        description = key.description,
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(innerPadding)
+                                    )
+                                }
+                            }
+                            entry<Profile> { key ->
+                                Scaffold { innerPadding ->
+                                    ProfileScreen(
+                                        data = key.account,
+                                        viewModel = profileViewModel,
+                                        navigateToProfileScreen = { account ->
+                                            authBackStack.backStack.add(
+                                                Profile(account)
+                                            )
+                                        },
+                                        navigateToMediaScreen = { mediaUrl, description ->
+                                            authBackStack.backStack.add(
+                                                Media(mediaUrl, description)
+                                            )
+                                        },
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(innerPadding)
+                                    )
+                                }
                             }
                         }
-                        entry<Home> {
-                            Scaffold { innerPadding ->
-                                TimelineScreen(
-                                    viewModel = timelineViewModel,
-                                    navigateToMediaScreen = { mediaUrl, description ->
-                                        authBackStack.backStack.add(
-                                            Media(mediaUrl, description)
-                                        )
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(innerPadding)
-                                )
-                            }
-                        }
-                        entry<Login> {
-                            Scaffold { innerPadding ->
-                                LoginScreen(
-                                    authViewModel = authViewModel,
-                                    onLoggedIn = { authBackStack.onLoginSuccess() },
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(innerPadding)
-                                )
-                            }
-                        }
-                        entry<Media> { key ->
-                            MediaScreen(
-                                mediaUrl = key.url,
-                                description = key.description,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
     }
