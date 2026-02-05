@@ -71,21 +71,21 @@ class MainActivity : ComponentActivity() {
                 initialValue = null
             )
 
-            val authBackStack = remember { AuthBackStack() }
+            val customBackStack = remember { CustomBackStack() }
 
             LaunchedEffect(serverName, bearerToken) {
                 if (serverName != null && bearerToken != null) {
                     val hasValidCredentials =
                         serverName!!.isNotBlank() && bearerToken!!.isNotBlank()
-                    authBackStack.restoreLoginState(hasValidCredentials)
+                    customBackStack.restoreLoginState(hasValidCredentials)
                 }
             }
 
             FerretTheme {
                 SharedTransitionLayout {
                     NavDisplay(
-                        backStack = authBackStack.backStack,
-                        onBack = { authBackStack.removeLast() },
+                        backStack = customBackStack.backStack,
+                        onBack = { customBackStack.removeLast() },
                         entryProvider = entryProvider {
                             entry<Splash> {
                                 Box(
@@ -100,12 +100,12 @@ class MainActivity : ComponentActivity() {
                                     TimelineScreen(
                                         viewModel = timelineViewModel,
                                         navigateToMediaScreen = { mediaUrl, description ->
-                                            authBackStack.backStack.add(
+                                            customBackStack.backStack.add(
                                                 Media(mediaUrl, description)
                                             )
                                         },
                                         navigateToProfileScreen = { account ->
-                                            authBackStack.backStack.add(
+                                            customBackStack.backStack.add(
                                                 Profile(account)
                                             )
                                         },
@@ -120,7 +120,7 @@ class MainActivity : ComponentActivity() {
                                 Scaffold { innerPadding ->
                                     LoginScreen(
                                         authViewModel = authViewModel,
-                                        onLoggedIn = { authBackStack.onLoginSuccess() },
+                                        onLoggedIn = { customBackStack.onLoginSuccess() },
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(innerPadding)
@@ -145,12 +145,12 @@ class MainActivity : ComponentActivity() {
                                         data = key.account,
                                         viewModel = profileViewModel,
                                         navigateToProfileScreen = { account ->
-                                            authBackStack.backStack.add(
+                                            customBackStack.backStack.add(
                                                 Profile(account)
                                             )
                                         },
                                         navigateToMediaScreen = { mediaUrl, description ->
-                                            authBackStack.backStack.add(
+                                            customBackStack.backStack.add(
                                                 Media(mediaUrl, description)
                                             )
                                         },
@@ -185,7 +185,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-private class AuthBackStack {
+private class CustomBackStack {
     private var isRestored = false
     val backStack = mutableStateListOf<NavKey>(Splash)
 
