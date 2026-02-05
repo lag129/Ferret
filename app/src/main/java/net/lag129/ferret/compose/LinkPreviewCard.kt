@@ -18,10 +18,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -42,7 +38,7 @@ fun LinkPreviewCard(
     modifier: Modifier = Modifier,
     imageUrl: String? = null
 ) {
-    var isClicked by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Card(
         colors = CardDefaults.cardColors(
@@ -50,13 +46,14 @@ fun LinkPreviewCard(
         ),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         shape = RoundedCornerShape(10.dp),
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.clickable {
-                isClicked = true
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable {
+                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                context.startActivity(intent)
             }
-        ) {
+    ) {
+        Row {
             AsyncImage(
                 model = imageUrl ?: "",
                 contentDescription = title,
@@ -97,12 +94,6 @@ fun LinkPreviewCard(
                 )
             }
         }
-    }
-
-    if (isClicked) {
-        val context = LocalContext.current
-        val intent = remember { Intent(Intent.ACTION_VIEW, url.toUri()) }
-        context.startActivity(intent)
     }
 }
 
