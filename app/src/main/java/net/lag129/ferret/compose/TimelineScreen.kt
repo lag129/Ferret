@@ -31,10 +31,11 @@ fun SharedTransitionScope.TimelineScreen(
     modifier: Modifier = Modifier
 ) {
     val statuses by viewModel.uiState.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     PullToRefreshBox(
-        isRefreshing = false,
-        onRefresh = {},
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refreshHomeTimeline() },
     ) {
         LazyColumn(
             modifier = modifier

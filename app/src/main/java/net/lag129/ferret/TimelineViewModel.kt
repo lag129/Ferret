@@ -16,6 +16,9 @@ class TimelineViewModel(
     private val _uiState = MutableStateFlow(listOf<Status>())
     val uiState: StateFlow<List<Status>> = _uiState.asStateFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     init {
         fetchHomeTimeline()
     }
@@ -42,6 +45,29 @@ class TimelineViewModel(
                 _uiState.value += statuses
             }.onFailure { error ->
                 Napier.e("Failed to fetch next home timeline", error)
+            }
+        }
+    }
+
+    fun refreshHomeTimeline() {
+        if (_isRefreshing.value) return
+
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            try {
+                val statuses = mastodonRepository.getHomeTimeline()
+
+                statuses.onSuccess { statuses ->
+                    val currentFirst = _uiState.value.firstOrNull()?.id
+                    println("Current first: $currentFirst")
+                    val newStatuses = statuses.takeWhile { it.id != currentFirst }
+                    println("New statuses: $newStatuses")
+                    _uiState.value = newStatuses + _uiState.value
+                }.onFailure { error ->
+                    Napier.e("Failed to refresh home timeline", error)
+                }
+            } finally {
+                _isRefreshing.value = false
             }
         }
     }
