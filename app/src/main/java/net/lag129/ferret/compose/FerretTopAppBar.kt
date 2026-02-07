@@ -14,22 +14,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import net.lag129.ferret.R
+import net.lag129.ferret.Timeline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(
+fun FerretTopAppBar(
+    currentTimeline: Timeline,
+    onSwitch: (Timeline) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    var selectedTab by remember { mutableStateOf(SelectedTab.HOME) }
 
     TopAppBar(
         title = {
             Text(
-                when (selectedTab) {
-                    SelectedTab.HOME -> stringResource(R.string.home_timeline)
-                    SelectedTab.LOCAL -> stringResource(R.string.local_timeline)
-                    SelectedTab.FEDERATED -> stringResource(R.string.federated_timeline)
+                when (currentTimeline) {
+                    Timeline.HOME -> stringResource(R.string.home_timeline)
+                    Timeline.LOCAL -> stringResource(R.string.local_timeline)
+                    Timeline.FEDERATED -> stringResource(R.string.federated_timeline)
                 },
                 modifier = Modifier.clickable { isExpanded = true }
             )
@@ -42,7 +44,7 @@ fun TopAppBar(
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.home_timeline)) },
                     onClick = {
-                        selectedTab = SelectedTab.HOME
+                        onSwitch(Timeline.HOME)
                         isExpanded = false
                     }
                 )
@@ -50,7 +52,7 @@ fun TopAppBar(
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.local_timeline)) },
                     onClick = {
-                        selectedTab = SelectedTab.LOCAL
+                        onSwitch(Timeline.LOCAL)
                         isExpanded = false
                     }
                 )
@@ -58,7 +60,7 @@ fun TopAppBar(
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.federated_timeline)) },
                     onClick = {
-                        selectedTab = SelectedTab.FEDERATED
+                        onSwitch(Timeline.FEDERATED)
                         isExpanded = false
                     }
                 )
@@ -66,10 +68,4 @@ fun TopAppBar(
         },
         modifier = modifier
     )
-}
-
-private enum class SelectedTab {
-    HOME,
-    LOCAL,
-    FEDERATED
 }

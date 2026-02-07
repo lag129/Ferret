@@ -26,11 +26,11 @@ import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.api.entity.Account
+import net.lag129.ferret.compose.FerretTopAppBar
 import net.lag129.ferret.compose.LoginScreen
 import net.lag129.ferret.compose.MediaScreen
 import net.lag129.ferret.compose.ProfileScreen
 import net.lag129.ferret.compose.TimelineScreen
-import net.lag129.ferret.compose.TopAppBar
 import net.lag129.ferret.ui.theme.FerretTheme
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -82,6 +82,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
+            val currentTimeline by timelineViewModel.currentTimeline.collectAsStateWithLifecycle()
+
             FerretTheme {
                 SharedTransitionLayout {
                     NavDisplay(
@@ -98,7 +100,12 @@ class MainActivity : ComponentActivity() {
                             }
                             entry<Home> {
                                 Scaffold(
-                                    topBar = { TopAppBar() }
+                                    topBar = {
+                                        FerretTopAppBar(
+                                            currentTimeline = currentTimeline,
+                                            onSwitch = { timelineViewModel.switchTimeline(it) }
+                                        )
+                                    }
                                 ) { innerPadding ->
                                     TimelineScreen(
                                         viewModel = timelineViewModel,
