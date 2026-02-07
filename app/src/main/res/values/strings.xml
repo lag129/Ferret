@@ -4,4 +4,7 @@
     <string name="now">now</string>
     <string name="minute_abbreviation">%sm</string>
     <string name="hour_abbreviation">%sh</string>
+    <string name="federated_timeline">Federated</string>
+    <string name="local_timeline">Local</string>
+    <string name="home_timeline">Home</string>
 </resources>

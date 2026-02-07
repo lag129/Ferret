@@ -30,6 +30,7 @@ import net.lag129.ferret.compose.LoginScreen
 import net.lag129.ferret.compose.MediaScreen
 import net.lag129.ferret.compose.ProfileScreen
 import net.lag129.ferret.compose.TimelineScreen
+import net.lag129.ferret.compose.TopAppBar
 import net.lag129.ferret.ui.theme.FerretTheme
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -96,7 +97,9 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             entry<Home> {
-                                Scaffold { innerPadding ->
+                                Scaffold(
+                                    topBar = { TopAppBar() }
+                                ) { innerPadding ->
                                     TimelineScreen(
                                         viewModel = timelineViewModel,
                                         navigateToMediaScreen = { mediaUrl, description ->
