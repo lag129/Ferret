@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,57 +31,63 @@ fun SharedTransitionScope.TimelineScreen(
     modifier: Modifier = Modifier
 ) {
     val statuses by viewModel.uiState.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(12.dp)
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refreshHomeTimeline() },
     ) {
-        items(
-            items = statuses,
-            key = { status -> status.id }
-        ) { status ->
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                val statusData = remember(status.id) {
-                    (status.reblog ?: status).let { targetStatus ->
-                        StatusCardData(
-                            displayName = targetStatus.account.displayName,
-                            userName = targetStatus.account.acct,
-                            createdAt = targetStatus.createdAt,
-                            avatarUrl = targetStatus.account.avatar,
-                            content = targetStatus.content,
-                            account = targetStatus.account,
-                            card = targetStatus.card,
-                            displayNameEmojis = targetStatus.account.emojis,
-                            emojis = targetStatus.emojis,
-                            mediaAttachments = targetStatus.mediaAttachments,
-                            sensitive = targetStatus.sensitive,
-                            spoilerText = targetStatus.spoilerText
-                        )
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(12.dp)
+        ) {
+            items(
+                items = statuses,
+                key = { status -> status.id }
+            ) { status ->
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val statusData = remember(status.id) {
+                        (status.reblog ?: status).let { targetStatus ->
+                            StatusCardData(
+                                displayName = targetStatus.account.displayName,
+                                userName = targetStatus.account.acct,
+                                createdAt = targetStatus.createdAt,
+                                avatarUrl = targetStatus.account.avatar,
+                                content = targetStatus.content,
+                                account = targetStatus.account,
+                                card = targetStatus.card,
+                                displayNameEmojis = targetStatus.account.emojis,
+                                emojis = targetStatus.emojis,
+                                mediaAttachments = targetStatus.mediaAttachments,
+                                sensitive = targetStatus.sensitive,
+                                spoilerText = targetStatus.spoilerText
+                            )
+                        }
                     }
+
+                    StatusCard(
+                        data = statusData,
+                        onMediaClick = navigateToMediaScreen,
+                        onProfileClick = navigateToProfileScreen,
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
+
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        thickness = 0.2.dp
+                    )
                 }
-
-                StatusCard(
-                    data = statusData,
-                    onMediaClick = navigateToMediaScreen,
-                    onProfileClick = navigateToProfileScreen,
-                    animatedVisibilityScope = animatedVisibilityScope
-                )
-
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    thickness = 0.2.dp
-                )
             }
-        }
 
-        val isLast = statuses.isEmpty()
+            val isLast = statuses.isEmpty()
 
-        if (isLast.not()) {
-            item {
-                LoadingIndicator(viewModel, statuses.last().id)
+            if (isLast.not()) {
+                item {
+                    LoadingIndicator(viewModel, statuses.last().id)
+                }
             }
         }
     }

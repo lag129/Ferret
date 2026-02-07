@@ -18,6 +18,18 @@ interface MastodonRepository {
         limit: Int? = 20
     ): Result<List<Status>>
 
+    suspend fun getLocalTimeline(
+        maxId: String? = null,
+        sinceId: String? = null,
+        limit: Int? = 20
+    ): Result<List<Status>>
+
+    suspend fun getFederatedTimeline(
+        maxId: String? = null,
+        sinceId: String? = null,
+        limit: Int? = 20
+    ): Result<List<Status>>
+
     suspend fun getAccountStatuses(
         accountId: String,
         maxId: String? = null,
@@ -49,6 +61,35 @@ class MastodonRepositoryImpl(private val client: HttpClient) : MastodonRepositor
     ): Result<List<Status>> {
         return runCatching {
             client.get("/api/v1/timelines/home") {
+                parameter("max_id", maxId)
+                parameter("since_id", sinceId)
+                parameter("limit", limit)
+            }.body()
+        }
+    }
+
+    override suspend fun getLocalTimeline(
+        maxId: String?,
+        sinceId: String?,
+        limit: Int?
+    ): Result<List<Status>> {
+        return runCatching {
+            client.get("/api/v1/timelines/public") {
+                parameter("local", true)
+                parameter("max_id", maxId)
+                parameter("since_id", sinceId)
+                parameter("limit", limit)
+            }.body()
+        }
+    }
+
+    override suspend fun getFederatedTimeline(
+        maxId: String?,
+        sinceId: String?,
+        limit: Int?
+    ): Result<List<Status>> {
+        return runCatching {
+            client.get("/api/v1/timelines/public") {
                 parameter("max_id", maxId)
                 parameter("since_id", sinceId)
                 parameter("limit", limit)
