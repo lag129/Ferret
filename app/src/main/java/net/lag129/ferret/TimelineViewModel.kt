@@ -3,6 +3,9 @@ package net.lag129.ferret
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,8 +20,8 @@ class TimelineViewModel(
     private val mastodonRepository: MastodonRepository,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(listOf<Status>())
-    val uiState: StateFlow<List<Status>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(persistentListOf<Status>())
+    val uiState: StateFlow<ImmutableList<Status>> = _uiState.asStateFlow()
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
@@ -39,7 +42,7 @@ class TimelineViewModel(
             }
 
             statuses.onSuccess { statuses ->
-                _uiState.value = statuses
+                _uiState.value = statuses.toPersistentList()
             }.onFailure { error ->
                 Napier.e("Failed to fetch timeline", error)
             }
@@ -57,7 +60,7 @@ class TimelineViewModel(
             }
 
             statuses.onSuccess { statuses ->
-                _uiState.value += statuses
+                _uiState.value = _uiState.value.addAll(statuses)
             }.onFailure { error ->
                 Napier.e("Failed to fetch next home timeline", error)
             }
@@ -72,14 +75,14 @@ class TimelineViewModel(
             try {
                 val statuses = when (_currentTimeline.value) {
                     Timeline.HOME -> mastodonRepository.getHomeTimeline()
-                    Timeline.LOCAL -> mastodonRepository.getHomeTimeline()
+                    Timeline.LOCAL -> mastodonRepository.getLocalTimeline()
                     Timeline.FEDERATED -> mastodonRepository.getFederatedTimeline()
                 }
 
                 statuses.onSuccess { statuses ->
                     val currentFirst = _uiState.value.firstOrNull()?.id
                     val newStatuses = statuses.takeWhile { it.id != currentFirst }
-                    _uiState.value = newStatuses + _uiState.value
+                    _uiState.value = newStatuses.toPersistentList().addAll(_uiState.value)
                 }.onFailure { error ->
                     Napier.e("Failed to refresh home timeline", error)
                 }
@@ -93,7 +96,7 @@ class TimelineViewModel(
         if (_currentTimeline.value == timeline) return
 
         _currentTimeline.value = timeline
-        _uiState.value = emptyList()
+        _uiState.value = persistentListOf()
         fetchTimeline()
     }
 }
