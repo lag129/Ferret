@@ -1,4 +1,5 @@
 [versions]
+aboutLibraries = "14.0.0-b02"
 agp = "9.0.0"
 coil = "3.3.0"
 composeLintChecks = "1.4.2"
@@ -29,6 +30,9 @@ navigationCompose = "2.9.7"
 zoomableImageCoil3 = "0.18.0"
 
 [libraries]
+aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
+aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose-core", version.ref = "aboutLibraries" }
+aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -86,3 +90,4 @@ zoomable-image-coil3 = { module = "me.saket.telephoto:zoomable-image-coil3", ver
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+mikepenz-aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
