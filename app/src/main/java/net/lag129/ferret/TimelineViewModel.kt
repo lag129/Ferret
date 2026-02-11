@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import net.lag129.ferret.api.entity.Status
+import net.lag129.ferret.db.CachedStatus
+import net.lag129.ferret.db.CachedStatusDao
 
 enum class Timeline {
     HOME, LOCAL, FEDERATED
@@ -18,7 +21,10 @@ enum class Timeline {
 
 class TimelineViewModel(
     private val mastodonRepository: MastodonRepository,
+    private val cachedStatusDao: CachedStatusDao
 ) : ViewModel() {
+
+    val json = Json { ignoreUnknownKeys = true }
 
     private val _uiState = MutableStateFlow(persistentListOf<Status>())
     val uiState: StateFlow<ImmutableList<Status>> = _uiState.asStateFlow()
@@ -35,60 +41,46 @@ class TimelineViewModel(
 
     private fun fetchTimeline() {
         viewModelScope.launch {
-            val statuses = when (_currentTimeline.value) {
-                Timeline.HOME -> mastodonRepository.getHomeTimeline()
-                Timeline.LOCAL -> mastodonRepository.getLocalTimeline()
-                Timeline.FEDERATED -> mastodonRepository.getFederatedTimeline()
-            }
+            val statuses = fetchTimelineByType()
 
             statuses.onSuccess { statuses ->
                 _uiState.value = statuses.toPersistentList()
+                saveToCache(_currentTimeline.value, statuses)
             }.onFailure { error ->
                 Napier.e("Failed to fetch timeline", error)
             }
         }
     }
 
-    fun fetchNextHomeTimeline(
-        maxId: String
-    ) {
+    fun fetchNextTimeline(maxId: String) {
         viewModelScope.launch {
-            val statuses = when (_currentTimeline.value) {
-                Timeline.HOME -> mastodonRepository.getHomeTimeline(maxId)
-                Timeline.LOCAL -> mastodonRepository.getLocalTimeline(maxId)
-                Timeline.FEDERATED -> mastodonRepository.getFederatedTimeline(maxId)
-            }
+            val statuses = fetchTimelineByType(maxId)
 
             statuses.onSuccess { statuses ->
                 _uiState.value = _uiState.value.addAll(statuses)
+                saveToCache(_currentTimeline.value, _uiState.value)
             }.onFailure { error ->
                 Napier.e("Failed to fetch next home timeline", error)
             }
         }
     }
 
-    fun refreshHomeTimeline() {
+    fun refreshTimeline() {
         if (_isRefreshing.value) return
 
         viewModelScope.launch {
             _isRefreshing.value = true
-            try {
-                val statuses = when (_currentTimeline.value) {
-                    Timeline.HOME -> mastodonRepository.getHomeTimeline()
-                    Timeline.LOCAL -> mastodonRepository.getLocalTimeline()
-                    Timeline.FEDERATED -> mastodonRepository.getFederatedTimeline()
-                }
+            val statuses = fetchTimelineByType()
 
-                statuses.onSuccess { statuses ->
-                    val currentFirst = _uiState.value.firstOrNull()?.id
-                    val newStatuses = statuses.takeWhile { it.id != currentFirst }
-                    _uiState.value = newStatuses.toPersistentList().addAll(_uiState.value)
-                }.onFailure { error ->
-                    Napier.e("Failed to refresh home timeline", error)
-                }
-            } finally {
-                _isRefreshing.value = false
+            statuses.onSuccess { statuses ->
+                val currentFirst = _uiState.value.firstOrNull()?.id
+                val newStatuses = statuses.takeWhile { it.id != currentFirst }
+                _uiState.value = newStatuses.toPersistentList().addAll(_uiState.value)
+                saveToCache(_currentTimeline.value, _uiState.value)
+            }.onFailure { error ->
+                Napier.e("Failed to refresh home timeline", error)
             }
+            _isRefreshing.value = false
         }
     }
 
@@ -97,6 +89,42 @@ class TimelineViewModel(
 
         _currentTimeline.value = timeline
         _uiState.value = persistentListOf()
-        fetchTimeline()
+
+        viewModelScope.launch {
+            val cached = cachedStatusDao.getCachedStatus(timeline.name)
+            if (cached.isNotEmpty()) {
+                _uiState.value = restoreFromCache(cached).toPersistentList()
+            } else {
+                fetchTimeline()
+            }
+        }
+    }
+
+    private suspend fun fetchTimelineByType(
+        maxId: String? = null
+    ): Result<List<Status>> {
+        return when (_currentTimeline.value) {
+            Timeline.HOME -> mastodonRepository.getHomeTimeline(maxId)
+            Timeline.LOCAL -> mastodonRepository.getLocalTimeline(maxId)
+            Timeline.FEDERATED -> mastodonRepository.getFederatedTimeline(maxId)
+        }
+    }
+
+    private suspend fun saveToCache(timeline: Timeline, statuses: List<Status>) {
+        val cachedStatuses = statuses.mapIndexed { index, status ->
+            CachedStatus(
+                statusId = status.id,
+                timelineType = timeline.name,
+                statusJson = json.encodeToString(status),
+                orderIndex = index
+            )
+        }
+
+        cachedStatusDao.clearTimeline(timeline.name)
+        cachedStatusDao.insertAll(cachedStatuses)
+    }
+
+    private fun restoreFromCache(cached: List<CachedStatus>): List<Status> {
+        return cached.map { json.decodeFromString<Status>(it.statusJson) }
     }
 }
