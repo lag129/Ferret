@@ -12,11 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -73,6 +72,7 @@ fun LinkPreviewCard(
                     text = url.toUri().host ?: url,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 10.sp,
+                    lineHeight = 12.sp
                 )
 
                 Spacer(modifier = Modifier.padding(2.dp))
@@ -80,6 +80,7 @@ fun LinkPreviewCard(
                 Text(
                     text = title,
                     fontWeight = FontWeight.SemiBold,
+                    lineHeight = 16.sp,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1
                 )
@@ -89,6 +90,7 @@ fun LinkPreviewCard(
                 Text(
                     text = desc,
                     fontSize = 12.sp,
+                    lineHeight = 14.sp,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )

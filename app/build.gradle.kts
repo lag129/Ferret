@@ -68,10 +68,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // androidx.compose.material
-    implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material.icons.core)
-
     // androidx.datastore:datastore-preferences
     implementation(libs.androidx.datastore.preferences)
 
