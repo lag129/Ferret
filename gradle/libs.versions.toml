@@ -22,13 +22,10 @@ ktor = "3.4.0"
 leakcanaryAndroid = "2.14"
 lifecycleRuntimeKtx = "2.10.0"
 material = "1.10.2"
-material3 = "1.4.0"
 mockk = "1.14.9"
 napier = "2.7.1"
 navigation3 = "1.1.0-alpha03"
-navigationCompose = "2.9.7"
 room = "2.8.4"
-zoomableImageCoil3 = "0.18.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
@@ -47,8 +44,6 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "navigation3" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "navigation3" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -61,15 +56,11 @@ compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", v
 datastore-crypto-preferences = { module = "com.cybozu.datastore.crypto:datastore-crypto-preferences", version.ref = "datastoreCrypto" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 koin-android = { module = "io.insert-koin:koin-android" }
-koin-android-test = { module = "io.insert-koin:koin-android-test" }
 koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation" }
 koin-core = { module = "io.insert-koin:koin-core" }
-koin-ktor = { module = "io.insert-koin:koin-ktor" }
-koin-test = { module = "io.insert-koin:koin-test" }
-koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4" }
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
 kotest-extensions-koin = { module = "io.kotest:kotest-extensions-koin", version.ref = "kotest" }
 kotest-runner-junit5 = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
@@ -85,7 +76,6 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
-zoomable-image-coil3 = { module = "me.saket.telephoto:zoomable-image-coil3", version.ref = "zoomableImageCoil3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
