@@ -60,7 +60,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,15 +68,8 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // androidx.compose.material
-    implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.material.icons.core)
-
     // androidx.datastore:datastore-preferences
     implementation(libs.androidx.datastore.preferences)
-
-    // androidx.navigation
-    implementation(libs.androidx.navigation.compose)
 
     // androidx.navigation3
     implementation(libs.androidx.navigation3.runtime)
@@ -98,10 +90,6 @@ dependencies {
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
     implementation(libs.koin.compose.viewmodel.navigation)
-    implementation(libs.koin.ktor)
-    implementation(libs.koin.test)
-    testImplementation(libs.koin.test.junit4)
-    testImplementation(libs.koin.android.test)
 
     // Kotest
     testImplementation(libs.kotest.runner.junit5)
@@ -137,9 +125,6 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-
-    // Telephoto
-    implementation(libs.zoomable.image.coil3)
 
     // Compose Lint
     lintChecks(libs.compose.lint.checks)
