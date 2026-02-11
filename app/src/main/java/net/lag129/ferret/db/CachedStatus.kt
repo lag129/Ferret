@@ -15,6 +15,6 @@ data class CachedStatus(
     @ColumnInfo(name = "status_json")
     val statusJson: String,
 
-    @ColumnInfo(name = "cached_at")
-    val cachedAt: Long,
+    @ColumnInfo(name = "order_index")
+    val orderIndex: Int,
 )
