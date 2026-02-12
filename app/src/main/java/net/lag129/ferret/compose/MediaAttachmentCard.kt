@@ -237,7 +237,7 @@ private fun SharedTransitionScope.MediaImage(
     val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
 
     AsyncImage(
-        model = media.url,
+        model = media.previewUrl,
         contentDescription = media.description,
         contentScale = ContentScale.Crop,
         placeholder = ColorPainter(surfaceVariant),

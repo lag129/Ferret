@@ -1,6 +1,7 @@
 package net.lag129.ferret
 
 import android.content.Context
+import androidx.room.Room
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.auth.Auth
@@ -14,6 +15,8 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import net.lag129.ferret.db.CachedStatusDao
+import net.lag129.ferret.db.RoomDatabase
 import net.lag129.ferret.utils.DateUtils
 import net.lag129.ferret.utils.DateUtilsImpl
 import org.koin.core.module.dsl.viewModel
@@ -46,11 +49,17 @@ val appModule = module {
         }
     }
 
+    single<RoomDatabase> {
+        Room.databaseBuilder(get(), RoomDatabase::class.java, "ferret_db").build()
+    }
+
+    single<CachedStatusDao> { get<RoomDatabase>().cachedStatusDao() }
+
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
 
     single<MastodonRepository> { MastodonRepositoryImpl(get()) }
 
-    viewModel { TimelineViewModel(get()) }
+    viewModel { TimelineViewModel(get(), get()) }
 
     viewModel { ProfileViewModel(get()) }
 

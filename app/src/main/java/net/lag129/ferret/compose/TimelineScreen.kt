@@ -35,7 +35,7 @@ fun SharedTransitionScope.TimelineScreen(
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refreshHomeTimeline() },
+        onRefresh = { viewModel.refreshTimeline() },
     ) {
         LazyColumn(
             modifier = modifier
@@ -105,6 +105,6 @@ private fun LoadingIndicator(
     )
 
     LaunchedEffect(Unit) {
-        viewModel.fetchNextHomeTimeline(maxId)
+        viewModel.fetchNextTimeline(maxId)
     }
 }
