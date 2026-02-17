@@ -86,7 +86,10 @@ fun SharedTransitionScope.TimelineScreen(
 
             if (isLast.not()) {
                 item {
-                    LoadingIndicator(viewModel, statuses.last().id)
+                    val maxId = statuses.last().id
+                    LoadingIndicator(onFetchNext = {
+                        viewModel.fetchNextTimeline(maxId)
+                    })
                 }
             }
         }
@@ -95,8 +98,7 @@ fun SharedTransitionScope.TimelineScreen(
 
 @Composable
 private fun LoadingIndicator(
-    viewModel: TimelineViewModel,
-    maxId: String,
+    onFetchNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LinearProgressIndicator(
@@ -105,6 +107,6 @@ private fun LoadingIndicator(
     )
 
     LaunchedEffect(Unit) {
-        viewModel.fetchNextTimeline(maxId)
+        onFetchNext()
     }
 }

@@ -103,11 +103,11 @@ fun SharedTransitionScope.ProfileScreen(
 
         if (isLast.not()) {
             item {
-                LoadingIndicator(
-                    viewModel = viewModel,
-                    accountId = statuses.last().account.id,
-                    maxId = statuses.last().id
-                )
+                val accountId = statuses.last().account.id
+                val maxId = statuses.last().id
+                LoadingIndicator(onFetchNext = {
+                    viewModel.fetchNextAccountStatuses(accountId, maxId)
+                })
             }
         }
     }
@@ -175,9 +175,7 @@ private fun ProfileTopBar(
 
 @Composable
 private fun LoadingIndicator(
-    viewModel: ProfileViewModel,
-    accountId: String,
-    maxId: String,
+    onFetchNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LinearProgressIndicator(
@@ -186,9 +184,6 @@ private fun LoadingIndicator(
     )
 
     LaunchedEffect(Unit) {
-        viewModel.fetchNextAccountStatuses(
-            accountId = accountId,
-            maxId = maxId
-        )
+        onFetchNext()
     }
 }
