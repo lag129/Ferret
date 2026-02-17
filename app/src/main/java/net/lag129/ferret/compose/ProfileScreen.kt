@@ -52,9 +52,7 @@ fun SharedTransitionScope.ProfileScreen(
     }
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(12.dp)
+        modifier = modifier.fillMaxSize()
     ) {
         item {
             ProfileTopBar(data)
@@ -90,7 +88,8 @@ fun SharedTransitionScope.ProfileScreen(
                     data = statusData,
                     onMediaClick = navigateToMediaScreen,
                     onProfileClick = navigateToProfileScreen,
-                    animatedVisibilityScope = animatedVisibilityScope
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    modifier = Modifier.padding(start = 12.dp, end = 12.dp)
                 )
 
                 HorizontalDivider(
@@ -116,13 +115,15 @@ fun SharedTransitionScope.ProfileScreen(
 
 @Composable
 private fun ProfileTopBar(
-    data: Account,
+    account: Account,
     modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(
+        modifier = modifier.padding(start = 12.dp, end = 12.dp)
+    ) {
         AsyncImage(
-            model = data.header,
-            contentDescription = data.displayName,
+            model = account.header,
+            contentDescription = account.displayName,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(160.dp)
@@ -130,8 +131,8 @@ private fun ProfileTopBar(
         )
 
         AsyncImage(
-            model = data.avatar,
-            contentDescription = data.displayName,
+            model = account.avatar,
+            contentDescription = account.displayName,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(80.dp)
@@ -140,8 +141,8 @@ private fun ProfileTopBar(
         )
 
         HtmlText(
-            body = data.displayName,
-            emojis = data.emojis.toImmutableList(),
+            body = account.displayName,
+            emojis = account.emojis.toImmutableList(),
             fontWeight = FontWeight.SemiBold,
             style = TextStyle(
                 fontSize = 24.sp
@@ -149,22 +150,22 @@ private fun ProfileTopBar(
             modifier = Modifier.offset(y = (-8).dp)
         )
 
-        Text(data.acct)
+        Text(account.acct)
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("${data.followersCount} フォロワー")
+            Text("${account.followersCount} フォロワー")
 
-            Text("${data.followingCount} フォロー中")
+            Text("${account.followingCount} フォロー中")
 
-            Text("${data.statusesCount} 投稿")
+            Text("${account.statusesCount} 投稿")
         }
 
         HtmlText(
-            body = data.note,
-            emojis = data.emojis.toImmutableList(),
+            body = account.note,
+            emojis = account.emojis.toImmutableList(),
             fontWeight = FontWeight.Light,
             style = TextStyle(
                 fontSize = 16.sp,

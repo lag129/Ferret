@@ -39,9 +39,7 @@ fun SharedTransitionScope.TimelineScreen(
         onRefresh = { viewModel.refreshTimeline() },
     ) {
         LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(12.dp)
+            modifier = modifier.fillMaxSize()
         ) {
             items(
                 items = statuses,
@@ -73,7 +71,8 @@ fun SharedTransitionScope.TimelineScreen(
                         data = statusData,
                         onMediaClick = navigateToMediaScreen,
                         onProfileClick = navigateToProfileScreen,
-                        animatedVisibilityScope = animatedVisibilityScope
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
                     )
 
                     HorizontalDivider(
