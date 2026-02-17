@@ -20,6 +20,13 @@ fun htmlToAnnotatedString(
         textDecoration = TextDecoration.Underline
     )
 ): AnnotatedString {
+    return parseHtmlToAnnotatedString(html, urlSpanStyle)
+}
+
+fun parseHtmlToAnnotatedString(
+    html: String,
+    urlSpanStyle: SpanStyle = SpanStyle()
+): AnnotatedString {
     val builder = Builder()
     val linkStack = mutableListOf<Boolean>()
 

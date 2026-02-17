@@ -21,17 +21,28 @@ fun emojisToAnnotatedString(
     @SuppressLint("ComposeUnstableCollections")
     emojis: List<CustomEmoji>
 ): AnnotatedString {
+
+    remember(emojis) {
+        emojis.associateBy { it.shortcode }
+    }
+
+    return parseEmojisToAnnotatedString(annotatedString, emojis)
+}
+
+fun parseEmojisToAnnotatedString(
+    annotatedString: AnnotatedString,
+    emojis: List<CustomEmoji>
+): AnnotatedString {
+
     val plainText = annotatedString.text
     val shortcodePattern = Regex(":([a-zA-Z0-9_]+):")
 
-    val emojiMap = remember(emojis) {
-        emojis.associateBy { it.shortcode }
-    }
+    val emojiMap = emojis.associateBy { it.shortcode }
 
     return buildAnnotatedString {
         var lastIndex = 0
 
-        shortcodePattern.findAll(plainText).forEach { matchResult ->
+        for (matchResult in shortcodePattern.findAll(plainText)) {
             val shortcode = matchResult.groupValues[1]
             val emoji = emojiMap[shortcode]
 
