@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.ProfileViewModel
 import net.lag129.ferret.api.entity.Account
 
@@ -78,7 +79,7 @@ fun SharedTransitionScope.ProfileScreen(
                             card = targetStatus.card,
                             displayNameEmojis = targetStatus.account.emojis,
                             emojis = targetStatus.emojis,
-                            mediaAttachments = targetStatus.mediaAttachments,
+                            mediaAttachments = targetStatus.mediaAttachments.toImmutableList(),
                             sensitive = targetStatus.sensitive,
                             spoilerText = targetStatus.spoilerText
                         )

@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.TimelineViewModel
 import net.lag129.ferret.api.entity.Account
 
@@ -61,7 +62,7 @@ fun SharedTransitionScope.TimelineScreen(
                                 card = targetStatus.card,
                                 displayNameEmojis = targetStatus.account.emojis,
                                 emojis = targetStatus.emojis,
-                                mediaAttachments = targetStatus.mediaAttachments,
+                                mediaAttachments = targetStatus.mediaAttachments.toImmutableList(),
                                 sensitive = targetStatus.sensitive,
                                 spoilerText = targetStatus.spoilerText
                             )

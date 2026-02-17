@@ -1,6 +1,5 @@
 package net.lag129.ferret.compose
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -39,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.R
 import net.lag129.ferret.api.entity.Account
@@ -62,12 +62,11 @@ data class StatusCardData(
     val card: PreviewCard? = null,
     val displayNameEmojis: List<CustomEmoji>? = null,
     val emojis: List<CustomEmoji>? = null,
-    val mediaAttachments: List<Attachment>? = null,
+    val mediaAttachments: ImmutableList<Attachment>? = null,
     val sensitive: Boolean,
     val spoilerText: String
 )
 
-@SuppressLint("ComposeParameterOrder")
 @Composable
 fun SharedTransitionScope.StatusCard(
     data: StatusCardData,

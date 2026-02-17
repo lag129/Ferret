@@ -1,6 +1,5 @@
 package net.lag129.ferret.compose
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
@@ -22,12 +21,13 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.api.entity.Attachment
 
 @Composable
 fun SharedTransitionScope.MediaAttachmentCard(
-    @SuppressLint("ComposeUnstableCollections")
-    mediaAttachments: List<Attachment>,
+    mediaAttachments: ImmutableList<Attachment>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
@@ -58,7 +58,7 @@ fun SharedTransitionScope.MediaAttachmentCard(
         )
 
         else -> FourMediaLayout(
-            media = mediaAttachments.take(4),
+            media = mediaAttachments.take(4).toImmutableList(),
             animatedVisibilityScope = animatedVisibilityScope,
             onMediaClick = onMediaClick,
             modifier = modifier
@@ -85,8 +85,7 @@ private fun SharedTransitionScope.SingleMediaAttachmentCard(
 
 @Composable
 private fun SharedTransitionScope.DoubleMediaAttachmentCard(
-    @SuppressLint("ComposeUnstableCollections")
-    media: List<Attachment>,
+    media: ImmutableList<Attachment>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
@@ -120,8 +119,7 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
 
 @Composable
 private fun SharedTransitionScope.ThreeMediaLayout(
-    @SuppressLint("ComposeUnstableCollections")
-    media: List<Attachment>,
+    media: ImmutableList<Attachment>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
@@ -168,8 +166,7 @@ private fun SharedTransitionScope.ThreeMediaLayout(
 
 @Composable
 private fun SharedTransitionScope.FourMediaLayout(
-    @SuppressLint("ComposeUnstableCollections")
-    media: List<Attachment>,
+    media: ImmutableList<Attachment>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
