@@ -30,6 +30,7 @@ import net.lag129.ferret.compose.FerretTopAppBar
 import net.lag129.ferret.compose.LoginScreen
 import net.lag129.ferret.compose.MediaScreen
 import net.lag129.ferret.compose.ProfileScreen
+import net.lag129.ferret.compose.SettingScreen
 import net.lag129.ferret.compose.TimelineScreen
 import net.lag129.ferret.ui.theme.FerretTheme
 import org.koin.android.ext.android.get
@@ -49,6 +50,9 @@ private data class Media(val url: String, val description: String?) : NavKey
 
 @Serializable
 private data class Profile(val account: Account) : NavKey
+
+@Serializable
+private data object Setting : NavKey
 
 class MainActivity : ComponentActivity() {
 
@@ -103,7 +107,8 @@ class MainActivity : ComponentActivity() {
                                     topBar = {
                                         FerretTopAppBar(
                                             currentTimeline = currentTimeline,
-                                            onSwitch = { timelineViewModel.switchTimeline(it) }
+                                            onSwitch = { timelineViewModel.switchTimeline(it) },
+                                            onSettingClick = { customBackStack.backStack.add(Setting) }
                                         )
                                     }
                                 ) { innerPadding ->
@@ -165,6 +170,15 @@ class MainActivity : ComponentActivity() {
                                             )
                                         },
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(innerPadding)
+                                    )
+                                }
+                            }
+                            entry<Setting> {
+                                Scaffold { innerPadding ->
+                                    SettingScreen(
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(innerPadding)
