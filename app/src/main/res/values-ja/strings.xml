@@ -1,10 +1,12 @@
 <resources>
     <string name="app_name">Ferret</string>
-    <string name="sensitive">閲覧注意</string>
-    <string name="now">たった今</string>
-    <string name="minute_abbreviation">%s分</string>
-    <string name="hour_abbreviation">%s時間</string>
     <string name="federated_timeline">連合</string>
-    <string name="local_timeline">ローカル</string>
     <string name="home_timeline">ホーム</string>
+    <string name="hour_abbreviation">%s時間</string>
+    <string name="local_timeline">ローカル</string>
+    <string name="login_button">ログイン</string>
+    <string name="minute_abbreviation">%s分</string>
+    <string name="now">たった今</string>
+    <string name="sensitive">閲覧注意</string>
+    <string name="server_name">サーバー名</string>
 </resources>

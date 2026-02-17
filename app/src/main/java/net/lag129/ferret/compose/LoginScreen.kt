@@ -20,10 +20,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.lag129.ferret.AuthViewModel
+import net.lag129.ferret.R
 
 @Composable
 fun LoginScreen(
@@ -66,7 +68,7 @@ fun LoginScreen(
         OutlinedTextField(
             value = serverName,
             onValueChange = { serverName = it },
-            label = { Text("サーバー名") },
+            label = { Text(stringResource(R.string.server_name)) },
             singleLine = true,
             enabled = authState !is AuthViewModel.AuthState.Loading,
             modifier = Modifier.fillMaxWidth()
@@ -85,7 +87,7 @@ fun LoginScreen(
                     onClick = { authViewModel.registerClientApp(serverName) },
                     modifier = Modifier
                 ) {
-                    Text("ログイン")
+                    Text(stringResource(R.string.login_button))
                 }
             }
         }
