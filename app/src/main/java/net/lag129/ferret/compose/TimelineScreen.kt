@@ -60,8 +60,8 @@ fun SharedTransitionScope.TimelineScreen(
                                 content = targetStatus.content,
                                 account = targetStatus.account,
                                 card = targetStatus.card,
-                                displayNameEmojis = targetStatus.account.emojis,
-                                emojis = targetStatus.emojis,
+                                displayNameEmojis = targetStatus.account.emojis.toImmutableList(),
+                                emojis = targetStatus.emojis.toImmutableList(),
                                 mediaAttachments = targetStatus.mediaAttachments.toImmutableList(),
                                 sensitive = targetStatus.sensitive,
                                 spoilerText = targetStatus.spoilerText

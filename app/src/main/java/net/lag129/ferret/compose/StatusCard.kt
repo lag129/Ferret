@@ -60,8 +60,8 @@ data class StatusCardData(
     val content: String,
     val account: Account,
     val card: PreviewCard? = null,
-    val displayNameEmojis: List<CustomEmoji>? = null,
-    val emojis: List<CustomEmoji>? = null,
+    val displayNameEmojis: ImmutableList<CustomEmoji>? = null,
+    val emojis: ImmutableList<CustomEmoji>? = null,
     val mediaAttachments: ImmutableList<Attachment>? = null,
     val sensitive: Boolean,
     val spoilerText: String

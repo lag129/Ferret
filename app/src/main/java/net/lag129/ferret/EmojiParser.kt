@@ -1,6 +1,5 @@
 package net.lag129.ferret
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
@@ -13,13 +12,13 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import kotlinx.collections.immutable.ImmutableList
 import net.lag129.ferret.api.entity.CustomEmoji
 
 @Composable
 fun emojisToAnnotatedString(
     annotatedString: AnnotatedString,
-    @SuppressLint("ComposeUnstableCollections")
-    emojis: List<CustomEmoji>
+    emojis: ImmutableList<CustomEmoji>
 ): AnnotatedString {
 
     remember(emojis) {
@@ -71,8 +70,7 @@ fun parseEmojisToAnnotatedString(
 
 @Composable
 fun createEmojiInlineContent(
-    @SuppressLint("ComposeUnstableCollections")
-    emojis: List<CustomEmoji>,
+    emojis: ImmutableList<CustomEmoji>,
     size: Int = 20
 ): Map<String, InlineTextContent> {
 

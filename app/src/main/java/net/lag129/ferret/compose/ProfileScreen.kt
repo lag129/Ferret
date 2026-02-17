@@ -77,8 +77,8 @@ fun SharedTransitionScope.ProfileScreen(
                             content = targetStatus.content,
                             account = targetStatus.account,
                             card = targetStatus.card,
-                            displayNameEmojis = targetStatus.account.emojis,
-                            emojis = targetStatus.emojis,
+                            displayNameEmojis = targetStatus.account.emojis.toImmutableList(),
+                            emojis = targetStatus.emojis.toImmutableList(),
                             mediaAttachments = targetStatus.mediaAttachments.toImmutableList(),
                             sensitive = targetStatus.sensitive,
                             spoilerText = targetStatus.spoilerText
@@ -141,7 +141,7 @@ private fun ProfileTopBar(
 
         HtmlText(
             body = data.displayName,
-            emojis = data.emojis,
+            emojis = data.emojis.toImmutableList(),
             fontWeight = FontWeight.SemiBold,
             style = TextStyle(
                 fontSize = 24.sp
@@ -164,7 +164,7 @@ private fun ProfileTopBar(
 
         HtmlText(
             body = data.note,
-            emojis = data.emojis,
+            emojis = data.emojis.toImmutableList(),
             fontWeight = FontWeight.Light,
             style = TextStyle(
                 fontSize = 16.sp,
