@@ -129,6 +129,10 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
 
+    // MLKit
+    implementation(libs.translate)
+    implementation(libs.kotlinx.coroutines.play.services)
+
     // Mockk
     testImplementation(libs.mockk)
 
