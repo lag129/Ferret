@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import coil3.imageLoader
 import coil3.request.ImageRequest
+import coil3.request.crossfade
 
 @Composable
 fun SharedTransitionScope.MediaScreen(
@@ -26,6 +27,9 @@ fun SharedTransitionScope.MediaScreen(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(mediaUrl)
+                .crossfade(true)
+                .placeholderMemoryCacheKey("${mediaUrl}-key")
+                .memoryCacheKey(mediaUrl)
                 .build(),
             imageLoader = LocalContext.current.imageLoader,
             contentDescription = description ?: "",

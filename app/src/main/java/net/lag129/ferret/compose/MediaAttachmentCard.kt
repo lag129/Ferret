@@ -19,8 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.api.entity.Attachment
@@ -234,7 +236,10 @@ private fun SharedTransitionScope.MediaImage(
     val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
 
     AsyncImage(
-        model = media.previewUrl,
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(media.previewUrl)
+            .memoryCacheKey("${media.url}-key")
+            .build(),
         contentDescription = media.description,
         contentScale = ContentScale.Crop,
         placeholder = ColorPainter(surfaceVariant),
