@@ -23,12 +23,17 @@ fun htmlToAnnotatedString(
     return parseHtmlToAnnotatedString(html, urlSpanStyle)
 }
 
+private enum class SpanState {
+    INVISIBLE, ELLIPSIS, NORMAL
+}
+
 fun parseHtmlToAnnotatedString(
     html: String,
     urlSpanStyle: SpanStyle = SpanStyle()
 ): AnnotatedString {
     val builder = Builder()
     val linkStack = mutableListOf<Boolean>()
+    val spanStack = mutableListOf<SpanState>()
 
     val handler = object : KsoupHtmlHandler {
         override fun onOpenTag(
@@ -55,13 +60,24 @@ fun parseHtmlToAnnotatedString(
                         linkStack.add(false)
                     }
                 }
+
+                "span" -> {
+                    val style = attributes["class"]?.trim() ?: ""
+                    val spanState = when {
+                        style.contains("invisible") -> SpanState.INVISIBLE
+                        style.contains("ellipsis") -> SpanState.ELLIPSIS
+                        else -> SpanState.NORMAL
+                    }
+                    spanStack.add(spanState)
+                }
             }
         }
 
         override fun onText(text: String) {
-            if (text.isNotBlank()) {
-                builder.append(text)
-            }
+            if (text.isBlank()) return
+            if (spanStack.lastOrNull() == SpanState.INVISIBLE) return
+
+            builder.append(text)
         }
 
         override fun onCloseTag(name: String, isImplied: Boolean) {
@@ -72,6 +88,15 @@ fun parseHtmlToAnnotatedString(
                         if (hadLink) {
                             builder.pop()
                             builder.pop()
+                        }
+                    }
+                }
+
+                "span" -> {
+                    if (spanStack.isNotEmpty()) {
+                        val state = spanStack.removeAt(spanStack.size - 1)
+                        if (state == SpanState.ELLIPSIS) {
+                            builder.append("...")
                         }
                     }
                 }
