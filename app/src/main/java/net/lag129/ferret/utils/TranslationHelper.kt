@@ -3,9 +3,15 @@ package net.lag129.ferret.utils
 import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.TranslatorOptions
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.tasks.await
 
-object TranslationHelper {
+interface ITranslationHelper : AutoCloseable {
+    suspend fun translate(text: String): Result<String>
+}
+
+class TranslationHelper : ITranslationHelper {
 
     private val translator by lazy {
         Translation.getClient(
@@ -16,8 +22,16 @@ object TranslationHelper {
         )
     }
 
-    suspend fun translate(text: String): Result<String> = runCatching {
-        translator.downloadModelIfNeeded().await()
+    private val mutex = Mutex()
+
+    override suspend fun translate(text: String): Result<String> = runCatching {
+        mutex.withLock {
+            translator.downloadModelIfNeeded().await()
+        }
         translator.translate(text).await()
+    }
+
+    override fun close() {
+        translator.close()
     }
 }

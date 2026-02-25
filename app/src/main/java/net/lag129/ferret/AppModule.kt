@@ -19,6 +19,8 @@ import net.lag129.ferret.db.CachedStatusDao
 import net.lag129.ferret.db.RoomDatabase
 import net.lag129.ferret.utils.DateUtils
 import net.lag129.ferret.utils.DateUtilsImpl
+import net.lag129.ferret.utils.ITranslationHelper
+import net.lag129.ferret.utils.TranslationHelper
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import java.io.File
@@ -58,6 +60,8 @@ val appModule = module {
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
 
     single<MastodonRepository> { MastodonRepositoryImpl(get()) }
+
+    single<ITranslationHelper> { TranslationHelper() }
 
     viewModel { TimelineViewModel(get(), get()) }
 
