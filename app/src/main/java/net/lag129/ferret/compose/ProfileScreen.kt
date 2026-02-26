@@ -65,27 +65,10 @@ fun SharedTransitionScope.ProfileScreen(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val statusData = remember(status.id) {
-                    (status.reblog ?: status).let { targetStatus ->
-                        StatusCardData(
-                            displayName = targetStatus.account.displayName,
-                            userName = targetStatus.account.acct,
-                            createdAt = targetStatus.createdAt,
-                            avatarUrl = targetStatus.account.avatar,
-                            content = targetStatus.content,
-                            account = targetStatus.account,
-                            card = targetStatus.card,
-                            displayNameEmojis = targetStatus.account.emojis.toImmutableList(),
-                            emojis = targetStatus.emojis.toImmutableList(),
-                            mediaAttachments = targetStatus.mediaAttachments.toImmutableList(),
-                            sensitive = targetStatus.sensitive,
-                            spoilerText = targetStatus.spoilerText
-                        )
-                    }
-                }
+                val statusCardData = remember(status) { status.toStatusCardData() }
 
                 StatusCard(
-                    data = statusData,
+                    data = statusCardData,
                     onClickMedia = navigateToMediaScreen,
                     onClickProfile = navigateToProfileScreen,
                     animatedVisibilityScope = animatedVisibilityScope,
