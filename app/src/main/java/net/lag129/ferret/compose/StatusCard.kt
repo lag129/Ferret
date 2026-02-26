@@ -72,8 +72,8 @@ fun SharedTransitionScope.StatusCard(
     data: StatusCardData,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null,
-    onProfileClick: ((account: Account) -> Unit)? = null
+    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)? = null,
+    onClickProfile: ((account: Account) -> Unit)? = null
 ) {
     val currentTime = Clock.System.now().toEpochMilliseconds()
     val dateUtils: DateUtils = koinInject()
@@ -90,7 +90,7 @@ fun SharedTransitionScope.StatusCard(
                 .size(40.dp)
                 .clip(RoundedCornerShape(30))
                 .clickable {
-                    onProfileClick?.invoke(data.account)
+                    onClickProfile?.invoke(data.account)
                 }
         )
 
@@ -113,7 +113,7 @@ fun SharedTransitionScope.StatusCard(
                         modifier = Modifier
                             .alignByBaseline()
                             .clickable {
-                                onProfileClick?.invoke(data.account)
+                                onClickProfile?.invoke(data.account)
                             }
                     )
 
@@ -184,7 +184,7 @@ fun SharedTransitionScope.StatusCard(
                     ) {
                         MediaAttachmentCard(
                             mediaAttachments = data.mediaAttachments,
-                            onMediaClick = onMediaClick,
+                            onClickMedia = onClickMedia,
                             animatedVisibilityScope = animatedVisibilityScope,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
@@ -202,7 +202,7 @@ fun SharedTransitionScope.StatusCard(
                 } else {
                     MediaAttachmentCard(
                         mediaAttachments = data.mediaAttachments,
-                        onMediaClick = onMediaClick,
+                        onClickMedia = onClickMedia,
                         animatedVisibilityScope = animatedVisibilityScope
                     )
                 }

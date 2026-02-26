@@ -26,8 +26,8 @@ import net.lag129.ferret.api.entity.Account
 @Composable
 fun SharedTransitionScope.TimelineScreen(
     viewModel: TimelineViewModel,
-    navigateToMediaScreen: (mediaUrl: String, description: String?) -> Unit,
-    navigateToProfileScreen: (account: Account) -> Unit,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
+    onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
@@ -69,8 +69,8 @@ fun SharedTransitionScope.TimelineScreen(
 
                     StatusCard(
                         data = statusData,
-                        onMediaClick = navigateToMediaScreen,
-                        onProfileClick = navigateToProfileScreen,
+                        onClickMedia = onClickMedia,
+                        onClickProfile = onClickProfile,
                         animatedVisibilityScope = animatedVisibilityScope,
                         modifier = Modifier.padding(start = 12.dp, end = 12.dp)
                     )

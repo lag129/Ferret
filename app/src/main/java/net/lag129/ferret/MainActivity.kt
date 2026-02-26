@@ -114,12 +114,12 @@ class MainActivity : ComponentActivity() {
                                 ) { innerPadding ->
                                     TimelineScreen(
                                         viewModel = timelineViewModel,
-                                        navigateToMediaScreen = { mediaUrl, description ->
+                                        onClickMedia = { mediaUrl, description ->
                                             customBackStack.backStack.add(
                                                 Media(mediaUrl, description)
                                             )
                                         },
-                                        navigateToProfileScreen = { account ->
+                                        onClickProfile = { account ->
                                             customBackStack.backStack.add(
                                                 Profile(account)
                                             )

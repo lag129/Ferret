@@ -86,8 +86,8 @@ fun SharedTransitionScope.ProfileScreen(
 
                 StatusCard(
                     data = statusData,
-                    onMediaClick = navigateToMediaScreen,
-                    onProfileClick = navigateToProfileScreen,
+                    onClickMedia = navigateToMediaScreen,
+                    onClickProfile = navigateToProfileScreen,
                     animatedVisibilityScope = animatedVisibilityScope,
                     modifier = Modifier.padding(start = 12.dp, end = 12.dp)
                 )
@@ -119,7 +119,7 @@ private fun ProfileTopBar(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.padding(start = 12.dp, end = 12.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         AsyncImage(
             model = account.header,
@@ -130,48 +130,52 @@ private fun ProfileTopBar(
                 .fillMaxWidth()
         )
 
-        AsyncImage(
-            model = account.avatar,
-            contentDescription = account.displayName,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(80.dp)
-                .offset(y = (-40).dp)
-                .clip(RoundedCornerShape(30))
-        )
-
-        HtmlText(
-            body = account.displayName,
-            emojis = account.emojis.toImmutableList(),
-            fontWeight = FontWeight.SemiBold,
-            style = TextStyle(
-                fontSize = 24.sp
-            ),
-            modifier = Modifier.offset(y = (-8).dp)
-        )
-
-        Text(account.acct)
-
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+        Column(
+            modifier = Modifier.padding(start = 12.dp, end = 12.dp)
         ) {
-            Text("${account.followersCount} フォロワー")
-
-            Text("${account.followingCount} フォロー中")
-
-            Text("${account.statusesCount} 投稿")
-        }
-
-        HtmlText(
-            body = account.note,
-            emojis = account.emojis.toImmutableList(),
-            fontWeight = FontWeight.Light,
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineBreak = LineBreak.Paragraph
+            AsyncImage(
+                model = account.avatar,
+                contentDescription = account.displayName,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(80.dp)
+                    .offset(y = (-40).dp)
+                    .clip(RoundedCornerShape(30))
             )
-        )
+
+            HtmlText(
+                body = account.displayName,
+                emojis = account.emojis.toImmutableList(),
+                fontWeight = FontWeight.SemiBold,
+                style = TextStyle(
+                    fontSize = 24.sp
+                ),
+                modifier = Modifier.offset(y = (-8).dp)
+            )
+
+            Text(account.acct)
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("${account.followersCount} フォロワー")
+
+                Text("${account.followingCount} フォロー中")
+
+                Text("${account.statusesCount} 投稿")
+            }
+
+            HtmlText(
+                body = account.note,
+                emojis = account.emojis.toImmutableList(),
+                fontWeight = FontWeight.Light,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    lineBreak = LineBreak.Paragraph
+                )
+            )
+        }
     }
 }
 

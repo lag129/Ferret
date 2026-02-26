@@ -32,7 +32,7 @@ fun SharedTransitionScope.MediaAttachmentCard(
     mediaAttachments: ImmutableList<Attachment>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
+    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
     val attachmentsSize = mediaAttachments.size
 
@@ -41,28 +41,28 @@ fun SharedTransitionScope.MediaAttachmentCard(
         1 -> SingleMediaAttachmentCard(
             media = mediaAttachments[0],
             animatedVisibilityScope = animatedVisibilityScope,
-            onMediaClick = onMediaClick,
+            onClickMedia = onClickMedia,
             modifier = modifier
         )
 
         2 -> DoubleMediaAttachmentCard(
             media = mediaAttachments,
             animatedVisibilityScope = animatedVisibilityScope,
-            onMediaClick = onMediaClick,
+            onClickMedia = onClickMedia,
             modifier = modifier
         )
 
         3 -> ThreeMediaLayout(
             media = mediaAttachments,
             animatedVisibilityScope = animatedVisibilityScope,
-            onMediaClick = onMediaClick,
+            onClickMedia = onClickMedia,
             modifier = modifier
         )
 
         else -> FourMediaLayout(
             media = mediaAttachments.take(4).toImmutableList(),
             animatedVisibilityScope = animatedVisibilityScope,
-            onMediaClick = onMediaClick,
+            onClickMedia = onClickMedia,
             modifier = modifier
         )
     }
@@ -73,7 +73,7 @@ private fun SharedTransitionScope.SingleMediaAttachmentCard(
     media: Attachment,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
+    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
     MediaImage(
         media = media,
@@ -81,7 +81,7 @@ private fun SharedTransitionScope.SingleMediaAttachmentCard(
         modifier = modifier
             .aspectRatio(ratio = 1.618f)
             .fillMaxWidth(),
-        onMediaClick = onMediaClick
+        onClickMedia = onClickMedia
     )
 }
 
@@ -90,7 +90,7 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
     media: ImmutableList<Attachment>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)? = null
+    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)? = null
 ) {
     Row(
         modifier = modifier
@@ -103,7 +103,7 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            onMediaClick = onMediaClick
+            onClickMedia = onClickMedia
         )
 
         Spacer(Modifier.padding(2.dp))
@@ -114,7 +114,7 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            onMediaClick = onMediaClick
+            onClickMedia = onClickMedia
         )
     }
 }
@@ -124,7 +124,7 @@ private fun SharedTransitionScope.ThreeMediaLayout(
     media: ImmutableList<Attachment>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
+    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)?
 ) {
     Row(
         modifier = modifier
@@ -137,7 +137,7 @@ private fun SharedTransitionScope.ThreeMediaLayout(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            onMediaClick = onMediaClick
+            onClickMedia = onClickMedia
         )
 
         Spacer(Modifier.padding(2.dp))
@@ -151,7 +151,7 @@ private fun SharedTransitionScope.ThreeMediaLayout(
                 media = media[1],
                 animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
-                onMediaClick = onMediaClick
+                onClickMedia = onClickMedia
             )
 
             Spacer(Modifier.padding(2.dp))
@@ -160,7 +160,7 @@ private fun SharedTransitionScope.ThreeMediaLayout(
                 media = media[2],
                 animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
-                onMediaClick = onMediaClick
+                onClickMedia = onClickMedia
             )
         }
     }
@@ -171,7 +171,7 @@ private fun SharedTransitionScope.FourMediaLayout(
     media: ImmutableList<Attachment>,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
+    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)?
 ) {
     Column(
         modifier = modifier
@@ -187,7 +187,7 @@ private fun SharedTransitionScope.FourMediaLayout(
                 media = media[0],
                 animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
-                onMediaClick = onMediaClick
+                onClickMedia = onClickMedia
             )
 
             Spacer(Modifier.padding(2.dp))
@@ -196,7 +196,7 @@ private fun SharedTransitionScope.FourMediaLayout(
                 media = media[1],
                 animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
-                onMediaClick = onMediaClick
+                onClickMedia = onClickMedia
             )
         }
 
@@ -211,7 +211,7 @@ private fun SharedTransitionScope.FourMediaLayout(
                 media = media[2],
                 animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
-                onMediaClick = onMediaClick
+                onClickMedia = onClickMedia
             )
 
             Spacer(Modifier.padding(2.dp))
@@ -220,7 +220,7 @@ private fun SharedTransitionScope.FourMediaLayout(
                 media = media[3],
                 animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
-                onMediaClick = onMediaClick
+                onClickMedia = onClickMedia
             )
         }
     }
@@ -231,7 +231,7 @@ private fun SharedTransitionScope.MediaImage(
     media: Attachment,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onMediaClick: ((mediaUrl: String, description: String?) -> Unit)?
+    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)?
 ) {
     val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
 
@@ -250,7 +250,7 @@ private fun SharedTransitionScope.MediaImage(
                 RoundedCornerShape(10.dp)
             )
             .clickable {
-                onMediaClick?.invoke(media.url, media.description)
+                onClickMedia?.invoke(media.url, media.description)
             }
             .sharedElement(
                 sharedContentState = rememberSharedContentState(key = media.url),
