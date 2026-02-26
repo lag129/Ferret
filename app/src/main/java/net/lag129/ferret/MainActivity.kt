@@ -159,14 +159,14 @@ class MainActivity : ComponentActivity() {
                                     ProfileScreen(
                                         data = key.account,
                                         viewModel = profileViewModel,
-                                        navigateToProfileScreen = { account ->
-                                            customBackStack.backStack.add(
-                                                Profile(account)
-                                            )
-                                        },
-                                        navigateToMediaScreen = { mediaUrl, description ->
+                                        onClickMedia = { mediaUrl, description ->
                                             customBackStack.backStack.add(
                                                 Media(mediaUrl, description)
+                                            )
+                                        },
+                                        onClickProfile = { account ->
+                                            customBackStack.backStack.add(
+                                                Profile(account)
                                             )
                                         },
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
