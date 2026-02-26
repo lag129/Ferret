@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Placeholder
@@ -20,10 +19,6 @@ fun emojisToAnnotatedString(
     annotatedString: AnnotatedString,
     emojis: ImmutableList<CustomEmoji>
 ): AnnotatedString {
-
-    remember(emojis) {
-        emojis.associateBy { it.shortcode }
-    }
 
     return parseEmojisToAnnotatedString(annotatedString, emojis)
 }

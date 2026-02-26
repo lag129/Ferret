@@ -24,7 +24,7 @@ class TimelineViewModel(
     private val cachedStatusDao: CachedStatusDao
 ) : ViewModel() {
 
-    val json = Json { ignoreUnknownKeys = true }
+    private val json = Json { ignoreUnknownKeys = true }
 
     private val _uiState = MutableStateFlow(persistentListOf<Status>())
     val uiState: StateFlow<ImmutableList<Status>> = _uiState.asStateFlow()
