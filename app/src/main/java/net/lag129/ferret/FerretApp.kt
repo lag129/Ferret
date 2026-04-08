@@ -7,12 +7,16 @@ import coil3.SingletonImageLoader
 import coil3.disk.DiskCache
 import coil3.disk.directory
 import coil3.memory.MemoryCache
+import io.github.aakira.napier.DebugAntilog
+import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
 class FerretApp : Application(), SingletonImageLoader.Factory {
     override fun onCreate() {
         super.onCreate()
+
+        Napier.base(DebugAntilog())
 
         startKoin {
             androidContext(this@FerretApp)

@@ -39,12 +39,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.R
 import net.lag129.ferret.api.entity.Account
 import net.lag129.ferret.api.entity.Attachment
 import net.lag129.ferret.api.entity.CustomEmoji
 import net.lag129.ferret.api.entity.PreviewCard
+import net.lag129.ferret.api.entity.Status
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 import kotlin.time.Clock
@@ -66,6 +68,24 @@ data class StatusCardData(
     val sensitive: Boolean,
     val spoilerText: String
 )
+
+fun Status.toStatusCardData(): StatusCardData {
+    val target = this.reblog ?: this
+    return StatusCardData(
+        displayName = target.account.displayName,
+        userName = target.account.acct,
+        createdAt = target.createdAt,
+        avatarUrl = target.account.avatar,
+        content = target.content,
+        account = target.account,
+        card = target.card,
+        displayNameEmojis = target.account.emojis.toImmutableList(),
+        emojis = target.emojis.toImmutableList(),
+        mediaAttachments = target.mediaAttachments.toImmutableList(),
+        sensitive = target.sensitive,
+        spoilerText = target.spoilerText
+    )
+}
 
 @Composable
 fun SharedTransitionScope.StatusCard(

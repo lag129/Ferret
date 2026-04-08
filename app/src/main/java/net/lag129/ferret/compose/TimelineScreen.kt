@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.TimelineViewModel
 import net.lag129.ferret.api.entity.Account
 
@@ -48,27 +47,10 @@ fun SharedTransitionScope.TimelineScreen(
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val statusData = remember(status.id) {
-                        (status.reblog ?: status).let { targetStatus ->
-                            StatusCardData(
-                                displayName = targetStatus.account.displayName,
-                                userName = targetStatus.account.acct,
-                                createdAt = targetStatus.createdAt,
-                                avatarUrl = targetStatus.account.avatar,
-                                content = targetStatus.content,
-                                account = targetStatus.account,
-                                card = targetStatus.card,
-                                displayNameEmojis = targetStatus.account.emojis.toImmutableList(),
-                                emojis = targetStatus.emojis.toImmutableList(),
-                                mediaAttachments = targetStatus.mediaAttachments.toImmutableList(),
-                                sensitive = targetStatus.sensitive,
-                                spoilerText = targetStatus.spoilerText
-                            )
-                        }
-                    }
+                    val statusCardData = remember(status) { status.toStatusCardData() }
 
                     StatusCard(
-                        data = statusData,
+                        data = statusCardData,
                         onClickMedia = onClickMedia,
                         onClickProfile = onClickProfile,
                         animatedVisibilityScope = animatedVisibilityScope,

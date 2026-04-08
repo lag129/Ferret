@@ -22,8 +22,6 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
-import io.github.aakira.napier.DebugAntilog
-import io.github.aakira.napier.Napier
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.api.entity.Account
 import net.lag129.ferret.compose.FerretTopAppBar
@@ -63,10 +61,9 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
+
         handleIntent(intent)
-        Napier.base(DebugAntilog())
 
         setContent {
             val serverName by preferencesRepository.serverName.collectAsStateWithLifecycle(
@@ -159,14 +156,14 @@ class MainActivity : ComponentActivity() {
                                     ProfileScreen(
                                         data = key.account,
                                         viewModel = profileViewModel,
-                                        navigateToProfileScreen = { account ->
-                                            customBackStack.backStack.add(
-                                                Profile(account)
-                                            )
-                                        },
-                                        navigateToMediaScreen = { mediaUrl, description ->
+                                        onClickMedia = { mediaUrl, description ->
                                             customBackStack.backStack.add(
                                                 Media(mediaUrl, description)
+                                            )
+                                        },
+                                        onClickProfile = { account ->
+                                            customBackStack.backStack.add(
+                                                Profile(account)
                                             )
                                         },
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,

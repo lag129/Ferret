@@ -40,8 +40,8 @@ import net.lag129.ferret.api.entity.Account
 fun SharedTransitionScope.ProfileScreen(
     data: Account,
     viewModel: ProfileViewModel,
-    navigateToProfileScreen: (account: Account) -> Unit,
-    navigateToMediaScreen: (mediaUrl: String, description: String?) -> Unit,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
+    onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
@@ -65,29 +65,12 @@ fun SharedTransitionScope.ProfileScreen(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val statusData = remember(status.id) {
-                    (status.reblog ?: status).let { targetStatus ->
-                        StatusCardData(
-                            displayName = targetStatus.account.displayName,
-                            userName = targetStatus.account.acct,
-                            createdAt = targetStatus.createdAt,
-                            avatarUrl = targetStatus.account.avatar,
-                            content = targetStatus.content,
-                            account = targetStatus.account,
-                            card = targetStatus.card,
-                            displayNameEmojis = targetStatus.account.emojis.toImmutableList(),
-                            emojis = targetStatus.emojis.toImmutableList(),
-                            mediaAttachments = targetStatus.mediaAttachments.toImmutableList(),
-                            sensitive = targetStatus.sensitive,
-                            spoilerText = targetStatus.spoilerText
-                        )
-                    }
-                }
+                val statusCardData = remember(status) { status.toStatusCardData() }
 
                 StatusCard(
-                    data = statusData,
-                    onClickMedia = navigateToMediaScreen,
-                    onClickProfile = navigateToProfileScreen,
+                    data = statusCardData,
+                    onClickMedia = onClickMedia,
+                    onClickProfile = onClickProfile,
                     animatedVisibilityScope = animatedVisibilityScope,
                     modifier = Modifier.padding(start = 12.dp, end = 12.dp)
                 )
