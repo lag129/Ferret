@@ -3,7 +3,8 @@ package net.lag129.ferret
 import androidx.compose.ui.text.AnnotatedString
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import net.lag129.ferret.api.entity.CustomEmoji
+import net.lag129.ferret.model.CustomEmoji
+import net.lag129.ferret.utils.parseEmojisToAnnotatedString
 
 class EmojiParserTest : StringSpec() {
 

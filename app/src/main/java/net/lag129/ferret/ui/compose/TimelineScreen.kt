@@ -1,4 +1,4 @@
-package net.lag129.ferret.compose
+package net.lag129.ferret.ui.compose
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -19,8 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import net.lag129.ferret.TimelineViewModel
-import net.lag129.ferret.api.entity.Account
+import net.lag129.ferret.viewmodel.TimelineViewModel
+import net.lag129.ferret.model.Account
 
 @Composable
 fun SharedTransitionScope.TimelineScreen(

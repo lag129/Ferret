@@ -1,4 +1,4 @@
-package net.lag129.ferret.compose
+package net.lag129.ferret.ui.compose
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.lag129.ferret.R
-import net.lag129.ferret.Timeline
+import net.lag129.ferret.viewmodel.Timeline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

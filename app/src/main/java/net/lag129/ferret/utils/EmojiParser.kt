@@ -1,4 +1,4 @@
-package net.lag129.ferret
+package net.lag129.ferret.utils
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.InlineTextContent
@@ -12,7 +12,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
-import net.lag129.ferret.api.entity.CustomEmoji
+import net.lag129.ferret.model.CustomEmoji
 
 @Composable
 fun emojisToAnnotatedString(

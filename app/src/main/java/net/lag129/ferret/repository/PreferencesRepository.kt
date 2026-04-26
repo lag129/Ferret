@@ -1,4 +1,4 @@
-package net.lag129.ferret
+package net.lag129.ferret.repository
 
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences

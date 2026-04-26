@@ -1,4 +1,4 @@
-package net.lag129.ferret.api.entity
+package net.lag129.ferret.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

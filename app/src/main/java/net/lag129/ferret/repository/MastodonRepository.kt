@@ -1,4 +1,4 @@
-package net.lag129.ferret
+package net.lag129.ferret.repository
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -6,9 +6,9 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.parameters
-import net.lag129.ferret.api.entity.CredentialApplication
-import net.lag129.ferret.api.entity.Status
-import net.lag129.ferret.api.entity.Token
+import net.lag129.ferret.model.CredentialApplication
+import net.lag129.ferret.model.Status
+import net.lag129.ferret.model.Token
 
 interface MastodonRepository {
 

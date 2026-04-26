@@ -1,4 +1,4 @@
-package net.lag129.ferret
+package net.lag129.ferret.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import net.lag129.ferret.api.entity.Status
+import net.lag129.ferret.repository.MastodonRepository
+import net.lag129.ferret.model.Status
 import net.lag129.ferret.db.CachedStatus
 import net.lag129.ferret.db.CachedStatusDao
 

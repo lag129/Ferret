@@ -1,4 +1,4 @@
-package net.lag129.ferret.compose
+package net.lag129.ferret.ui.compose
 
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.LocalTextStyle
@@ -9,10 +9,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.collections.immutable.ImmutableList
-import net.lag129.ferret.api.entity.CustomEmoji
-import net.lag129.ferret.createEmojiInlineContent
-import net.lag129.ferret.emojisToAnnotatedString
-import net.lag129.ferret.htmlToAnnotatedString
+import net.lag129.ferret.model.CustomEmoji
+import net.lag129.ferret.utils.createEmojiInlineContent
+import net.lag129.ferret.utils.emojisToAnnotatedString
+import net.lag129.ferret.utils.htmlToAnnotatedString
 
 @Composable
 fun HtmlText(

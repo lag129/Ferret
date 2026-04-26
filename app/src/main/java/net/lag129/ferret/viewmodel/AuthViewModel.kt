@@ -1,4 +1,4 @@
-package net.lag129.ferret
+package net.lag129.ferret.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import net.lag129.ferret.repository.MastodonRepositoryImpl
+import net.lag129.ferret.repository.PreferencesRepository
 
 class AuthViewModel(
     private val preferencesRepository: PreferencesRepository

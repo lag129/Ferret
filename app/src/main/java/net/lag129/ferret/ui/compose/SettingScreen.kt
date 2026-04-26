@@ -1,4 +1,4 @@
-package net.lag129.ferret.compose
+package net.lag129.ferret.ui.compose
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
