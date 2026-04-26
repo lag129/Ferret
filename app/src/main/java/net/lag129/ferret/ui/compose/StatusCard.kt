@@ -1,4 +1,4 @@
-package net.lag129.ferret.compose
+package net.lag129.ferret.ui.compose
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -42,11 +42,11 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.R
-import net.lag129.ferret.api.entity.Account
-import net.lag129.ferret.api.entity.Attachment
-import net.lag129.ferret.api.entity.CustomEmoji
-import net.lag129.ferret.api.entity.PreviewCard
-import net.lag129.ferret.api.entity.Status
+import net.lag129.ferret.model.Account
+import net.lag129.ferret.model.Attachment
+import net.lag129.ferret.model.CustomEmoji
+import net.lag129.ferret.model.PreviewCard
+import net.lag129.ferret.model.Status
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 import kotlin.time.Clock

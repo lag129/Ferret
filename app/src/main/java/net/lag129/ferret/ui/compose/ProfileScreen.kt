@@ -1,4 +1,4 @@
-package net.lag129.ferret.compose
+package net.lag129.ferret.ui.compose
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.toImmutableList
-import net.lag129.ferret.ProfileViewModel
-import net.lag129.ferret.api.entity.Account
+import net.lag129.ferret.viewmodel.ProfileViewModel
+import net.lag129.ferret.model.Account
 
 @Composable
 fun SharedTransitionScope.ProfileScreen(

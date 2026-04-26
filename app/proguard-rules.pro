@@ -3,8 +3,8 @@
 -renamesourcefileattribute SourceFile
 
 # Keep annotations
--keep class net.lag129.ferret.api.entity.** { *; }
--keep class net.lag129.ferret.compose.StatusCardData { *; }
+-keep class net.lag129.ferret.api.model.** { *; }
+-keep class net.lag129.ferret.ui.compose.StatusCardData { *; }
 
 -keep class io.ktor.client.engine.** { *; }
 -keep class io.ktor.client.engine.cio.** { *; }

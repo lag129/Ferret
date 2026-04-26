@@ -1,4 +1,4 @@
-package net.lag129.ferret.compose
+package net.lag129.ferret.ui.compose
 
 import android.content.Intent
 import android.widget.Toast
@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import net.lag129.ferret.AuthViewModel
+import net.lag129.ferret.viewmodel.AuthViewModel
 import net.lag129.ferret.R
 
 @Composable

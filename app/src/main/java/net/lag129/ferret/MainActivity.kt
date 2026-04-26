@@ -23,14 +23,18 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
-import net.lag129.ferret.api.entity.Account
-import net.lag129.ferret.compose.FerretTopAppBar
-import net.lag129.ferret.compose.LoginScreen
-import net.lag129.ferret.compose.MediaScreen
-import net.lag129.ferret.compose.ProfileScreen
-import net.lag129.ferret.compose.SettingScreen
-import net.lag129.ferret.compose.TimelineScreen
+import net.lag129.ferret.model.Account
+import net.lag129.ferret.ui.compose.FerretTopAppBar
+import net.lag129.ferret.ui.compose.LoginScreen
+import net.lag129.ferret.ui.compose.MediaScreen
+import net.lag129.ferret.ui.compose.ProfileScreen
+import net.lag129.ferret.ui.compose.SettingScreen
+import net.lag129.ferret.ui.compose.TimelineScreen
+import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.ui.theme.FerretTheme
+import net.lag129.ferret.viewmodel.AuthViewModel
+import net.lag129.ferret.viewmodel.ProfileViewModel
+import net.lag129.ferret.viewmodel.TimelineViewModel
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

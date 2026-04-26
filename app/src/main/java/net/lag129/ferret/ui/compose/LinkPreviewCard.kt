@@ -1,4 +1,4 @@
-package net.lag129.ferret.compose
+package net.lag129.ferret.ui.compose
 
 import android.content.Intent
 import androidx.compose.foundation.BorderStroke

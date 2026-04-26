@@ -1,4 +1,4 @@
-package net.lag129.ferret.compose
+package net.lag129.ferret.ui.compose
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -25,7 +25,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import net.lag129.ferret.api.entity.Attachment
+import net.lag129.ferret.model.Attachment
 
 @Composable
 fun SharedTransitionScope.MediaAttachmentCard(

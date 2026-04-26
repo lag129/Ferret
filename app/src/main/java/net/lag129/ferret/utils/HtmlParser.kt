@@ -1,4 +1,4 @@
-package net.lag129.ferret
+package net.lag129.ferret.utils
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable

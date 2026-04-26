@@ -2,6 +2,7 @@ package net.lag129.ferret
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import net.lag129.ferret.utils.parseHtmlToAnnotatedString
 
 class HtmlParserTest : StringSpec() {
 

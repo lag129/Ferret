@@ -17,8 +17,15 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatusDao
 import net.lag129.ferret.db.RoomDatabase
+import net.lag129.ferret.repository.MastodonRepository
+import net.lag129.ferret.repository.MastodonRepositoryImpl
+import net.lag129.ferret.repository.PreferencesRepository
+import net.lag129.ferret.repository.PreferencesRepositoryImpl
 import net.lag129.ferret.utils.DateUtils
 import net.lag129.ferret.utils.DateUtilsImpl
+import net.lag129.ferret.viewmodel.AuthViewModel
+import net.lag129.ferret.viewmodel.ProfileViewModel
+import net.lag129.ferret.viewmodel.TimelineViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import java.io.File
