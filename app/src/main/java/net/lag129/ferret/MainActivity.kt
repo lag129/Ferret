@@ -6,6 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -99,6 +104,14 @@ class MainActivity : ComponentActivity() {
                     NavDisplay(
                         backStack = customBackStack.backStack,
                         onBack = { customBackStack.removeLast() },
+                        transitionSpec = {
+                            slideInHorizontally { it } + fadeIn() togetherWith
+                                    slideOutHorizontally { -it } + fadeOut()
+                        },
+                        popTransitionSpec = {
+                            slideInHorizontally { -it } + fadeIn() togetherWith
+                                    slideOutHorizontally { it } + fadeOut()
+                        },
                         entryProvider = entryProvider {
                             entry<Splash> {
                                 Box(
@@ -171,6 +184,9 @@ class MainActivity : ComponentActivity() {
                                     ProfileScreen(
                                         data = key.account,
                                         viewModel = profileViewModel,
+                                        onClickDetail = { data ->
+                                            customBackStack.backStack.add(Detail(data))
+                                        },
                                         onClickMedia = { mediaUrl, description ->
                                             customBackStack.backStack.add(
                                                 Media(mediaUrl, description)

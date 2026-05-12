@@ -9,6 +9,10 @@ import kotlin.time.Instant
 
 interface DateUtils {
 
+    fun formatDateTime(
+        time: Long,
+    ): String
+
     fun getRelativeTimeSpanString(
         currentTime: Long,
         postedTime: Long
@@ -18,6 +22,13 @@ interface DateUtils {
 class DateUtilsImpl(
     private val context: Context
 ) : DateUtils {
+
+    override fun formatDateTime(time: Long): String {
+        val dateTime =
+            Instant.fromEpochMilliseconds(time).toLocalDateTime(TimeZone.currentSystemDefault())
+
+        return "${dateTime.year}/${dateTime.month.number}/${dateTime.day} ${dateTime.hour}:${dateTime.minute}"
+    }
 
     override fun getRelativeTimeSpanString(
         currentTime: Long,

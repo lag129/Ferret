@@ -40,6 +40,7 @@ import net.lag129.ferret.viewmodel.ProfileViewModel
 fun SharedTransitionScope.ProfileScreen(
     data: Account,
     viewModel: ProfileViewModel,
+    onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -69,7 +70,7 @@ fun SharedTransitionScope.ProfileScreen(
 
                 StatusCard(
                     data = statusCardData,
-                    onClickDetail = {},
+                    onClickDetail = onClickDetail,
                     onClickMedia = onClickMedia,
                     onClickProfile = onClickProfile,
                     animatedVisibilityScope = animatedVisibilityScope,
