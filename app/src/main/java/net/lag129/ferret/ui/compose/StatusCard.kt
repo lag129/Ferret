@@ -90,10 +90,11 @@ fun Status.toStatusCardData(): StatusCardData {
 @Composable
 fun SharedTransitionScope.StatusCard(
     data: StatusCardData,
+    onClickDetail: (data: StatusCardData) -> Unit,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
+    onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)? = null,
-    onClickProfile: ((account: Account) -> Unit)? = null
 ) {
     val currentTime = Clock.System.now().toEpochMilliseconds()
     val dateUtils: DateUtils = koinInject()
@@ -102,6 +103,7 @@ fun SharedTransitionScope.StatusCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 16.dp, bottom = 24.dp)
+            .clickable { onClickDetail.invoke(data) },
     ) {
         AsyncImage(
             model = data.avatarUrl,
@@ -109,9 +111,7 @@ fun SharedTransitionScope.StatusCard(
             modifier = Modifier
                 .size(40.dp)
                 .clip(RoundedCornerShape(30))
-                .clickable {
-                    onClickProfile?.invoke(data.account)
-                }
+                .clickable { onClickProfile.invoke(data.account) }
         )
 
         Spacer(modifier = Modifier.padding(6.dp))
@@ -133,7 +133,7 @@ fun SharedTransitionScope.StatusCard(
                         modifier = Modifier
                             .alignByBaseline()
                             .clickable {
-                                onClickProfile?.invoke(data.account)
+                                onClickProfile.invoke(data.account)
                             }
                     )
 

@@ -25,11 +25,13 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.model.Account
 import net.lag129.ferret.repository.PreferencesRepository
+import net.lag129.ferret.ui.compose.DetailScreen
 import net.lag129.ferret.ui.compose.FerretTopAppBar
 import net.lag129.ferret.ui.compose.LoginScreen
 import net.lag129.ferret.ui.compose.MediaScreen
 import net.lag129.ferret.ui.compose.ProfileScreen
 import net.lag129.ferret.ui.compose.SettingScreen
+import net.lag129.ferret.ui.compose.StatusCardData
 import net.lag129.ferret.ui.compose.TimelineScreen
 import net.lag129.ferret.ui.theme.FerretTheme
 import net.lag129.ferret.viewmodel.AuthViewModel
@@ -55,6 +57,9 @@ private data class Profile(val account: Account) : NavKey
 
 @Serializable
 private data object Setting : NavKey
+
+@Serializable
+private data class Detail(val data: StatusCardData) : NavKey
 
 class MainActivity : ComponentActivity() {
 
@@ -115,6 +120,9 @@ class MainActivity : ComponentActivity() {
                                 ) { innerPadding ->
                                     TimelineScreen(
                                         viewModel = timelineViewModel,
+                                        onClickDetail = { data ->
+                                            customBackStack.backStack.add(Detail(data))
+                                        },
                                         onClickMedia = { mediaUrl, description ->
                                             customBackStack.backStack.add(
                                                 Media(mediaUrl, description)
@@ -183,6 +191,27 @@ class MainActivity : ComponentActivity() {
                             entry<Setting> {
                                 Scaffold { innerPadding ->
                                     SettingScreen(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(innerPadding)
+                                    )
+                                }
+                            }
+                            entry<Detail> { key ->
+                                Scaffold { innerPadding ->
+                                    DetailScreen(
+                                        data = key.data,
+                                        onClickMedia = { mediaUrl, description ->
+                                            customBackStack.backStack.add(
+                                                Media(mediaUrl, description)
+                                            )
+                                        },
+                                        onClickProfile = { account ->
+                                            customBackStack.backStack.add(
+                                                Profile(account)
+                                            )
+                                        },
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(innerPadding)
