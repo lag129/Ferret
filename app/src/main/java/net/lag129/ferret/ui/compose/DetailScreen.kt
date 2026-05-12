@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
@@ -64,7 +66,7 @@ fun SharedTransitionScope.DetailScreen(
                     .clip(RoundedCornerShape(30))
             )
 
-            Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.width(4.dp))
 
             Column {
                 HtmlText(
@@ -85,7 +87,7 @@ fun SharedTransitionScope.DetailScreen(
             }
         }
 
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         SelectionContainer {
             HtmlText(
@@ -95,7 +97,7 @@ fun SharedTransitionScope.DetailScreen(
         }
 
         if (!data.mediaAttachments.isNullOrEmpty()) {
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             if (data.sensitive) {
                 var isBlurred by remember { mutableStateOf(true) }
@@ -131,7 +133,7 @@ fun SharedTransitionScope.DetailScreen(
         }
 
         if (data.card != null) {
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             LinkPreviewCard(
                 url = data.card.url,
@@ -143,7 +145,7 @@ fun SharedTransitionScope.DetailScreen(
         }
 
         if (data.reactions.isNotEmpty()) {
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             ReactionBar(
                 reactions = data.reactions,
@@ -151,7 +153,7 @@ fun SharedTransitionScope.DetailScreen(
             )
         }
 
-        Spacer(modifier = Modifier.padding(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         val time = Instant.parse(data.createdAt).toEpochMilliseconds()
 
