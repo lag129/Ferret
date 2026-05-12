@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -75,7 +76,7 @@ fun LinkPreviewCard(
                     lineHeight = 12.sp
                 )
 
-                Spacer(modifier = Modifier.padding(2.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
                     text = title,
@@ -85,7 +86,7 @@ fun LinkPreviewCard(
                     maxLines = 1
                 )
 
-                Spacer(modifier = Modifier.padding(1.dp))
+                Spacer(modifier = Modifier.height(1.dp))
 
                 Text(
                     text = desc,

@@ -11,7 +11,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -30,9 +31,9 @@ import net.lag129.ferret.model.Attachment
 @Composable
 fun SharedTransitionScope.MediaAttachmentCard(
     mediaAttachments: ImmutableList<Attachment>,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier,
-    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)? = null
+    modifier: Modifier = Modifier
 ) {
     val attachmentsSize = mediaAttachments.size
 
@@ -71,9 +72,9 @@ fun SharedTransitionScope.MediaAttachmentCard(
 @Composable
 private fun SharedTransitionScope.SingleMediaAttachmentCard(
     media: Attachment,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier,
-    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)? = null
+    modifier: Modifier = Modifier
 ) {
     MediaImage(
         media = media,
@@ -88,9 +89,9 @@ private fun SharedTransitionScope.SingleMediaAttachmentCard(
 @Composable
 private fun SharedTransitionScope.DoubleMediaAttachmentCard(
     media: ImmutableList<Attachment>,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier,
-    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)? = null
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -106,7 +107,7 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
             onClickMedia = onClickMedia
         )
 
-        Spacer(Modifier.padding(2.dp))
+        Spacer(Modifier.width(2.dp))
 
         MediaImage(
             media = media[1],
@@ -122,9 +123,9 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
 @Composable
 private fun SharedTransitionScope.ThreeMediaLayout(
     media: ImmutableList<Attachment>,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier,
-    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)?
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -140,7 +141,7 @@ private fun SharedTransitionScope.ThreeMediaLayout(
             onClickMedia = onClickMedia
         )
 
-        Spacer(Modifier.padding(2.dp))
+        Spacer(Modifier.width(2.dp))
 
         Column(
             modifier = Modifier
@@ -154,7 +155,7 @@ private fun SharedTransitionScope.ThreeMediaLayout(
                 onClickMedia = onClickMedia
             )
 
-            Spacer(Modifier.padding(2.dp))
+            Spacer(Modifier.height(2.dp))
 
             MediaImage(
                 media = media[2],
@@ -169,9 +170,9 @@ private fun SharedTransitionScope.ThreeMediaLayout(
 @Composable
 private fun SharedTransitionScope.FourMediaLayout(
     media: ImmutableList<Attachment>,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier,
-    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)?
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -190,7 +191,7 @@ private fun SharedTransitionScope.FourMediaLayout(
                 onClickMedia = onClickMedia
             )
 
-            Spacer(Modifier.padding(2.dp))
+            Spacer(Modifier.width(2.dp))
 
             MediaImage(
                 media = media[1],
@@ -200,7 +201,7 @@ private fun SharedTransitionScope.FourMediaLayout(
             )
         }
 
-        Spacer(Modifier.padding(2.dp))
+        Spacer(Modifier.height(2.dp))
 
         Row(
             modifier = Modifier
@@ -214,7 +215,7 @@ private fun SharedTransitionScope.FourMediaLayout(
                 onClickMedia = onClickMedia
             )
 
-            Spacer(Modifier.padding(2.dp))
+            Spacer(Modifier.width(2.dp))
 
             MediaImage(
                 media = media[3],
@@ -229,9 +230,9 @@ private fun SharedTransitionScope.FourMediaLayout(
 @Composable
 private fun SharedTransitionScope.MediaImage(
     media: Attachment,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier,
-    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)?
+    modifier: Modifier = Modifier
 ) {
     val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
 
@@ -250,7 +251,7 @@ private fun SharedTransitionScope.MediaImage(
                 RoundedCornerShape(10.dp)
             )
             .clickable {
-                onClickMedia?.invoke(media.url, media.description)
+                onClickMedia.invoke(media.url, media.description)
             }
             .sharedElement(
                 sharedContentState = rememberSharedContentState(key = media.url),

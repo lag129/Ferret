@@ -33,13 +33,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.toImmutableList
-import net.lag129.ferret.viewmodel.ProfileViewModel
 import net.lag129.ferret.model.Account
+import net.lag129.ferret.viewmodel.ProfileViewModel
 
 @Composable
 fun SharedTransitionScope.ProfileScreen(
     data: Account,
     viewModel: ProfileViewModel,
+    onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -69,6 +70,7 @@ fun SharedTransitionScope.ProfileScreen(
 
                 StatusCard(
                     data = statusCardData,
+                    onClickDetail = onClickDetail,
                     onClickMedia = onClickMedia,
                     onClickProfile = onClickProfile,
                     animatedVisibilityScope = animatedVisibilityScope,

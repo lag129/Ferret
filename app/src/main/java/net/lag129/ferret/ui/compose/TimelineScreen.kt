@@ -19,12 +19,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import net.lag129.ferret.viewmodel.TimelineViewModel
 import net.lag129.ferret.model.Account
+import net.lag129.ferret.viewmodel.TimelineViewModel
 
 @Composable
 fun SharedTransitionScope.TimelineScreen(
     viewModel: TimelineViewModel,
+    onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -51,6 +52,7 @@ fun SharedTransitionScope.TimelineScreen(
 
                     StatusCard(
                         data = statusCardData,
+                        onClickDetail = onClickDetail,
                         onClickMedia = onClickMedia,
                         onClickProfile = onClickProfile,
                         animatedVisibilityScope = animatedVisibilityScope,

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.R
@@ -46,6 +48,7 @@ import net.lag129.ferret.model.Account
 import net.lag129.ferret.model.Attachment
 import net.lag129.ferret.model.CustomEmoji
 import net.lag129.ferret.model.PreviewCard
+import net.lag129.ferret.model.Reaction
 import net.lag129.ferret.model.Status
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
@@ -66,7 +69,8 @@ data class StatusCardData(
     val emojis: ImmutableList<CustomEmoji>? = null,
     val mediaAttachments: ImmutableList<Attachment>? = null,
     val sensitive: Boolean,
-    val spoilerText: String
+    val spoilerText: String,
+    val reactions: ImmutableList<Reaction> = persistentListOf()
 )
 
 fun Status.toStatusCardData(): StatusCardData {
@@ -83,17 +87,19 @@ fun Status.toStatusCardData(): StatusCardData {
         emojis = target.emojis.toImmutableList(),
         mediaAttachments = target.mediaAttachments.toImmutableList(),
         sensitive = target.sensitive,
-        spoilerText = target.spoilerText
+        spoilerText = target.spoilerText,
+        reactions = target.emojiReactions?.toImmutableList() ?: persistentListOf()
     )
 }
 
 @Composable
 fun SharedTransitionScope.StatusCard(
     data: StatusCardData,
+    onClickDetail: (data: StatusCardData) -> Unit,
+    onClickMedia: (mediaUrl: String, description: String?) -> Unit,
+    onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    onClickMedia: ((mediaUrl: String, description: String?) -> Unit)? = null,
-    onClickProfile: ((account: Account) -> Unit)? = null
 ) {
     val currentTime = Clock.System.now().toEpochMilliseconds()
     val dateUtils: DateUtils = koinInject()
@@ -102,6 +108,7 @@ fun SharedTransitionScope.StatusCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 16.dp, bottom = 24.dp)
+            .clickable { onClickDetail.invoke(data) },
     ) {
         AsyncImage(
             model = data.avatarUrl,
@@ -109,12 +116,10 @@ fun SharedTransitionScope.StatusCard(
             modifier = Modifier
                 .size(40.dp)
                 .clip(RoundedCornerShape(30))
-                .clickable {
-                    onClickProfile?.invoke(data.account)
-                }
+                .clickable { onClickProfile.invoke(data.account) }
         )
 
-        Spacer(modifier = Modifier.padding(6.dp))
+        Spacer(modifier = Modifier.width(6.dp))
 
         Column {
             Row(
@@ -133,7 +138,7 @@ fun SharedTransitionScope.StatusCard(
                         modifier = Modifier
                             .alignByBaseline()
                             .clickable {
-                                onClickProfile?.invoke(data.account)
+                                onClickProfile.invoke(data.account)
                             }
                     )
 
