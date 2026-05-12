@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import net.lag129.ferret.repository.MastodonRepository
-import net.lag129.ferret.model.Status
 import net.lag129.ferret.db.CachedStatus
 import net.lag129.ferret.db.CachedStatusDao
+import net.lag129.ferret.model.Status
+import net.lag129.ferret.repository.MastodonRepository
 
 enum class Timeline {
     HOME, LOCAL, FEDERATED
@@ -40,7 +40,7 @@ class TimelineViewModel(
         fetchTimeline()
     }
 
-    private fun fetchTimeline() {
+    fun fetchTimeline() {
         viewModelScope.launch {
             val statuses = fetchTimelineByType()
 

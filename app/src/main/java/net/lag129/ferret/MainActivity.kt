@@ -24,13 +24,13 @@ import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.model.Account
+import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.ui.compose.FerretTopAppBar
 import net.lag129.ferret.ui.compose.LoginScreen
 import net.lag129.ferret.ui.compose.MediaScreen
 import net.lag129.ferret.ui.compose.ProfileScreen
 import net.lag129.ferret.ui.compose.SettingScreen
 import net.lag129.ferret.ui.compose.TimelineScreen
-import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.ui.theme.FerretTheme
 import net.lag129.ferret.viewmodel.AuthViewModel
 import net.lag129.ferret.viewmodel.ProfileViewModel
@@ -136,7 +136,10 @@ class MainActivity : ComponentActivity() {
                                 Scaffold { innerPadding ->
                                     LoginScreen(
                                         authViewModel = authViewModel,
-                                        onLoggedIn = { customBackStack.onLoginSuccess() },
+                                        onLoggedIn = {
+                                            customBackStack.onLoginSuccess()
+                                            timelineViewModel.fetchTimeline()
+                                        },
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(innerPadding)
