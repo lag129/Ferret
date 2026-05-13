@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,10 +48,12 @@ fun SharedTransitionScope.DetailScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
     val dateUtils: DateUtils = koinInject()
 
     Column(
         modifier = modifier
+            .verticalScroll(scrollState)
             .fillMaxSize()
             .padding(16.dp)
     ) {

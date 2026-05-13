@@ -6,13 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -30,7 +26,9 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.serialization.Serializable
 import net.lag129.ferret.model.Account
 import net.lag129.ferret.repository.PreferencesRepository
+import net.lag129.ferret.ui.compose.BottomAppBarItem
 import net.lag129.ferret.ui.compose.DetailScreen
+import net.lag129.ferret.ui.compose.FerretBottomAppBar
 import net.lag129.ferret.ui.compose.FerretTopAppBar
 import net.lag129.ferret.ui.compose.LoginScreen
 import net.lag129.ferret.ui.compose.MediaScreen
@@ -58,7 +56,7 @@ private data object Login : NavKey
 private data class Media(val url: String, val description: String?) : NavKey
 
 @Serializable
-private data class Profile(val account: Account) : NavKey
+private data class Profile(val id: String, val account: Account?) : NavKey
 
 @Serializable
 private data object Setting : NavKey
@@ -88,6 +86,9 @@ class MainActivity : ComponentActivity() {
             )
 
             val customBackStack = remember { CustomBackStack() }
+            val currentKey = customBackStack.backStack.lastOrNull()
+
+            val accountId by profileViewModel.accountId.collectAsStateWithLifecycle(initialValue = null)
 
             LaunchedEffect(serverName, bearerToken) {
                 if (serverName != null && bearerToken != null) {
@@ -95,42 +96,93 @@ class MainActivity : ComponentActivity() {
                         serverName!!.isNotBlank() && bearerToken!!.isNotBlank()
                     customBackStack.restoreLoginState(hasValidCredentials)
                 }
+
+                profileViewModel.fetchMyCredential()
             }
 
             val currentTimeline by timelineViewModel.currentTimeline.collectAsStateWithLifecycle()
 
             FerretTheme {
                 SharedTransitionLayout {
-                    NavDisplay(
-                        backStack = customBackStack.backStack,
-                        onBack = { customBackStack.removeLast() },
-                        transitionSpec = {
-                            slideInHorizontally { it } + fadeIn() togetherWith
-                                    slideOutHorizontally { -it } + fadeOut()
-                        },
-                        popTransitionSpec = {
-                            slideInHorizontally { -it } + fadeIn() togetherWith
-                                    slideOutHorizontally { it } + fadeOut()
-                        },
-                        entryProvider = entryProvider {
-                            entry<Splash> {
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.fillMaxSize()
-                                ) {
-                                    CircularProgressIndicator()
+                    Scaffold(
+                        topBar = {
+                            when (currentKey) {
+                                is Home -> {
+                                    FerretTopAppBar(
+                                        currentTimeline = currentTimeline,
+                                        onSwitch = { timelineViewModel.switchTimeline(it) },
+                                        onSettingClick = {
+                                            customBackStack.backStack.add(
+                                                Setting
+                                            )
+                                        }
+                                    )
                                 }
+
+                                else -> {}
                             }
-                            entry<Home> {
-                                Scaffold(
-                                    topBar = {
-                                        FerretTopAppBar(
-                                            currentTimeline = currentTimeline,
-                                            onSwitch = { timelineViewModel.switchTimeline(it) },
-                                            onSettingClick = { customBackStack.backStack.add(Setting) }
-                                        )
+                        },
+                        bottomBar = {
+                            when (currentKey) {
+                                is Home, is Profile -> {
+                                    val selectedItem = when (currentKey) {
+                                        is Home -> BottomAppBarItem.HOME
+                                        is Profile -> BottomAppBarItem.PROFILE
+                                        else -> BottomAppBarItem.HOME
                                     }
-                                ) { innerPadding ->
+
+                                    FerretBottomAppBar(
+                                        selected = selectedItem,
+                                        onClick = {
+                                            when (it) {
+                                                BottomAppBarItem.HOME -> {
+                                                    customBackStack.backStack.add(
+                                                        Home
+                                                    )
+                                                }
+
+                                                BottomAppBarItem.PROFILE -> {
+                                                    customBackStack.backStack.add(
+                                                        Profile(
+                                                            id = accountId ?: "",
+                                                            account = null,
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+
+                                else -> {}
+                            }
+                        }
+                    ) { innerPadding ->
+                        NavDisplay(
+                            backStack = customBackStack.backStack,
+                            onBack = { customBackStack.removeLast() },
+                            entryProvider = entryProvider {
+                                entry<Detail> { key ->
+                                    DetailScreen(
+                                        data = key.data,
+                                        onClickMedia = { mediaUrl, description ->
+                                            customBackStack.backStack.add(
+                                                Media(mediaUrl, description)
+                                            )
+                                        },
+                                        onClickProfile = { account ->
+                                            customBackStack.backStack.add(
+                                                Profile(account.id, account)
+                                            )
+                                        },
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(innerPadding)
+                                    )
+                                }
+                                entry<Home> {
                                     TimelineScreen(
                                         viewModel = timelineViewModel,
                                         onClickDetail = { data ->
@@ -143,7 +195,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onClickProfile = { account ->
                                             customBackStack.backStack.add(
-                                                Profile(account)
+                                                Profile(account.id, account)
                                             )
                                         },
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
@@ -152,9 +204,7 @@ class MainActivity : ComponentActivity() {
                                             .padding(innerPadding)
                                     )
                                 }
-                            }
-                            entry<Login> {
-                                Scaffold { innerPadding ->
+                                entry<Login> {
                                     LoginScreen(
                                         authViewModel = authViewModel,
                                         onLoggedIn = {
@@ -166,9 +216,7 @@ class MainActivity : ComponentActivity() {
                                             .padding(innerPadding)
                                     )
                                 }
-                            }
-                            entry<Media> { key ->
-                                Scaffold { innerPadding ->
+                                entry<Media> { key ->
                                     MediaScreen(
                                         mediaUrl = key.url,
                                         description = key.description,
@@ -178,11 +226,10 @@ class MainActivity : ComponentActivity() {
                                             .padding(innerPadding)
                                     )
                                 }
-                            }
-                            entry<Profile> { key ->
-                                Scaffold { innerPadding ->
+                                entry<Profile> { key ->
                                     ProfileScreen(
-                                        data = key.account,
+                                        id = key.id,
+                                        account = key.account,
                                         viewModel = profileViewModel,
                                         onClickDetail = { data ->
                                             customBackStack.backStack.add(Detail(data))
@@ -194,7 +241,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onClickProfile = { account ->
                                             customBackStack.backStack.add(
-                                                Profile(account)
+                                                Profile(account.id, account)
                                             )
                                         },
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
@@ -203,39 +250,26 @@ class MainActivity : ComponentActivity() {
                                             .padding(innerPadding)
                                     )
                                 }
-                            }
-                            entry<Setting> {
-                                Scaffold { innerPadding ->
+                                entry<Setting> {
                                     SettingScreen(
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(innerPadding)
                                     )
                                 }
-                            }
-                            entry<Detail> { key ->
-                                Scaffold { innerPadding ->
-                                    DetailScreen(
-                                        data = key.data,
-                                        onClickMedia = { mediaUrl, description ->
-                                            customBackStack.backStack.add(
-                                                Media(mediaUrl, description)
-                                            )
-                                        },
-                                        onClickProfile = { account ->
-                                            customBackStack.backStack.add(
-                                                Profile(account)
-                                            )
-                                        },
-                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                entry<Splash> {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
                                         modifier = Modifier
                                             .fillMaxSize()
                                             .padding(innerPadding)
-                                    )
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
