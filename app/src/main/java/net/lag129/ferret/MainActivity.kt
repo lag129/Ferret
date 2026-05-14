@@ -43,8 +43,9 @@ import net.lag129.ferret.viewmodel.TimelineViewModel
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+
 @Serializable
-private data object Splash : NavKey
+private data class Detail(val data: StatusCardData) : NavKey
 
 @Serializable
 private data object Home : NavKey
@@ -62,7 +63,11 @@ private data class Profile(val id: String, val account: Account?) : NavKey
 private data object Setting : NavKey
 
 @Serializable
-private data class Detail(val data: StatusCardData) : NavKey
+private data object Splash : NavKey
+
+@Serializable
+private data class TimelineProfile(val id: String, val account: Account?) : NavKey
+
 
 class MainActivity : ComponentActivity() {
 
@@ -124,7 +129,7 @@ class MainActivity : ComponentActivity() {
                         },
                         bottomBar = {
                             when (currentKey) {
-                                is Home, is Profile -> {
+                                is Home, is Profile, is TimelineProfile -> {
                                     val selectedItem = when (currentKey) {
                                         is Home -> BottomAppBarItem.HOME
                                         is Profile -> BottomAppBarItem.PROFILE
@@ -195,7 +200,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onClickProfile = { account ->
                                             customBackStack.backStack.add(
-                                                Profile(account.id, account)
+                                                TimelineProfile(account.id, account)
                                             )
                                         },
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
@@ -266,6 +271,30 @@ class MainActivity : ComponentActivity() {
                                     ) {
                                         CircularProgressIndicator()
                                     }
+                                }
+                                entry<TimelineProfile> { key ->
+                                    ProfileScreen(
+                                        id = key.id,
+                                        account = key.account,
+                                        viewModel = profileViewModel,
+                                        onClickDetail = { data ->
+                                            customBackStack.backStack.add(Detail(data))
+                                        },
+                                        onClickMedia = { mediaUrl, description ->
+                                            customBackStack.backStack.add(
+                                                Media(mediaUrl, description)
+                                            )
+                                        },
+                                        onClickProfile = { account ->
+                                            customBackStack.backStack.add(
+                                                Profile(account.id, account)
+                                            )
+                                        },
+                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(innerPadding)
+                                    )
                                 }
                             }
                         )
