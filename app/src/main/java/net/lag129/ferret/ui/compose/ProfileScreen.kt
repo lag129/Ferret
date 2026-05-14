@@ -38,25 +38,33 @@ import net.lag129.ferret.viewmodel.ProfileViewModel
 
 @Composable
 fun SharedTransitionScope.ProfileScreen(
-    data: Account,
+    id: String,
     viewModel: ProfileViewModel,
     onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    account: Account? = null
 ) {
     val statuses by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(data.id) {
-        viewModel.fetchAccountStatuses(data.id)
+    LaunchedEffect(id) {
+        viewModel.fetchAccountStatuses(id)
     }
 
     LazyColumn(
         modifier = modifier.fillMaxSize()
     ) {
-        item {
-            ProfileTopBar(data)
+
+        if (account == null) {
+            item {
+                ProfileTopBar(statuses.firstOrNull()?.account ?: return@item)
+            }
+        } else {
+            item {
+                ProfileTopBar(account)
+            }
         }
 
         items(

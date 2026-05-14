@@ -6,6 +6,7 @@ import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.http.parameters
+import net.lag129.ferret.model.Account
 import net.lag129.ferret.model.CredentialApplication
 import net.lag129.ferret.model.Status
 import net.lag129.ferret.model.Token
@@ -36,6 +37,8 @@ interface MastodonRepository {
         sinceId: String? = null,
         limit: Int? = 20
     ): Result<List<Status>>
+
+    suspend fun getMyCredential(): Result<Account>
 
     suspend fun registerClientApp(
         clientName: String,
@@ -109,6 +112,12 @@ class MastodonRepositoryImpl(private val client: HttpClient) : MastodonRepositor
                 parameter("since_id", sinceId)
                 parameter("limit", limit)
             }.body()
+        }
+    }
+
+    override suspend fun getMyCredential(): Result<Account> {
+        return runCatching {
+            client.get("/api/v1/accounts/verify_credentials").body()
         }
     }
 
