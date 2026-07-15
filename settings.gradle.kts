@@ -26,3 +26,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Ferret"
 include(":app")
+include(":baselineprofile")
