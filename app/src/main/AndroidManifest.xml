@@ -35,6 +35,9 @@
                     android:scheme="ferret" />
             </intent-filter>
         </activity>
+
+        <profileable android:shell="true" />
+
     </application>
 
 </manifest>

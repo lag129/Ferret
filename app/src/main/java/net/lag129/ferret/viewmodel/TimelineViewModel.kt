@@ -6,10 +6,12 @@ import io.github.aakira.napier.Napier
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatus
 import net.lag129.ferret.db.CachedStatusDao
@@ -112,20 +114,22 @@ class TimelineViewModel(
     }
 
     private suspend fun saveToCache(timeline: Timeline, statuses: List<Status>) {
-        val cachedStatuses = statuses.mapIndexed { index, status ->
-            CachedStatus(
-                statusId = status.id,
-                timelineType = timeline.name,
-                statusJson = json.encodeToString(status),
-                orderIndex = index
-            )
+        val cachedStatuses = withContext(Dispatchers.Default) {
+            statuses.mapIndexed { index, status ->
+                CachedStatus(
+                    statusId = status.id,
+                    timelineType = timeline.name,
+                    statusJson = json.encodeToString(status),
+                    orderIndex = index
+                )
+            }
         }
 
         cachedStatusDao.clearTimeline(timeline.name)
         cachedStatusDao.insertAll(cachedStatuses)
     }
 
-    private fun restoreFromCache(cached: List<CachedStatus>): List<Status> {
-        return cached.map { json.decodeFromString<Status>(it.statusJson) }
+    private suspend fun restoreFromCache(cached: List<CachedStatus>): List<Status> {
+        return withContext(Dispatchers.Default) { cached.map { json.decodeFromString<Status>(it.statusJson) }}
     }
 }
