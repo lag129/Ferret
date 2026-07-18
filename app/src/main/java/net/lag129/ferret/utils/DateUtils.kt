@@ -27,7 +27,10 @@ class DateUtilsImpl(
         val dateTime =
             Instant.fromEpochMilliseconds(time).toLocalDateTime(TimeZone.currentSystemDefault())
 
-        return "${dateTime.year}/${dateTime.month.number}/${dateTime.day} ${dateTime.hour}:${dateTime.minute}"
+        val hour = "%02d".format(dateTime.hour)
+        val minute = "%02d".format(dateTime.minute)
+
+        return "${dateTime.year}/${dateTime.month.number}/${dateTime.day} ${hour}:${minute}"
     }
 
     override fun getRelativeTimeSpanString(
