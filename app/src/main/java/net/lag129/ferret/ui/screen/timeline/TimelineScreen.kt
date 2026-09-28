@@ -1,4 +1,4 @@
-package net.lag129.ferret.ui.compose
+package net.lag129.ferret.ui.screen.timeline
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.lag129.ferret.model.Account
-import net.lag129.ferret.viewmodel.TimelineViewModel
+import net.lag129.ferret.ui.compose.*
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

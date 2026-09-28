@@ -1,4 +1,4 @@
-package net.lag129.ferret.ui.compose
+package net.lag129.ferret.ui.screen.login
 
 import android.content.Intent
 import android.widget.Toast
@@ -13,14 +13,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.lag129.ferret.R
-import net.lag129.ferret.viewmodel.AuthViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier
 ) {
-    val authViewModel: AuthViewModel = koinViewModel()
+    val authViewModel: LoginViewModel = koinViewModel()
     val context = LocalContext.current
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
@@ -28,16 +27,16 @@ fun LoginScreen(
 
     LaunchedEffect(authState) {
         when (authState) {
-            is AuthViewModel.AuthState.Redirect -> {
-                val oauthUrl = (authState as AuthViewModel.AuthState.Redirect).oauthUrl
+            is LoginViewModel.AuthState.Redirect -> {
+                val oauthUrl = (authState as LoginViewModel.AuthState.Redirect).oauthUrl
                 val intent = Intent(Intent.ACTION_VIEW, oauthUrl.toUri())
                 context.startActivity(intent)
             }
 
-            is AuthViewModel.AuthState.Success -> {}
+            is LoginViewModel.AuthState.Success -> {}
 
-            is AuthViewModel.AuthState.Error -> {
-                val message = (authState as AuthViewModel.AuthState.Error).message
+            is LoginViewModel.AuthState.Error -> {
+                val message = (authState as LoginViewModel.AuthState.Error).message
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
 
@@ -58,18 +57,18 @@ fun LoginScreen(
                 onValueChange = { serverName = it },
                 label = { Text(stringResource(R.string.server_name)) },
                 singleLine = true,
-                enabled = authState !is AuthViewModel.AuthState.Loading,
+                enabled = authState !is LoginViewModel.AuthState.Loading,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             when (authState) {
-                is AuthViewModel.AuthState.Loading -> {
+                is LoginViewModel.AuthState.Loading -> {
                     CircularProgressIndicator()
                 }
 
-                is AuthViewModel.AuthState.Error -> {}
+                is LoginViewModel.AuthState.Error -> {}
                 else -> {
                     Button(
                         onClick = { authViewModel.registerClientApp(serverName) },

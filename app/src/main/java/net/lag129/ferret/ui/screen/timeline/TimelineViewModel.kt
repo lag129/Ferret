@@ -1,4 +1,4 @@
-package net.lag129.ferret.viewmodel
+package net.lag129.ferret.ui.screen.timeline
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -130,6 +130,6 @@ class TimelineViewModel(
     }
 
     private suspend fun restoreFromCache(cached: List<CachedStatus>): List<Status> {
-        return withContext(Dispatchers.Default) { cached.map { json.decodeFromString<Status>(it.statusJson) }}
+        return withContext(Dispatchers.Default) { cached.map { json.decodeFromString<Status>(it.statusJson) } }
     }
 }

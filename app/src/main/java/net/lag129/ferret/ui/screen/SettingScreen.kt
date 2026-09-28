@@ -1,4 +1,4 @@
-package net.lag129.ferret.ui.compose
+package net.lag129.ferret.ui.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

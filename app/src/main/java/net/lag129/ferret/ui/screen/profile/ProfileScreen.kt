@@ -1,4 +1,4 @@
-package net.lag129.ferret.ui.compose
+package net.lag129.ferret.ui.screen.profile
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
@@ -23,7 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.model.Account
-import net.lag129.ferret.viewmodel.ProfileViewModel
+import net.lag129.ferret.ui.compose.*
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

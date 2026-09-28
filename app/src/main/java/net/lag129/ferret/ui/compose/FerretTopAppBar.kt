@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.lag129.ferret.R
-import net.lag129.ferret.viewmodel.Timeline
+import net.lag129.ferret.ui.screen.timeline.Timeline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
