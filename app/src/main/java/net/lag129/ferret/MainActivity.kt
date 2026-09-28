@@ -23,50 +23,15 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
-import kotlinx.serialization.Serializable
-import net.lag129.ferret.model.Account
 import net.lag129.ferret.repository.PreferencesRepository
-import net.lag129.ferret.ui.compose.BottomAppBarItem
-import net.lag129.ferret.ui.compose.DetailScreen
-import net.lag129.ferret.ui.compose.FerretBottomAppBar
-import net.lag129.ferret.ui.compose.FerretTopAppBar
-import net.lag129.ferret.ui.compose.LoginScreen
-import net.lag129.ferret.ui.compose.MediaScreen
-import net.lag129.ferret.ui.compose.ProfileScreen
-import net.lag129.ferret.ui.compose.SettingScreen
-import net.lag129.ferret.ui.compose.StatusCardData
-import net.lag129.ferret.ui.compose.TimelineScreen
+import net.lag129.ferret.ui.compose.*
+import net.lag129.ferret.ui.navigation.*
 import net.lag129.ferret.ui.theme.FerretTheme
 import net.lag129.ferret.viewmodel.AuthViewModel
 import net.lag129.ferret.viewmodel.ProfileViewModel
 import net.lag129.ferret.viewmodel.TimelineViewModel
 import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
-
-@Serializable
-private data class Detail(val data: StatusCardData) : NavKey
-
-@Serializable
-private data object Home : NavKey
-
-@Serializable
-private data object Login : NavKey
-
-@Serializable
-private data class Media(val url: String, val description: String?) : NavKey
-
-@Serializable
-private data class Profile(val id: String, val account: Account?) : NavKey
-
-@Serializable
-private data object Setting : NavKey
-
-@Serializable
-private data object Splash : NavKey
-
-@Serializable
-private data class TimelineProfile(val id: String, val account: Account?) : NavKey
 
 
 class MainActivity : ComponentActivity() {
