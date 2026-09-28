@@ -24,7 +24,4 @@ data object Profile : NavKey
 data object Setting : NavKey
 
 @Serializable
-data object Splash : NavKey
-
-@Serializable
 data class TimelineProfile(val id: String, val account: Account?) : NavKey

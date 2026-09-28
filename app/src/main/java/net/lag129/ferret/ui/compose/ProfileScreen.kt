@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,54 +43,58 @@ fun SharedTransitionScope.ProfileScreen(
         viewModel.fetchAccountStatuses(id)
     }
 
-    LazyColumn(
-        modifier = modifier.fillMaxSize()
-    ) {
+    Scaffold { innerPadding ->
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
 
-        if (account == null) {
-            item {
-                ProfileTopBar(statuses.firstOrNull()?.account ?: return@item)
+            if (account == null) {
+                item {
+                    ProfileTopBar(statuses.firstOrNull()?.account ?: return@item)
+                }
+            } else {
+                item {
+                    ProfileTopBar(account)
+                }
             }
-        } else {
-            item {
-                ProfileTopBar(account)
+
+            items(
+                items = statuses,
+                key = { status -> status.id }
+            ) { status ->
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val statusCardData = remember(status) { status.toStatusCardData() }
+
+                    StatusCard(
+                        data = statusCardData,
+                        onClickDetail = onClickDetail,
+                        onClickMedia = onClickMedia,
+                        onClickProfile = onClickProfile,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                    )
+
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        thickness = 0.2.dp
+                    )
+                }
             }
-        }
 
-        items(
-            items = statuses,
-            key = { status -> status.id }
-        ) { status ->
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                val statusCardData = remember(status) { status.toStatusCardData() }
+            val isLast = statuses.isEmpty()
 
-                StatusCard(
-                    data = statusCardData,
-                    onClickDetail = onClickDetail,
-                    onClickMedia = onClickMedia,
-                    onClickProfile = onClickProfile,
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                )
-
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    thickness = 0.2.dp
-                )
-            }
-        }
-
-        val isLast = statuses.isEmpty()
-
-        if (isLast.not()) {
-            item {
-                val accountId = statuses.last().account.id
-                val maxId = statuses.last().id
-                LoadingIndicator(onFetchNext = {
-                    viewModel.fetchNextAccountStatuses(accountId, maxId)
-                })
+            if (isLast.not()) {
+                item {
+                    val accountId = statuses.last().account.id
+                    val maxId = statuses.last().id
+                    LoadingIndicator(onFetchNext = {
+                        viewModel.fetchNextAccountStatuses(accountId, maxId)
+                    })
+                }
             }
         }
     }

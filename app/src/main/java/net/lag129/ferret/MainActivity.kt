@@ -8,248 +8,45 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
-import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.ui.compose.*
 import net.lag129.ferret.ui.navigation.*
 import net.lag129.ferret.ui.theme.FerretTheme
 import net.lag129.ferret.viewmodel.AuthViewModel
+import net.lag129.ferret.viewmodel.LoginState
+import net.lag129.ferret.viewmodel.PreferencesViewModel
 import net.lag129.ferret.viewmodel.ProfileViewModel
-import net.lag129.ferret.viewmodel.TimelineViewModel
-import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 
 class MainActivity : ComponentActivity() {
 
-    private val preferencesRepository = get<PreferencesRepository>()
     private val authViewModel: AuthViewModel by viewModel()
-    private val profileViewModel: ProfileViewModel by viewModel()
-    private val timelineViewModel: TimelineViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         handleIntent(intent)
 
         setContent {
-            val serverName by preferencesRepository.serverName.collectAsStateWithLifecycle(
-                initialValue = null
-            )
-            val bearerToken by preferencesRepository.bearerToken.collectAsStateWithLifecycle(
-                initialValue = null
-            )
-
-            val customBackStack = remember { CustomBackStack() }
-            val currentKey = customBackStack.backStack.lastOrNull()
-
-            val accountId by profileViewModel.accountId.collectAsStateWithLifecycle(initialValue = null)
-
-            LaunchedEffect(serverName, bearerToken) {
-                if (serverName != null && bearerToken != null) {
-                    val hasValidCredentials =
-                        serverName!!.isNotBlank() && bearerToken!!.isNotBlank()
-                    customBackStack.restoreLoginState(hasValidCredentials)
-                }
-
-                profileViewModel.fetchMyCredential()
-            }
-
-            val currentTimeline by timelineViewModel.currentTimeline.collectAsStateWithLifecycle()
+            val preferencesViewModel: PreferencesViewModel = koinViewModel()
+            val loginState by preferencesViewModel.loginState.collectAsStateWithLifecycle()
 
             FerretTheme {
-                SharedTransitionLayout {
-                    Scaffold(
-                        topBar = {
-                            when (currentKey) {
-                                is Home -> {
-                                    FerretTopAppBar(
-                                        currentTimeline = currentTimeline,
-                                        onSwitch = { timelineViewModel.switchTimeline(it) },
-                                        onSettingClick = {
-                                            customBackStack.backStack.add(Setting)
-                                        }
-                                    )
-                                }
-
-                                else -> {}
-                            }
-                        },
-                        bottomBar = {
-                            when (currentKey) {
-                                is Home, is Profile, is TimelineProfile -> {
-                                    val selectedItem = when (currentKey) {
-                                        is Home -> BottomAppBarItem.HOME
-                                        is Profile -> BottomAppBarItem.PROFILE
-                                        else -> BottomAppBarItem.HOME
-                                    }
-
-                                    FerretBottomAppBar(
-                                        selected = selectedItem,
-                                        onClick = {
-                                            when (it) {
-                                                BottomAppBarItem.HOME -> {
-                                                    customBackStack.backStack.add(Home)
-                                                }
-
-                                                BottomAppBarItem.PROFILE -> {
-                                                    customBackStack.backStack.add(Profile)
-                                                }
-                                            }
-                                        },
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
-
-                                else -> {}
-                            }
-                        }
-                    ) { innerPadding ->
-                        NavDisplay(
-                            backStack = customBackStack.backStack,
-                            onBack = { customBackStack.removeLast() },
-                            entryProvider = entryProvider {
-                                entry<Detail> { key ->
-                                    DetailScreen(
-                                        data = key.data,
-                                        onClickMedia = { mediaUrl, description ->
-                                            customBackStack.backStack.add(
-                                                Media(mediaUrl, description)
-                                            )
-                                        },
-                                        onClickProfile = { account ->
-                                            customBackStack.backStack.add(
-                                                TimelineProfile(account.id, account)
-                                            )
-                                        },
-                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(innerPadding)
-                                    )
-                                }
-                                entry<Home> {
-                                    TimelineScreen(
-                                        onClickDetail = { data ->
-                                            customBackStack.backStack.add(Detail(data))
-                                        },
-                                        onClickMedia = { mediaUrl, description ->
-                                            customBackStack.backStack.add(
-                                                Media(mediaUrl, description)
-                                            )
-                                        },
-                                        onClickProfile = { account ->
-                                            customBackStack.backStack.add(
-                                                TimelineProfile(account.id, account)
-                                            )
-                                        },
-                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(innerPadding)
-                                    )
-                                }
-                                entry<Login> {
-                                    LoginScreen(
-                                        onLoggedIn = {
-                                            customBackStack.onLoginSuccess()
-                                            timelineViewModel.fetchTimeline()
-                                        },
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(innerPadding)
-                                    )
-                                }
-                                entry<Media> { key ->
-                                    MediaScreen(
-                                        mediaUrl = key.url,
-                                        description = key.description,
-                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(innerPadding)
-                                    )
-                                }
-                                entry<Profile> {
-                                    ProfileScreen(
-                                        id = accountId ?: "",
-                                        onClickDetail = { data ->
-                                            customBackStack.backStack.add(Detail(data))
-                                        },
-                                        onClickMedia = { mediaUrl, description ->
-                                            customBackStack.backStack.add(
-                                                Media(mediaUrl, description)
-                                            )
-                                        },
-                                        onClickProfile = { account ->
-                                            customBackStack.backStack.add(
-                                                TimelineProfile(account.id, account)
-                                            )
-                                        },
-                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(innerPadding)
-                                    )
-                                }
-                                entry<Setting> {
-                                    SettingScreen(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(innerPadding)
-                                    )
-                                }
-                                entry<Splash> {
-                                    Box(
-                                        contentAlignment = Alignment.Center,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(innerPadding)
-                                    ) {
-                                        CircularProgressIndicator()
-                                    }
-                                }
-                                entry<TimelineProfile> { key ->
-                                    ProfileScreen(
-                                        id = key.id,
-                                        account = key.account,
-                                        onClickDetail = { data ->
-                                            customBackStack.backStack.add(Detail(data))
-                                        },
-                                        onClickMedia = { mediaUrl, description ->
-                                            customBackStack.backStack.add(
-                                                Media(mediaUrl, description)
-                                            )
-                                        },
-                                        onClickProfile = { account ->
-                                            customBackStack.backStack.add(
-                                                TimelineProfile(account.id, account)
-                                            )
-                                        },
-                                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(innerPadding)
-                                    )
-                                }
-                            }
-                        )
-                    }
+                when (loginState) {
+                    LoginState.Loading -> SplashScreen()
+                    else -> FerretNavDisplay(loginState)
                 }
             }
         }
@@ -265,30 +62,130 @@ class MainActivity : ComponentActivity() {
 
         if (uri.scheme == "ferret" && uri.host == "oauth") {
             val code = uri.getQueryParameter("code")
-            if (code != null) {
-                authViewModel.obtainAccessToken(code)
-            }
+            if (code != null) authViewModel.obtainAccessToken(code)
         }
     }
 }
 
-private class CustomBackStack {
-    private var isRestored = false
-    val backStack = mutableStateListOf<NavKey>(Splash)
+@Composable
+private fun FerretNavDisplay(
+    loginState: LoginState,
+    profileViewModel: ProfileViewModel = koinViewModel()
+) {
+    val accountId by profileViewModel.accountId.collectAsStateWithLifecycle(initialValue = null)
 
-    fun restoreLoginState(hasValidCredentials: Boolean) {
-        if (isRestored) return
-        isRestored = true
-        backStack.clear()
-        backStack.add(if (hasValidCredentials) Home else Login)
+    SharedTransitionLayout {
+        val backStack = rememberNavBackStack(
+            if (loginState == LoginState.LoggedIn) Home else Login
+        )
+
+        LaunchedEffect(loginState) {
+            if (loginState == LoginState.LoggedIn) {
+                if (backStack.lastOrNull() == Login) {
+                    backStack.clear()
+                    backStack.add(Home)
+                }
+                profileViewModel.fetchMyCredential()
+            }
+        }
+
+        NavDisplay(
+            backStack = backStack,
+            onBack = { backStack.removeLastOrNull() },
+            entryProvider = { key ->
+                when (key) {
+                    is Home -> NavEntry(key) {
+                        TimelineScreen(
+                            onClickDetail = { data ->
+                                backStack.add(Detail(data))
+                            },
+                            onClickMedia = { mediaUrl, description ->
+                                backStack.add(Media(mediaUrl, description))
+                            },
+                            onClickProfile = { account ->
+                                backStack.add(TimelineProfile(account.id, account))
+                            },
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        )
+                    }
+
+                    is Detail -> NavEntry(key) {
+                        DetailScreen(
+                            data = key.data,
+                            onClickMedia = { mediaUrl, description ->
+                                backStack.add(Media(mediaUrl, description))
+                            },
+                            onClickProfile = { account ->
+                                backStack.add(TimelineProfile(account.id, account))
+                            },
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        )
+                    }
+
+                    is Profile -> NavEntry(key) {
+                        ProfileScreen(
+                            id = accountId ?: "",
+                            onClickDetail = { data ->
+                                backStack.add(Detail(data))
+                            },
+                            onClickMedia = { mediaUrl, description ->
+                                backStack.add(Media(mediaUrl, description))
+                            },
+                            onClickProfile = { account ->
+                                backStack.add(TimelineProfile(account.id, account))
+                            },
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        )
+                    }
+
+                    is TimelineProfile -> NavEntry(key) {
+                        ProfileScreen(
+                            id = key.id,
+                            account = key.account,
+                            onClickDetail = { data ->
+                                backStack.add(Detail(data))
+                            },
+                            onClickMedia = { mediaUrl, description ->
+                                backStack.add(Media(mediaUrl, description))
+                            },
+                            onClickProfile = { account ->
+                                backStack.add(TimelineProfile(account.id, account))
+                            },
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        )
+                    }
+
+                    is Media -> NavEntry(key) {
+                        MediaScreen(
+                            mediaUrl = key.url,
+                            description = key.description,
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                        )
+                    }
+
+                    is Setting -> NavEntry(key) {
+                        SettingScreen()
+                    }
+
+                    is Login -> NavEntry(key) {
+                        LoginScreen()
+                    }
+
+                    else -> NavEntry(key) {}
+                }
+            }
+        )
     }
+}
 
-    fun onLoginSuccess() {
-        backStack.clear()
-        backStack.add(Home)
-    }
-
-    fun removeLast() {
-        backStack.removeLastOrNull()
+@Composable
+private fun SplashScreen(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.fillMaxSize()
+    ) {
+        CircularProgressIndicator()
     }
 }

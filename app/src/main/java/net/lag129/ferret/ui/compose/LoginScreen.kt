@@ -3,10 +3,7 @@ package net.lag129.ferret.ui.compose
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +18,6 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
-    onLoggedIn: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val authViewModel: AuthViewModel = koinViewModel()
@@ -38,9 +34,7 @@ fun LoginScreen(
                 context.startActivity(intent)
             }
 
-            is AuthViewModel.AuthState.Success -> {
-                onLoggedIn()
-            }
+            is AuthViewModel.AuthState.Success -> {}
 
             is AuthViewModel.AuthState.Error -> {
                 val message = (authState as AuthViewModel.AuthState.Error).message
@@ -51,35 +45,38 @@ fun LoginScreen(
         }
     }
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-    ) {
-        OutlinedTextField(
-            value = serverName,
-            onValueChange = { serverName = it },
-            label = { Text(stringResource(R.string.server_name)) },
-            singleLine = true,
-            enabled = authState !is AuthViewModel.AuthState.Loading,
-            modifier = Modifier.fillMaxWidth()
-        )
+    Scaffold { innerPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(innerPadding)
+                .padding(16.dp)
+        ) {
+            OutlinedTextField(
+                value = serverName,
+                onValueChange = { serverName = it },
+                label = { Text(stringResource(R.string.server_name)) },
+                singleLine = true,
+                enabled = authState !is AuthViewModel.AuthState.Loading,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        when (authState) {
-            is AuthViewModel.AuthState.Loading -> {
-                CircularProgressIndicator()
-            }
+            when (authState) {
+                is AuthViewModel.AuthState.Loading -> {
+                    CircularProgressIndicator()
+                }
 
-            is AuthViewModel.AuthState.Error -> {}
-            else -> {
-                Button(
-                    onClick = { authViewModel.registerClientApp(serverName) },
-                    modifier = Modifier
-                ) {
-                    Text(stringResource(R.string.login_button))
+                is AuthViewModel.AuthState.Error -> {}
+                else -> {
+                    Button(
+                        onClick = { authViewModel.registerClientApp(serverName) },
+                        modifier = Modifier
+                    ) {
+                        Text(stringResource(R.string.login_button))
+                    }
                 }
             }
         }

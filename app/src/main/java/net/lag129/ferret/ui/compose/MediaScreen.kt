@@ -5,6 +5,8 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -21,28 +23,32 @@ fun SharedTransitionScope.MediaScreen(
     modifier: Modifier = Modifier,
     description: String? = null
 ) {
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(mediaUrl)
-                .crossfade(true)
-                .placeholderMemoryCacheKey("${mediaUrl}-key")
-                .memoryCacheKey(mediaUrl)
-                .build(),
-            imageLoader = LocalContext.current.imageLoader,
-            contentDescription = description ?: "",
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
+    Scaffold { innerPadding ->
+        Box(
+            modifier = modifier
                 .fillMaxSize()
-                .sharedElement(
-                    sharedContentState = rememberSharedContentState(key = mediaUrl),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    boundsTransform = { _, _ ->
-                        tween(durationMillis = 300)
-                    }
-                )
-        )
+                .padding(innerPadding)
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(mediaUrl)
+                    .crossfade(true)
+                    .placeholderMemoryCacheKey("${mediaUrl}-key")
+                    .memoryCacheKey(mediaUrl)
+                    .build(),
+                imageLoader = LocalContext.current.imageLoader,
+                contentDescription = description ?: "",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .sharedElement(
+                        sharedContentState = rememberSharedContentState(key = mediaUrl),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+                            tween(durationMillis = 300)
+                        }
+                    )
+            )
+        }
     }
 }

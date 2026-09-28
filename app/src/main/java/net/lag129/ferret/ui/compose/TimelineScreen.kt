@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -31,46 +32,50 @@ fun SharedTransitionScope.TimelineScreen(
     val statuses by viewModel.uiState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refreshTimeline() },
-    ) {
-        LazyColumn(
-            modifier = modifier.fillMaxSize()
+    Scaffold { innerPadding ->
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { viewModel.refreshTimeline() },
         ) {
-            items(
-                items = statuses,
-                key = { status -> status.id }
-            ) { status ->
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    val statusCardData = remember(status) { status.toStatusCardData() }
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+            ) {
+                items(
+                    items = statuses,
+                    key = { status -> status.id }
+                ) { status ->
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        val statusCardData = remember(status) { status.toStatusCardData() }
 
-                    StatusCard(
-                        data = statusCardData,
-                        onClickDetail = onClickDetail,
-                        onClickMedia = onClickMedia,
-                        onClickProfile = onClickProfile,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                    )
+                        StatusCard(
+                            data = statusCardData,
+                            onClickDetail = onClickDetail,
+                            onClickMedia = onClickMedia,
+                            onClickProfile = onClickProfile,
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                        )
 
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        thickness = 0.2.dp
-                    )
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            thickness = 0.2.dp
+                        )
+                    }
                 }
-            }
 
-            val isLast = statuses.isEmpty()
+                val isLast = statuses.isEmpty()
 
-            if (isLast.not()) {
-                item {
-                    val maxId = statuses.last().id
-                    LoadingIndicator(onFetchNext = {
-                        viewModel.fetchNextTimeline(maxId)
-                    })
+                if (isLast.not()) {
+                    item {
+                        val maxId = statuses.last().id
+                        LoadingIndicator(onFetchNext = {
+                            viewModel.fetchNextTimeline(maxId)
+                        })
+                    }
                 }
             }
         }
