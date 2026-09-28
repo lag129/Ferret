@@ -16,6 +16,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.lag129.ferret.model.Account
 import net.lag129.ferret.viewmodel.TimelineViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -25,22 +26,33 @@ fun SharedTransitionScope.TimelineScreen(
     onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
+    onClickSetting: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    timelineViewModel: TimelineViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
-    val viewModel: TimelineViewModel = koinViewModel()
-    val statuses by viewModel.uiState.collectAsState()
-    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val statuses by timelineViewModel.uiState.collectAsStateWithLifecycle()
+    val currentTimeline by timelineViewModel.currentTimeline.collectAsStateWithLifecycle()
+    val currentItem by mainViewModel.currentItem.collectAsStateWithLifecycle()
+    val isRefreshing by timelineViewModel.isRefreshing.collectAsStateWithLifecycle()
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        topBar = {
+            FerretTopAppBar(
+                currentTimeline = currentTimeline,
+                onSwitch = { timelineViewModel.switchTimeline(it) },
+                onClickSetting = { onClickSetting() }
+            )
+        }
+    ) { innerPadding ->
         PullToRefreshBox(
             isRefreshing = isRefreshing,
-            onRefresh = { viewModel.refreshTimeline() },
+            onRefresh = { timelineViewModel.refreshTimeline() },
+            modifier = Modifier.padding(innerPadding)
         ) {
             LazyColumn(
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+                modifier = modifier.fillMaxSize()
             ) {
                 items(
                     items = statuses,
@@ -73,7 +85,7 @@ fun SharedTransitionScope.TimelineScreen(
                     item {
                         val maxId = statuses.last().id
                         LoadingIndicator(onFetchNext = {
-                            viewModel.fetchNextTimeline(maxId)
+                            timelineViewModel.fetchNextTimeline(maxId)
                         })
                     }
                 }

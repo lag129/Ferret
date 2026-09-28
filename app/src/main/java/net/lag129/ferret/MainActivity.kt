@@ -107,6 +107,9 @@ private fun FerretNavDisplay(
                             onClickProfile = { account ->
                                 backStack.add(TimelineProfile(account.id, account))
                             },
+                            onClickSetting = {
+                                backStack.add(Setting)
+                            },
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
                     }
