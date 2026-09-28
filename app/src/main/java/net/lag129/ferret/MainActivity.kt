@@ -12,11 +12,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import net.lag129.ferret.ui.compose.*
@@ -75,7 +77,7 @@ private fun FerretNavDisplay(
     val accountId by profileViewModel.accountId.collectAsStateWithLifecycle(initialValue = null)
 
     SharedTransitionLayout {
-        val backStack = rememberNavBackStack(
+        val backStack = rememberFerretBackStack(
             if (loginState == LoginState.LoggedIn) Home else Login
         )
 
@@ -170,13 +172,19 @@ private fun FerretNavDisplay(
                     is Login -> NavEntry(key) {
                         LoginScreen()
                     }
-
-                    else -> NavEntry(key) {}
                 }
             }
         )
     }
 }
+
+@Composable
+private fun rememberFerretBackStack(
+    vararg elements: FerretNavKey
+): NavBackStack<FerretNavKey> =
+    rememberSerializable(serializer = NavBackStackSerializer<FerretNavKey>()) {
+        NavBackStack(*elements)
+    }
 
 @Composable
 private fun SplashScreen(

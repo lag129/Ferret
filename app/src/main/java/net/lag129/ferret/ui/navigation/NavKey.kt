@@ -6,22 +6,25 @@ import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.compose.StatusCardData
 
 @Serializable
-data class Detail(val data: StatusCardData) : NavKey
+sealed interface FerretNavKey : NavKey
 
 @Serializable
-data object Home : NavKey
+data class Detail(val data: StatusCardData) : FerretNavKey
 
 @Serializable
-data object Login : NavKey
+data object Home : FerretNavKey
 
 @Serializable
-data class Media(val url: String, val description: String?) : NavKey
+data object Login : FerretNavKey
 
 @Serializable
-data object Profile : NavKey
+data class Media(val url: String, val description: String?) : FerretNavKey
 
 @Serializable
-data object Setting : NavKey
+data object Profile : FerretNavKey
 
 @Serializable
-data class TimelineProfile(val id: String, val account: Account?) : NavKey
+data object Setting : FerretNavKey
+
+@Serializable
+data class TimelineProfile(val id: String, val account: Account?) : FerretNavKey
