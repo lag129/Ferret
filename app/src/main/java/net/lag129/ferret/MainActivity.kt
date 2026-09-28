@@ -110,6 +110,14 @@ private fun FerretNavDisplay(
                             onClickSetting = {
                                 backStack.add(Setting)
                             },
+                            onClickBottomAppBar = {
+                                when (it) {
+                                    BottomAppBarItem.HOME -> {}
+                                    BottomAppBarItem.PROFILE -> {
+                                        backStack.add(Profile)
+                                    }
+                                }
+                            },
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
                     }
@@ -139,6 +147,16 @@ private fun FerretNavDisplay(
                             onClickProfile = { account ->
                                 backStack.add(TimelineProfile(account.id, account))
                             },
+                            onClickBottomAppBar = {
+                                when (it) {
+                                    BottomAppBarItem.HOME -> {
+                                        backStack.add(Home)
+                                    }
+
+                                    BottomAppBarItem.PROFILE -> {}
+                                }
+                            },
+                            selectedItem = BottomAppBarItem.PROFILE,
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
                     }
@@ -156,6 +174,18 @@ private fun FerretNavDisplay(
                             onClickProfile = { account ->
                                 backStack.add(TimelineProfile(account.id, account))
                             },
+                            onClickBottomAppBar = {
+                                when (it) {
+                                    BottomAppBarItem.HOME -> {
+                                        backStack.add(Home)
+                                    }
+
+                                    BottomAppBarItem.PROFILE -> {
+                                        backStack.add(Profile)
+                                    }
+                                }
+                            },
+                            selectedItem = BottomAppBarItem.HOME,
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
                     }

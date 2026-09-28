@@ -13,7 +13,10 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,14 +30,13 @@ fun SharedTransitionScope.TimelineScreen(
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     onClickSetting: () -> Unit,
+    onClickBottomAppBar: (bottomAppBarItem: BottomAppBarItem) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
-    timelineViewModel: TimelineViewModel = koinViewModel(),
-    mainViewModel: MainViewModel = koinViewModel()
+    timelineViewModel: TimelineViewModel = koinViewModel()
 ) {
     val statuses by timelineViewModel.uiState.collectAsStateWithLifecycle()
     val currentTimeline by timelineViewModel.currentTimeline.collectAsStateWithLifecycle()
-    val currentItem by mainViewModel.currentItem.collectAsStateWithLifecycle()
     val isRefreshing by timelineViewModel.isRefreshing.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -42,7 +44,14 @@ fun SharedTransitionScope.TimelineScreen(
             FerretTopAppBar(
                 currentTimeline = currentTimeline,
                 onSwitch = { timelineViewModel.switchTimeline(it) },
-                onClickSetting = { onClickSetting() }
+                onClickSetting = onClickSetting
+            )
+        },
+        bottomBar = {
+            FerretBottomAppBar(
+                selected = BottomAppBarItem.HOME,
+                onClick = onClickBottomAppBar,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     ) { innerPadding ->

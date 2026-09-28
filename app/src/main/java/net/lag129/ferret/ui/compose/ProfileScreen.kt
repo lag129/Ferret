@@ -32,18 +32,28 @@ fun SharedTransitionScope.ProfileScreen(
     onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
+    onClickBottomAppBar: (bottomAppBarItem: BottomAppBarItem) -> Unit,
+    selectedItem: BottomAppBarItem,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    profileViewModel: ProfileViewModel = koinViewModel(),
     account: Account? = null
 ) {
-    val viewModel: ProfileViewModel = koinViewModel()
-    val statuses by viewModel.uiState.collectAsStateWithLifecycle()
+    val statuses by profileViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(id) {
-        viewModel.fetchAccountStatuses(id)
+        profileViewModel.fetchAccountStatuses(id)
     }
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        bottomBar = {
+            FerretBottomAppBar(
+                selected = selectedItem,
+                onClick = onClickBottomAppBar,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    ) { innerPadding ->
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
@@ -92,7 +102,7 @@ fun SharedTransitionScope.ProfileScreen(
                     val accountId = statuses.last().account.id
                     val maxId = statuses.last().id
                     LoadingIndicator(onFetchNext = {
-                        viewModel.fetchNextAccountStatuses(accountId, maxId)
+                        profileViewModel.fetchNextAccountStatuses(accountId, maxId)
                     })
                 }
             }
