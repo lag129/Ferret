@@ -2,15 +2,7 @@ package net.lag129.ferret.ui.compose
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,11 +27,11 @@ import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.model.Account
 import net.lag129.ferret.viewmodel.ProfileViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.ProfileScreen(
     id: String,
-    viewModel: ProfileViewModel,
     onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
@@ -47,6 +39,7 @@ fun SharedTransitionScope.ProfileScreen(
     modifier: Modifier = Modifier,
     account: Account? = null
 ) {
+    val viewModel: ProfileViewModel = koinViewModel()
     val statuses by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(id) {

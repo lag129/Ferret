@@ -2,21 +2,12 @@ package net.lag129.ferret.ui.compose
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,15 +15,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import net.lag129.ferret.viewmodel.AuthViewModel
 import net.lag129.ferret.R
+import net.lag129.ferret.viewmodel.AuthViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
-    authViewModel: AuthViewModel,
     onLoggedIn: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val authViewModel: AuthViewModel = koinViewModel()
     val context = LocalContext.current
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 

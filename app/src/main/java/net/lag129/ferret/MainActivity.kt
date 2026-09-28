@@ -145,7 +145,6 @@ class MainActivity : ComponentActivity() {
                                 }
                                 entry<Home> {
                                     TimelineScreen(
-                                        viewModel = timelineViewModel,
                                         onClickDetail = { data ->
                                             customBackStack.backStack.add(Detail(data))
                                         },
@@ -167,7 +166,6 @@ class MainActivity : ComponentActivity() {
                                 }
                                 entry<Login> {
                                     LoginScreen(
-                                        authViewModel = authViewModel,
                                         onLoggedIn = {
                                             customBackStack.onLoginSuccess()
                                             timelineViewModel.fetchTimeline()
@@ -190,7 +188,6 @@ class MainActivity : ComponentActivity() {
                                 entry<Profile> {
                                     ProfileScreen(
                                         id = accountId ?: "",
-                                        viewModel = profileViewModel,
                                         onClickDetail = { data ->
                                             customBackStack.backStack.add(Detail(data))
                                         },
@@ -231,7 +228,6 @@ class MainActivity : ComponentActivity() {
                                     ProfileScreen(
                                         id = key.id,
                                         account = key.account,
-                                        viewModel = profileViewModel,
                                         onClickDetail = { data ->
                                             customBackStack.backStack.add(Detail(data))
                                         },

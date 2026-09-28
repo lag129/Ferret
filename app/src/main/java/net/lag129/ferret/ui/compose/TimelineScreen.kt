@@ -12,25 +12,22 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.lag129.ferret.model.Account
 import net.lag129.ferret.viewmodel.TimelineViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.TimelineScreen(
-    viewModel: TimelineViewModel,
     onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
+    val viewModel: TimelineViewModel = koinViewModel()
     val statuses by viewModel.uiState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
 
