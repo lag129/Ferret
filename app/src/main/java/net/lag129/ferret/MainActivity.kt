@@ -82,9 +82,7 @@ class MainActivity : ComponentActivity() {
                                         currentTimeline = currentTimeline,
                                         onSwitch = { timelineViewModel.switchTimeline(it) },
                                         onSettingClick = {
-                                            customBackStack.backStack.add(
-                                                Setting
-                                            )
+                                            customBackStack.backStack.add(Setting)
                                         }
                                     )
                                 }
@@ -106,18 +104,11 @@ class MainActivity : ComponentActivity() {
                                         onClick = {
                                             when (it) {
                                                 BottomAppBarItem.HOME -> {
-                                                    customBackStack.backStack.add(
-                                                        Home
-                                                    )
+                                                    customBackStack.backStack.add(Home)
                                                 }
 
                                                 BottomAppBarItem.PROFILE -> {
-                                                    customBackStack.backStack.add(
-                                                        Profile(
-                                                            id = accountId ?: "",
-                                                            account = null,
-                                                        )
-                                                    )
+                                                    customBackStack.backStack.add(Profile)
                                                 }
                                             }
                                         },
@@ -143,7 +134,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onClickProfile = { account ->
                                             customBackStack.backStack.add(
-                                                Profile(account.id, account)
+                                                TimelineProfile(account.id, account)
                                             )
                                         },
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
@@ -196,10 +187,9 @@ class MainActivity : ComponentActivity() {
                                             .padding(innerPadding)
                                     )
                                 }
-                                entry<Profile> { key ->
+                                entry<Profile> {
                                     ProfileScreen(
-                                        id = key.id,
-                                        account = key.account,
+                                        id = accountId ?: "",
                                         viewModel = profileViewModel,
                                         onClickDetail = { data ->
                                             customBackStack.backStack.add(Detail(data))
@@ -211,7 +201,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onClickProfile = { account ->
                                             customBackStack.backStack.add(
-                                                Profile(account.id, account)
+                                                TimelineProfile(account.id, account)
                                             )
                                         },
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,
@@ -252,7 +242,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onClickProfile = { account ->
                                             customBackStack.backStack.add(
-                                                Profile(account.id, account)
+                                                TimelineProfile(account.id, account)
                                             )
                                         },
                                         animatedVisibilityScope = LocalNavAnimatedContentScope.current,

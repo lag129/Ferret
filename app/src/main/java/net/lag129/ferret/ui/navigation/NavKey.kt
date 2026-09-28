@@ -18,7 +18,7 @@ data object Login : NavKey
 data class Media(val url: String, val description: String?) : NavKey
 
 @Serializable
-data class Profile(val id: String, val account: Account?) : NavKey
+data object Profile : NavKey
 
 @Serializable
 data object Setting : NavKey
