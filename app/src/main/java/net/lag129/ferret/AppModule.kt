@@ -12,8 +12,6 @@ import io.ktor.client.plugins.cache.storage.FileStorage
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatusDao
 import net.lag129.ferret.db.RoomDatabase
@@ -34,13 +32,12 @@ val appModule = module {
 
     single<HttpClient> {
         val preferencesRepository = get<PreferencesRepository>()
-        val serverName = runBlocking { preferencesRepository.serverName.first() }
         HttpClient(CIO) {
-            defaultRequest { url("https://$serverName/") }
+            defaultRequest { url("https://${preferencesRepository.serverName.value}/") }
             install(Auth) {
                 bearer {
                     loadTokens {
-                        val bearerToken = preferencesRepository.bearerToken.first()
+                        val bearerToken = preferencesRepository.bearerToken.value
                         BearerTokens(bearerToken, bearerToken)
                     }
                 }

@@ -5,8 +5,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.cybozu.datastore.crypto.preferences.encryptedPreferencesDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 private val Context.dataStore by encryptedPreferencesDataStore(
     name = "preferences",
@@ -20,8 +26,8 @@ data class TemporaryAuthData(
 )
 
 interface PreferencesRepository {
-    val serverName: Flow<String>
-    val bearerToken: Flow<String>
+    val serverName: StateFlow<String>
+    val bearerToken: StateFlow<String>
     val temporaryAuthData: Flow<TemporaryAuthData?>
     suspend fun saveServerName(serverName: String): Preferences
     suspend fun saveBearerToken(bearerToken: String): Preferences
@@ -36,16 +42,17 @@ interface PreferencesRepository {
 }
 
 class PreferencesRepositoryImpl(
-    private val context: Context
+    private val context: Context,
+    scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 ) : PreferencesRepository {
 
-    override val serverName = context.dataStore.data.map { preferences ->
-        preferences[SERVER_NAME] ?: ""
-    }
+    override val serverName: StateFlow<String> = context.dataStore.data
+        .map { preferences -> preferences[SERVER_NAME] ?: "" }
+        .stateIn(scope, SharingStarted.Eagerly, "")
 
-    override val bearerToken = context.dataStore.data.map { preferences ->
-        preferences[BEARER_TOKEN] ?: ""
-    }
+    override val bearerToken: StateFlow<String> = context.dataStore.data
+        .map { preferences -> preferences[BEARER_TOKEN] ?: "" }
+        .stateIn(scope, SharingStarted.Eagerly, "")
 
     override val temporaryAuthData = context.dataStore.data.map { preferences ->
         val serverName = preferences[SERVER_NAME]
