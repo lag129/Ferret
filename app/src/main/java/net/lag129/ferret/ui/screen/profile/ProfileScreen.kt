@@ -1,23 +1,12 @@
-package net.lag129.ferret.ui.compose
+package net.lag129.ferret.ui.screen.profile
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,73 +23,88 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.model.Account
-import net.lag129.ferret.viewmodel.ProfileViewModel
+import net.lag129.ferret.ui.compose.*
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.ProfileScreen(
     id: String,
-    viewModel: ProfileViewModel,
     onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
+    onClickBottomAppBar: (bottomAppBarItem: BottomAppBarItem) -> Unit,
+    selectedItem: BottomAppBarItem,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    profileViewModel: ProfileViewModel = koinViewModel(),
     account: Account? = null
 ) {
-    val statuses by viewModel.uiState.collectAsStateWithLifecycle()
+    val statuses by profileViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(id) {
-        viewModel.fetchAccountStatuses(id)
+        profileViewModel.fetchAccountStatuses(id)
     }
 
-    LazyColumn(
-        modifier = modifier.fillMaxSize()
-    ) {
-
-        if (account == null) {
-            item {
-                ProfileTopBar(statuses.firstOrNull()?.account ?: return@item)
-            }
-        } else {
-            item {
-                ProfileTopBar(account)
-            }
-        }
-
-        items(
-            items = statuses,
-            key = { status -> status.id }
-        ) { status ->
-            Column(
+    Scaffold(
+        bottomBar = {
+            FerretBottomAppBar(
+                selected = selectedItem,
+                onClick = onClickBottomAppBar,
                 modifier = Modifier.fillMaxWidth()
-            ) {
-                val statusCardData = remember(status) { status.toStatusCardData() }
-
-                StatusCard(
-                    data = statusCardData,
-                    onClickDetail = onClickDetail,
-                    onClickMedia = onClickMedia,
-                    onClickProfile = onClickProfile,
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                )
-
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    thickness = 0.2.dp
-                )
-            }
+            )
         }
+    ) { innerPadding ->
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
 
-        val isLast = statuses.isEmpty()
+            if (account == null) {
+                item {
+                    ProfileTopBar(statuses.firstOrNull()?.account ?: return@item)
+                }
+            } else {
+                item {
+                    ProfileTopBar(account)
+                }
+            }
 
-        if (isLast.not()) {
-            item {
-                val accountId = statuses.last().account.id
-                val maxId = statuses.last().id
-                LoadingIndicator(onFetchNext = {
-                    viewModel.fetchNextAccountStatuses(accountId, maxId)
-                })
+            items(
+                items = statuses,
+                key = { status -> status.id }
+            ) { status ->
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    val statusCardData = remember(status) { status.toStatusCardData() }
+
+                    StatusCard(
+                        data = statusCardData,
+                        onClickDetail = onClickDetail,
+                        onClickMedia = onClickMedia,
+                        onClickProfile = onClickProfile,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+                    )
+
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        thickness = 0.2.dp
+                    )
+                }
+            }
+
+            val isLast = statuses.isEmpty()
+
+            if (isLast.not()) {
+                item {
+                    val accountId = statuses.last().account.id
+                    val maxId = statuses.last().id
+                    LoadingIndicator(onFetchNext = {
+                        profileViewModel.fetchNextAccountStatuses(accountId, maxId)
+                    })
+                }
             }
         }
     }

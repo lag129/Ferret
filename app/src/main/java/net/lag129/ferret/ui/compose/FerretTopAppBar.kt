@@ -2,29 +2,20 @@ package net.lag129.ferret.ui.compose
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import net.lag129.ferret.R
-import net.lag129.ferret.viewmodel.Timeline
+import net.lag129.ferret.ui.screen.timeline.Timeline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FerretTopAppBar(
     currentTimeline: Timeline,
     onSwitch: (Timeline) -> Unit,
-    onSettingClick: () -> Unit,
+    onClickSetting: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isExpanded by remember { mutableStateOf(false) }
@@ -72,7 +63,7 @@ fun FerretTopAppBar(
             }
         },
         actions = {
-            TextButton(onClick = onSettingClick) {
+            TextButton(onClick = onClickSetting) {
                 Text("︙")
             }
         },

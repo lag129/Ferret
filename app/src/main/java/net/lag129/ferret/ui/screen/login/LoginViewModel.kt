@@ -1,13 +1,13 @@
-package net.lag129.ferret.viewmodel
+package net.lag129.ferret.ui.screen.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +17,7 @@ import kotlinx.serialization.json.Json
 import net.lag129.ferret.repository.MastodonRepositoryImpl
 import net.lag129.ferret.repository.PreferencesRepository
 
-class AuthViewModel(
+class LoginViewModel(
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 

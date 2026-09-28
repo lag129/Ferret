@@ -1,6 +1,8 @@
-package net.lag129.ferret.ui.compose
+package net.lag129.ferret.ui.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -18,17 +20,21 @@ fun SettingScreen(
 ) {
     val libraries by produceLibraries()
 
-    LibrariesContainer(
-        libraries = libraries,
-        showAuthor = false,
-        showDescription = false,
-        showVersion = false,
-        showLicenseBadges = false,
-        textStyles = LibraryDefaults.libraryTextStyles(
-            nameTextStyle = TextStyle.Default.copy(fontSize = 16.sp)
-        ),
-        modifier = modifier.fillMaxSize()
-    )
+    Scaffold { innerPadding ->
+        LibrariesContainer(
+            libraries = libraries,
+            showAuthor = false,
+            showDescription = false,
+            showVersion = false,
+            showLicenseBadges = false,
+            textStyles = LibraryDefaults.libraryTextStyles(
+                nameTextStyle = TextStyle.Default.copy(fontSize = 16.sp)
+            ),
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        )
+    }
 }
 
 @Preview
