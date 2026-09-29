@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "net.lag129.ferret"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "net.lag129.ferret"
         minSdk = 30
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
