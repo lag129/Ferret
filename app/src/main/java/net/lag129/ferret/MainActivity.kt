@@ -22,10 +22,10 @@ import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import net.lag129.ferret.ui.compose.BottomAppBarItem
-import net.lag129.ferret.ui.screen.SettingScreen
 import net.lag129.ferret.ui.navigation.*
 import net.lag129.ferret.ui.screen.DetailScreen
 import net.lag129.ferret.ui.screen.MediaScreen
+import net.lag129.ferret.ui.screen.SettingScreen
 import net.lag129.ferret.ui.screen.login.LoginScreen
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.screen.profile.ProfileScreen
@@ -137,6 +137,7 @@ private fun FerretNavDisplay(
                             onClickProfile = { account ->
                                 backStack.add(TimelineProfile(account.id, account))
                             },
+                            onBack = { backStack.removeLastOrNull() },
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
                     }
