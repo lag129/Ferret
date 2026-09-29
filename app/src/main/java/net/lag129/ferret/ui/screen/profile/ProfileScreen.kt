@@ -1,5 +1,6 @@
 package net.lag129.ferret.ui.screen.profile
 
+import android.icu.text.CompactDecimalFormat
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineBreak
@@ -22,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import kotlinx.collections.immutable.toImmutableList
+import net.lag129.ferret.R
 import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.compose.*
 import org.koin.compose.viewmodel.koinViewModel
@@ -156,11 +160,19 @@ private fun ProfileTopBar(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("${account.followersCount} フォロワー")
+                val locale = LocalLocale.current.platformLocale
+                val formatter = remember(locale) {
+                    CompactDecimalFormat.getInstance(
+                        locale,
+                        CompactDecimalFormat.CompactStyle.SHORT
+                    )
+                }
 
-                Text("${account.followingCount} フォロー中")
+                Text(stringResource(R.string.follower, formatter.format(account.followersCount)))
 
-                Text("${account.statusesCount} 投稿")
+                Text(stringResource(R.string.following, formatter.format(account.followingCount)))
+
+                Text(stringResource(R.string.posts, formatter.format(account.statusesCount)))
             }
 
             HtmlText(

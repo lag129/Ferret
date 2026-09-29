@@ -9,4 +9,7 @@
     <string name="now">たった今</string>
     <string name="sensitive">閲覧注意</string>
     <string name="server_name">サーバー名</string>
+    <string name="following">%s フォロー中</string>
+    <string name="follower">%s フォロワー</string>
+    <string name="posts">%s 投稿</string>
 </resources>

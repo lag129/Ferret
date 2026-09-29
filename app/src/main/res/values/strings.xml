@@ -9,4 +9,7 @@
     <string name="now">now</string>
     <string name="sensitive">sensitive</string>
     <string name="server_name">Server Name</string>
+    <string name="following">%s Following</string>
+    <string name="follower">%s Follower</string>
+    <string name="posts">%s Posts</string>
 </resources>
