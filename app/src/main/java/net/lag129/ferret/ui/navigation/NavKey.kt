@@ -21,7 +21,7 @@ data object Login : FerretNavKey
 data class Media(val url: String, val description: String?) : FerretNavKey
 
 @Serializable
-data object Profile : FerretNavKey
+data object MyProfile : FerretNavKey
 
 @Serializable
 data object Setting : FerretNavKey

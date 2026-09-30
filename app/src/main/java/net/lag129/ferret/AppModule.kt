@@ -21,6 +21,7 @@ import net.lag129.ferret.repository.MastodonRepositoryImpl
 import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.repository.PreferencesRepositoryImpl
 import net.lag129.ferret.ui.screen.login.LoginViewModel
+import net.lag129.ferret.ui.screen.profile.MyProfileViewModel
 import net.lag129.ferret.ui.screen.profile.ProfileViewModel
 import net.lag129.ferret.ui.screen.timeline.TimelineViewModel
 import net.lag129.ferret.utils.DateUtils
@@ -76,6 +77,8 @@ val appModule = module {
     viewModel { TimelineViewModel(get(), get()) }
 
     viewModel { ProfileViewModel(get()) }
+
+    viewModel { MyProfileViewModel(get()) }
 
     viewModel { LoginViewModel(get()) }
 

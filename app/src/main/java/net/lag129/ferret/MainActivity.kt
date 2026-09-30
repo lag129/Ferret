@@ -24,6 +24,7 @@ import net.lag129.ferret.ui.screen.SettingScreen
 import net.lag129.ferret.ui.screen.SplashScreen
 import net.lag129.ferret.ui.screen.login.LoginScreen
 import net.lag129.ferret.ui.screen.login.LoginViewModel
+import net.lag129.ferret.ui.screen.profile.MyProfileScreen
 import net.lag129.ferret.ui.screen.profile.ProfileScreen
 import net.lag129.ferret.ui.screen.profile.ProfileViewModel
 import net.lag129.ferret.ui.screen.timeline.TimelineScreen
@@ -99,8 +100,8 @@ private fun FerretNavDisplay(
                     backStack.removeLastOrNull()
                 }
 
-                BottomAppBarItem.PROFILE -> if (backStack.lastOrNull() != Profile) {
-                    backStack.add(Profile)
+                BottomAppBarItem.PROFILE -> if (backStack.lastOrNull() != MyProfile) {
+                    backStack.add(MyProfile)
                 }
             }
         }
@@ -143,9 +144,8 @@ private fun FerretNavDisplay(
                         )
                     }
 
-                    is Profile -> NavEntry(key) {
-                        ProfileScreen(
-                            id = accountId ?: "",
+                    is MyProfile -> NavEntry(key) {
+                        MyProfileScreen(
                             onClickDetail = { data ->
                                 backStack.add(Detail(data))
                             },
@@ -155,8 +155,6 @@ private fun FerretNavDisplay(
                             onClickProfile = { account ->
                                 backStack.add(TimelineProfile(account.id, account))
                             },
-                            onClickBottomAppBar = ::selectTab,
-                            selectedItem = BottomAppBarItem.PROFILE,
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
                     }
