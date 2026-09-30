@@ -6,15 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSerializable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
@@ -26,6 +21,7 @@ import net.lag129.ferret.ui.navigation.*
 import net.lag129.ferret.ui.screen.DetailScreen
 import net.lag129.ferret.ui.screen.MediaScreen
 import net.lag129.ferret.ui.screen.SettingScreen
+import net.lag129.ferret.ui.screen.SplashScreen
 import net.lag129.ferret.ui.screen.login.LoginScreen
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.screen.profile.ProfileScreen
@@ -212,15 +208,3 @@ private fun rememberFerretBackStack(
     rememberSerializable(serializer = NavBackStackSerializer<FerretNavKey>()) {
         NavBackStack(*elements)
     }
-
-@Composable
-private fun SplashScreen(
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier.fillMaxSize()
-    ) {
-        CircularProgressIndicator()
-    }
-}
