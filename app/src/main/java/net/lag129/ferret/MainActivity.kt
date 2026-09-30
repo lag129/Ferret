@@ -97,6 +97,18 @@ private fun FerretNavDisplay(
             }
         }
 
+        fun selectTab(item: BottomAppBarItem) {
+            when (item) {
+                BottomAppBarItem.HOME -> while (backStack.lastOrNull() != Home) {
+                    backStack.removeLastOrNull()
+                }
+
+                BottomAppBarItem.PROFILE -> if (backStack.lastOrNull() != Profile) {
+                    backStack.add(Profile)
+                }
+            }
+        }
+
         NavDisplay(
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
@@ -116,14 +128,7 @@ private fun FerretNavDisplay(
                             onClickSetting = {
                                 backStack.add(Setting)
                             },
-                            onClickBottomAppBar = {
-                                when (it) {
-                                    BottomAppBarItem.HOME -> {}
-                                    BottomAppBarItem.PROFILE -> {
-                                        backStack.add(Profile)
-                                    }
-                                }
-                            },
+                            onClickBottomAppBar = ::selectTab,
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
                     }
@@ -154,15 +159,7 @@ private fun FerretNavDisplay(
                             onClickProfile = { account ->
                                 backStack.add(TimelineProfile(account.id, account))
                             },
-                            onClickBottomAppBar = {
-                                when (it) {
-                                    BottomAppBarItem.HOME -> {
-                                        backStack.add(Home)
-                                    }
-
-                                    BottomAppBarItem.PROFILE -> {}
-                                }
-                            },
+                            onClickBottomAppBar = ::selectTab,
                             selectedItem = BottomAppBarItem.PROFILE,
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
@@ -181,17 +178,7 @@ private fun FerretNavDisplay(
                             onClickProfile = { account ->
                                 backStack.add(TimelineProfile(account.id, account))
                             },
-                            onClickBottomAppBar = {
-                                when (it) {
-                                    BottomAppBarItem.HOME -> {
-                                        backStack.add(Home)
-                                    }
-
-                                    BottomAppBarItem.PROFILE -> {
-                                        backStack.add(Profile)
-                                    }
-                                }
-                            },
+                            onClickBottomAppBar = ::selectTab,
                             selectedItem = BottomAppBarItem.HOME,
                             animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
