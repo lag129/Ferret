@@ -21,7 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.lag129.ferret.model.Account
-import net.lag129.ferret.ui.compose.*
+import net.lag129.ferret.ui.compose.FerretTopAppBar
+import net.lag129.ferret.ui.compose.StatusCard
+import net.lag129.ferret.ui.compose.StatusCardData
+import net.lag129.ferret.ui.compose.toStatusCardData
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -30,7 +33,6 @@ fun SharedTransitionScope.TimelineScreen(
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     onClickSetting: () -> Unit,
-    onClickBottomAppBar: (bottomAppBarItem: BottomAppBarItem) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     timelineViewModel: TimelineViewModel = koinViewModel()
@@ -47,21 +49,14 @@ fun SharedTransitionScope.TimelineScreen(
                 onClickSetting = onClickSetting
             )
         },
-        bottomBar = {
-            FerretBottomAppBar(
-                selected = BottomAppBarItem.HOME,
-                onClick = onClickBottomAppBar,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
     ) { innerPadding ->
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = { timelineViewModel.refreshTimeline() },
-            modifier = Modifier.padding(innerPadding)
+            modifier = modifier.padding(innerPadding)
         ) {
             LazyColumn(
-                modifier = modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 items(
                     items = statuses,

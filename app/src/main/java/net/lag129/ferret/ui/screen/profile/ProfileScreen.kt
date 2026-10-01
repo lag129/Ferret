@@ -20,7 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.lag129.ferret.model.Account
-import net.lag129.ferret.ui.compose.*
+import net.lag129.ferret.ui.compose.ProfileTopBar
+import net.lag129.ferret.ui.compose.StatusCard
+import net.lag129.ferret.ui.compose.StatusCardData
+import net.lag129.ferret.ui.compose.toStatusCardData
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -29,8 +32,6 @@ fun SharedTransitionScope.ProfileScreen(
     onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
-    onClickBottomAppBar: (bottomAppBarItem: BottomAppBarItem) -> Unit,
-    selectedItem: BottomAppBarItem,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel = koinViewModel(),
@@ -42,15 +43,7 @@ fun SharedTransitionScope.ProfileScreen(
         profileViewModel.fetchAccountStatuses(id)
     }
 
-    Scaffold(
-        bottomBar = {
-            FerretBottomAppBar(
-                selected = selectedItem,
-                onClick = onClickBottomAppBar,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    ) { innerPadding ->
+    Scaffold { innerPadding ->
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
