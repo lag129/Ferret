@@ -1,10 +1,6 @@
 package net.lag129.ferret.ui.navigation
 
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -117,7 +113,7 @@ fun FerretNavDisplay(
                             )
                         }
 
-                        is MyProfile -> NavEntry(key, metadata = transition) {
+                        is MyProfile -> NavEntry(key) {
                             MyProfileScreen(
                                 onClickDetail = { data ->
                                     backStack.add(Detail(data))
@@ -194,22 +190,4 @@ private fun rememberFerretBackStack(
 ): NavBackStack<FerretNavKey> =
     rememberSerializable(serializer = NavBackStackSerializer<FerretNavKey>()) {
         NavBackStack(*elements)
-    }
-
-private val transition: Map<String, Any> =
-    NavDisplay.transitionSpec {
-        slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(300)) togetherWith slideOutHorizontally(
-            targetOffsetX = { -it },
-            animationSpec = tween(300)
-        )
-    } + NavDisplay.popTransitionSpec {
-        slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300)) togetherWith slideOutHorizontally(
-            targetOffsetX = { it },
-            animationSpec = tween(300)
-        )
-    } + NavDisplay.predictivePopTransitionSpec {
-        slideInHorizontally(initialOffsetX = { -it }, animationSpec = tween(300)) togetherWith slideOutHorizontally(
-            targetOffsetX = { it },
-            animationSpec = tween(300)
-        )
     }
