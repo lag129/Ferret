@@ -61,10 +61,10 @@ fun FerretNavDisplay(
         Scaffold(
             bottomBar = {
                 when (backStack.lastOrNull()) {
-                    Home, MyProfile -> {
+                    Home, MyProfile, is TimelineProfile -> {
                         FerretBottomAppBar(
-                            selected = when (backStack.lastOrNull()) {
-                                is MyProfile -> BottomAppBarItem.PROFILE
+                            selected = when (backStack.lastOrNull { it == Home || it == MyProfile }) {
+                                MyProfile -> BottomAppBarItem.PROFILE
                                 else -> BottomAppBarItem.HOME
                             },
                             onClick = ::selectTab,
