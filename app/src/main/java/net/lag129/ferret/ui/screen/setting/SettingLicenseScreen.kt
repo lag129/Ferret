@@ -1,26 +1,38 @@
-package net.lag129.ferret.ui.screen
+package net.lag129.ferret.ui.screen.setting
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.mikepenz.aboutlibraries.ui.compose.LibraryDefaults
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
-import net.lag129.ferret.ui.theme.FerretTheme
+import net.lag129.ferret.R
+import net.lag129.ferret.ui.compose.OnBackTopAppBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen(
-    modifier: Modifier = Modifier
+fun SettingLicenseScreen(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val libraries by produceLibraries()
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        topBar = {
+            OnBackTopAppBar(
+                body = stringResource(id = R.string.ferret_setting_source_license),
+                scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                onBack = onBack,
+            )
+        }
+    ) { innerPadding ->
         LibrariesContainer(
             libraries = libraries,
             showAuthor = false,
@@ -30,17 +42,7 @@ fun SettingScreen(
             textStyles = LibraryDefaults.libraryTextStyles(
                 nameTextStyle = TextStyle.Default.copy(fontSize = 16.sp)
             ),
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+            modifier = modifier.padding(innerPadding)
         )
-    }
-}
-
-@Preview
-@Composable
-private fun SettingScreenPreview() {
-    FerretTheme {
-        SettingScreen()
     }
 }

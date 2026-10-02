@@ -22,10 +22,12 @@ import net.lag129.ferret.ui.compose.BottomAppBarItem
 import net.lag129.ferret.ui.compose.FerretBottomAppBar
 import net.lag129.ferret.ui.screen.DetailScreen
 import net.lag129.ferret.ui.screen.MediaScreen
-import net.lag129.ferret.ui.screen.SettingScreen
 import net.lag129.ferret.ui.screen.login.LoginScreen
 import net.lag129.ferret.ui.screen.profile.MyProfileScreen
 import net.lag129.ferret.ui.screen.profile.ProfileScreen
+import net.lag129.ferret.ui.screen.setting.SettingAboutScreen
+import net.lag129.ferret.ui.screen.setting.SettingLicenseScreen
+import net.lag129.ferret.ui.screen.setting.SettingScreen
 import net.lag129.ferret.ui.screen.timeline.TimelineScreen
 import net.lag129.ferret.viewmodel.LoginState
 
@@ -156,7 +158,23 @@ fun FerretNavDisplay(
                         }
 
                         is Setting -> NavEntry(key) {
-                            SettingScreen()
+                            SettingScreen(
+                                onBack = { backStack.removeLastOrNull() },
+                                onClickSettingAbout = { backStack.add(SettingAbout) },
+                                onClickSettingLicense = { backStack.add(SettingLicense) }
+                            )
+                        }
+
+                        is SettingAbout -> NavEntry(key) {
+                            SettingAboutScreen(
+                                onBack = { backStack.removeLastOrNull() },
+                            )
+                        }
+
+                        is SettingLicense -> NavEntry(key) {
+                            SettingLicenseScreen(
+                                onBack = { backStack.removeLastOrNull() },
+                            )
                         }
 
                         is Login -> NavEntry(key) {

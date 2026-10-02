@@ -27,4 +27,10 @@ data object MyProfile : FerretNavKey
 data object Setting : FerretNavKey
 
 @Serializable
+data object SettingAbout : FerretNavKey
+
+@Serializable
+data object SettingLicense : FerretNavKey
+
+@Serializable
 data class TimelineProfile(val id: String, val account: Account?) : FerretNavKey

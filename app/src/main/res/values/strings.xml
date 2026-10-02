@@ -12,4 +12,7 @@
     <string name="following">%s Following</string>
     <string name="follower">%s Follower</string>
     <string name="posts">%s Posts</string>
+    <string name="ferret_setting_source_license">Open source licenses</string>
+    <string name="ferret_setting_about">About Ferret</string>
+    <string name="ferret_setting">Settings</string>
 </resources>

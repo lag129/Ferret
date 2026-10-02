@@ -12,4 +12,7 @@
     <string name="following">%s フォロー中</string>
     <string name="follower">%s フォロワー</string>
     <string name="posts">%s 投稿</string>
+    <string name="ferret_setting_source_license">オープンソースライセンス</string>
+    <string name="ferret_setting_about">Ferretについて</string>
+    <string name="ferret_setting">設定</string>
 </resources>
