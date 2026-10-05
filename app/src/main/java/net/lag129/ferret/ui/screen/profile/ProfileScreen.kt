@@ -5,10 +5,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,31 +13,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.model.Account
-import net.lag129.ferret.ui.compose.ProfileTopBar
-import net.lag129.ferret.ui.compose.StatusCard
-import net.lag129.ferret.ui.compose.StatusCardData
-import net.lag129.ferret.ui.compose.toStatusCardData
+import net.lag129.ferret.ui.compose.*
 import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SharedTransitionScope.ProfileScreen(
     id: String,
+    account: Account,
+    onBack: () -> Unit,
     onClickDetail: (data: StatusCardData) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel = koinViewModel(),
-    account: Account? = null
 ) {
     val statuses by profileViewModel.uiState.collectAsStateWithLifecycle()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     LaunchedEffect(id) {
         profileViewModel.fetchAccountStatuses(id)
     }
 
     Scaffold(
+        topBar = {
+            OnBackTopAppBar(
+                body = account.displayName,
+                emojis = account.emojis.toImmutableList(),
+                onBack = onBack,
+                scrollBehavior = scrollBehavior,
+            )
+        },
         contentWindowInsets = WindowInsets.statusBars
     ) { innerPadding ->
         LazyColumn(
@@ -49,14 +55,8 @@ fun SharedTransitionScope.ProfileScreen(
                 .padding(innerPadding)
         ) {
 
-            if (account == null) {
-                item {
-                    ProfileTopBar(statuses.firstOrNull()?.account ?: return@item)
-                }
-            } else {
-                item {
-                    ProfileTopBar(account)
-                }
+            item {
+                ProfileTopBar(account)
             }
 
             items(
