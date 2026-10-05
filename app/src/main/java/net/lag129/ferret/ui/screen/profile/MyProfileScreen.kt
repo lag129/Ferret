@@ -2,10 +2,7 @@ package net.lag129.ferret.ui.screen.profile
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -42,7 +39,9 @@ fun SharedTransitionScope.MyProfileScreen(
         viewModel.fetchMyStatuses()
     }
 
-    Scaffold { innerPadding ->
+    Scaffold(
+        contentWindowInsets = WindowInsets.statusBars
+    ) { innerPadding ->
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
