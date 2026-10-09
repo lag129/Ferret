@@ -13,10 +13,10 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.compose.FerretTopAppBar
 import net.lag129.ferret.ui.compose.StatusCard
@@ -30,8 +30,8 @@ fun SharedTransitionScope.TimelineScreen(
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     onClickSetting: () -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    animatedVisibilityScope: AnimatedVisibilityScope = LocalNavAnimatedContentScope.current,
     timelineViewModel: TimelineViewModel = koinViewModel()
 ) {
     val statuses by timelineViewModel.uiState.collectAsStateWithLifecycle()
@@ -58,27 +58,22 @@ fun SharedTransitionScope.TimelineScreen(
             ) {
                 items(
                     items = statuses,
-                    key = { status -> status.id }
                 ) { status ->
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        val statusCardData = remember(status) { status.toStatusCardData() }
+                    StatusCard(
+                        data = status.toStatusCardData(),
+                        onClickDetail = onClickDetail,
+                        onClickMedia = onClickMedia,
+                        onClickProfile = onClickProfile,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                    )
 
-                        StatusCard(
-                            data = statusCardData,
-                            onClickDetail = onClickDetail,
-                            onClickMedia = onClickMedia,
-                            onClickProfile = onClickProfile,
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            modifier = Modifier.padding(start = 12.dp, end = 12.dp)
-                        )
-
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            thickness = 0.2.dp
-                        )
-                    }
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        thickness = 0.2.dp
+                    )
                 }
 
                 val isLast = statuses.isEmpty()

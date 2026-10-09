@@ -239,6 +239,7 @@ private fun SharedTransitionScope.MediaImage(
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(media.previewUrl)
+            .placeholderMemoryCacheKey("${media.url}-key")
             .memoryCacheKey("${media.url}-key")
             .build(),
         contentDescription = media.description,

@@ -50,8 +50,8 @@ fun FerretBottomAppBar(
         NavigationBarItem(
             icon = {
                 Icon(
-                    painterResource(R.drawable.user_circle_duotone),
-                    contentDescription = "Profile",
+                    painterResource(R.drawable.magnifying_glass),
+                    contentDescription = "Search",
                     modifier = Modifier.size(28.dp)
                 )
             },

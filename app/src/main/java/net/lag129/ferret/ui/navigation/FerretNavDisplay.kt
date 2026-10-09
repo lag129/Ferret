@@ -66,8 +66,9 @@ fun FerretNavDisplay(
                 when (backStack.lastOrNull()) {
                     Home, MyProfile, Search, is TimelineProfile -> {
                         FerretBottomAppBar(
-                            selected = when (backStack.lastOrNull { it == Home || it == MyProfile }) {
+                            selected = when (backStack.lastOrNull { it == Home || it == MyProfile || it == Search }) {
                                 MyProfile -> BottomAppBarItem.MY_PROFILE
+                                Search -> BottomAppBarItem.SEARCH
                                 else -> BottomAppBarItem.HOME
                             },
                             onClick = ::selectTab,
@@ -97,10 +98,7 @@ fun FerretNavDisplay(
                                 onClickProfile = { account ->
                                     backStack.add(TimelineProfile(account.id, account))
                                 },
-                                onClickSetting = {
-                                    backStack.add(Setting)
-                                },
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                onClickSetting = { backStack.add(Setting) },
                             )
                         }
 
@@ -152,7 +150,18 @@ fun FerretNavDisplay(
                         }
 
                         is Search -> NavEntry(key) {
-                            SearchScreen()
+                            SearchScreen(
+                                onClickDetail = { data ->
+                                    backStack.add(Detail(data))
+                                },
+                                onClickMedia = { mediaUrl, description ->
+                                    backStack.add(Media(mediaUrl, description))
+                                },
+                                onClickProfile = { account ->
+                                    backStack.add(TimelineProfile(account.id, account))
+                                },
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                            )
                         }
 
                         is Media -> NavEntry(key) {
