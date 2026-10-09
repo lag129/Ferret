@@ -1,18 +1,14 @@
 package net.lag129.ferret.repository
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.forms.submitForm
-import io.ktor.client.request.get
-import io.ktor.client.request.parameter
-import io.ktor.http.parameters
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.http.*
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import net.lag129.ferret.model.Account
-import net.lag129.ferret.model.CredentialApplication
-import net.lag129.ferret.model.Status
-import net.lag129.ferret.model.Token
+import net.lag129.ferret.model.*
 import kotlin.coroutines.cancellation.CancellationException
 
 interface MastodonRepository {
@@ -43,6 +39,11 @@ interface MastodonRepository {
     ): Result<List<Status>>
 
     suspend fun getMyCredential(): Result<Account>
+
+    suspend fun search(
+        query: String,
+        limit: Int? = 20,
+    ): Result<Search>
 
     suspend fun registerClientApp(
         clientName: String,
@@ -134,6 +135,20 @@ class MastodonRepositoryImpl(
         return withContext(dispatcher) {
             runSuspendCatching {
                 client.get("/api/v1/accounts/verify_credentials").body()
+            }
+        }
+    }
+
+    override suspend fun search(
+        query: String,
+        limit: Int?
+    ): Result<Search> {
+        return withContext(dispatcher) {
+            runSuspendCatching {
+                client.get("/api/v2/search") {
+                    parameter("q", query)
+                    parameter("limit", limit)
+                }.body()
             }
         }
     }

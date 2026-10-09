@@ -21,6 +21,7 @@ import net.lag129.ferret.ui.screen.MediaScreen
 import net.lag129.ferret.ui.screen.login.LoginScreen
 import net.lag129.ferret.ui.screen.profile.MyProfileScreen
 import net.lag129.ferret.ui.screen.profile.ProfileScreen
+import net.lag129.ferret.ui.screen.search.SearchScreen
 import net.lag129.ferret.ui.screen.setting.SettingAboutScreen
 import net.lag129.ferret.ui.screen.setting.SettingLicenseScreen
 import net.lag129.ferret.ui.screen.setting.SettingScreen
@@ -49,8 +50,12 @@ fun FerretNavDisplay(
                 backStack.removeLastOrNull()
             }
 
-            BottomAppBarItem.PROFILE -> if (backStack.lastOrNull() != MyProfile) {
+            BottomAppBarItem.MY_PROFILE -> if (backStack.lastOrNull() != MyProfile) {
                 backStack.add(MyProfile)
+            }
+
+            BottomAppBarItem.SEARCH -> if (backStack.lastOrNull() != Search) {
+                backStack.add(Search)
             }
         }
     }
@@ -59,10 +64,10 @@ fun FerretNavDisplay(
         Scaffold(
             bottomBar = {
                 when (backStack.lastOrNull()) {
-                    Home, MyProfile, is TimelineProfile -> {
+                    Home, MyProfile, Search, is TimelineProfile -> {
                         FerretBottomAppBar(
                             selected = when (backStack.lastOrNull { it == Home || it == MyProfile }) {
-                                MyProfile -> BottomAppBarItem.PROFILE
+                                MyProfile -> BottomAppBarItem.MY_PROFILE
                                 else -> BottomAppBarItem.HOME
                             },
                             onClick = ::selectTab,
@@ -144,6 +149,10 @@ fun FerretNavDisplay(
                                 },
                                 animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             )
+                        }
+
+                        is Search -> NavEntry(key) {
+                            SearchScreen()
                         }
 
                         is Media -> NavEntry(key) {

@@ -2,17 +2,17 @@ package net.lag129.ferret.utils
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.AnnotatedString.Builder
 import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.sp
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
 
 @Composable
+@ReadOnlyComposable
 fun htmlToAnnotatedString(
     html: String,
     urlSpanStyle: SpanStyle = SpanStyle(
@@ -44,8 +44,7 @@ fun parseHtmlToAnnotatedString(
             when (name.lowercase()) {
                 "p" -> {
                     if (builder.length > 0) {
-                        builder.pushStyle(ParagraphStyle(lineHeight = 16.sp))
-                        builder.pop()
+                        builder.append("\n")
                     }
                 }
 

@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import net.lag129.ferret.R
 
 enum class BottomAppBarItem {
-    HOME, PROFILE
+    HOME, MY_PROFILE, SEARCH
 }
 
 @Composable
@@ -56,10 +56,26 @@ fun FerretBottomAppBar(
                 )
             },
             label = { },
-            selected = selected == BottomAppBarItem.PROFILE,
+            selected = selected == BottomAppBarItem.SEARCH,
             onClick = {
                 haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                onClick(BottomAppBarItem.PROFILE)
+                onClick(BottomAppBarItem.SEARCH)
+            }
+        )
+
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    painterResource(R.drawable.user_circle_duotone),
+                    contentDescription = "Profile",
+                    modifier = Modifier.size(28.dp)
+                )
+            },
+            label = { },
+            selected = selected == BottomAppBarItem.MY_PROFILE,
+            onClick = {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                onClick(BottomAppBarItem.MY_PROFILE)
             }
         )
     }
