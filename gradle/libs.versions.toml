@@ -29,6 +29,7 @@ napier = "2.7.1"
 navigation3 = "1.2.0"
 profileinstaller = "1.4.1"
 room = "2.8.5"
+zoomable = "2.16.0"
 
 [libraries]
 aboutlibraries-compose-core = { module = "com.mikepenz:aboutlibraries-compose-core", version.ref = "aboutLibraries" }
@@ -79,6 +80,7 @@ ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx
 leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
+zoomable = { module = "net.engawapg.lib:zoomable", version.ref = "zoomable" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

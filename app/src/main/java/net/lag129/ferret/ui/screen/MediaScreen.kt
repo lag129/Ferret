@@ -15,6 +15,8 @@ import coil3.compose.AsyncImage
 import coil3.imageLoader
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import net.engawapg.lib.zoomable.rememberZoomState
+import net.engawapg.lib.zoomable.zoomable
 
 @Composable
 fun SharedTransitionScope.MediaScreen(
@@ -23,6 +25,8 @@ fun SharedTransitionScope.MediaScreen(
     modifier: Modifier = Modifier,
     description: String? = null
 ) {
+    val zoomState = rememberZoomState()
+
     Scaffold { innerPadding ->
         Box(
             modifier = modifier
@@ -39,8 +43,12 @@ fun SharedTransitionScope.MediaScreen(
                 imageLoader = LocalContext.current.imageLoader,
                 contentDescription = description ?: "",
                 contentScale = ContentScale.Fit,
+                onSuccess = { state ->
+                    zoomState.setContentSize(state.painter.intrinsicSize)
+                },
                 modifier = Modifier
                     .fillMaxSize()
+                    .zoomable(zoomState)
                     .sharedElement(
                         sharedContentState = rememberSharedContentState(key = mediaUrl),
                         animatedVisibilityScope = animatedVisibilityScope,

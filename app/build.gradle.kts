@@ -141,6 +141,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    // Zoomable
+    implementation(libs.zoomable)
+
     // Compose Lint
     lintChecks(libs.compose.lint.checks)
 
