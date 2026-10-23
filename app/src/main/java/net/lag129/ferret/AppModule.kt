@@ -16,10 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatusDao
 import net.lag129.ferret.db.RoomDatabase
-import net.lag129.ferret.repository.MastodonRepository
-import net.lag129.ferret.repository.MastodonRepositoryImpl
-import net.lag129.ferret.repository.PreferencesRepository
-import net.lag129.ferret.repository.PreferencesRepositoryImpl
+import net.lag129.ferret.repository.*
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.screen.profile.MyProfileViewModel
 import net.lag129.ferret.ui.screen.profile.ProfileViewModel
@@ -74,6 +71,12 @@ val appModule = module {
     single<PreferencesRepository> { PreferencesRepositoryImpl(get()) }
 
     single<MastodonRepository> { MastodonRepositoryImpl(get()) }
+
+    single<MisskeyRepository> { MisskeyRepositoryImpl(get()) }
+
+    single<TimelineRepository> { MastodonTimelineRepositoryImpl(get()) }
+
+    single<TimelineRepository> { MisskeyTimelineRepositoryImpl(get()) }
 
     viewModel { TimelineViewModel(get(), get()) }
 

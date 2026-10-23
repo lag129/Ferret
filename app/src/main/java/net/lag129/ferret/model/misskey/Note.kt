@@ -3,12 +3,16 @@ package net.lag129.ferret.model.misskey
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.lag129.ferret.ui.model.Post
 
 @Immutable
 @Serializable
 data class Note(
     @SerialName("createdAt")
     val createdAt: String,
+
+    @SerialName("cw")
+    val cw: String? = null,
 
     @SerialName("id")
     val id: String,
@@ -23,7 +27,10 @@ data class Note(
     val reactionEmojis: Map<String, String>,
 
     @SerialName("reactions")
-    val reactions: Map<String, String>,
+    val reactions: Map<String, Int>,
+
+    @SerialName("renote")
+    val renote: Note? = null,
 
     @SerialName("renoteCount")
     val renoteCount: Int,
@@ -69,5 +76,25 @@ data class Note(
 
         @SerialName("specified")
         SPECIFIED,
+    }
+
+    fun toPost(): Post {
+        val target = if (text == null && renote != null) renote else this
+        return Post(
+            id = id,
+            displayName = target.user.name ?: target.user.username,
+            userName = target.user.host?.let { "${target.user.username}@$it" } ?: target.user.username,
+            avatarUrl = target.user.avatarUrl,
+            createdAt = target.createdAt,
+            content = target.text.orEmpty(),
+            displayNameEmojis = target.user.emojis.map { (shortcode, url) ->
+                Post.Emoji(
+                    shortcode = shortcode,
+                    url = url
+                )
+            },
+            sensitive = target.cw != null,
+            spoilerText = target.cw.orEmpty(),
+        )
     }
 }

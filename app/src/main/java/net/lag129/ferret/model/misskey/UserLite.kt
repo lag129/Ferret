@@ -33,12 +33,6 @@ data class UserLite(
 
     @SerialName("username")
     val username: String,
-
-    @SerialName("userId")
-    val userId: String,
-
-    @SerialName("visibility")
-    val visibility: Visibility,
 ) {
     @Serializable
     data class AvatarDecoration(
@@ -49,16 +43,16 @@ data class UserLite(
         val url: String,
 
         @SerialName("angle")
-        val angle: Int,
+        val angle: Float? = null,
 
         @SerialName("flipH")
-        val flipH: Boolean,
+        val flipH: Boolean? = null,
 
         @SerialName("offsetX")
-        val offsetX: Int,
+        val offsetX: Float? = null,
 
         @SerialName("offsetY")
-        val offsetY: Int,
+        val offsetY: Float? = null,
     )
 
     enum class OnlineStatus {
@@ -73,19 +67,5 @@ data class UserLite(
 
         @SerialName("offline")
         OFFLINE,
-    }
-
-    enum class Visibility {
-        @SerialName("public")
-        PUBLIC,
-
-        @SerialName("home")
-        HOME,
-
-        @SerialName("followers")
-        FOLLOWERS,
-
-        @SerialName("specified")
-        SPECIFIED,
     }
 }
