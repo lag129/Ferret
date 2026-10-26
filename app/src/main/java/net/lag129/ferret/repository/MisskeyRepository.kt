@@ -19,6 +19,18 @@ interface MisskeyRepository {
         sinceId: String? = null,
         limit: Int? = 20
     ): Result<List<Note>>
+
+    suspend fun getLocalTimeline(
+        maxId: String? = null,
+        sinceId: String? = null,
+        limit: Int? = 20
+    ): Result<List<Note>>
+
+    suspend fun getFederatedTimeline(
+        maxId: String? = null,
+        sinceId: String? = null,
+        limit: Int? = 20
+    ): Result<List<Note>>
 }
 
 class MisskeyRepositoryImpl(
@@ -34,6 +46,44 @@ class MisskeyRepositoryImpl(
         return withContext(dispatcher) {
             runSuspendCatching {
                 client.post("/api/notes/timeline") {
+                    contentType(ContentType.Application.Json)
+                    setBody(buildJsonObject {
+                        maxId?.let { put("untilId", it) }
+                        sinceId?.let { put("sinceId", it) }
+                        limit?.let { put("limit", it) }
+                    })
+                }.body()
+            }
+        }
+    }
+
+    override suspend fun getLocalTimeline(
+        maxId: String?,
+        sinceId: String?,
+        limit: Int?
+    ): Result<List<Note>> {
+        return withContext(dispatcher) {
+            runSuspendCatching {
+                client.post("/api/notes/local-timeline") {
+                    contentType(ContentType.Application.Json)
+                    setBody(buildJsonObject {
+                        maxId?.let { put("untilId", it) }
+                        sinceId?.let { put("sinceId", it) }
+                        limit?.let { put("limit", it) }
+                    })
+                }.body()
+            }
+        }
+    }
+
+    override suspend fun getFederatedTimeline(
+        maxId: String?,
+        sinceId: String?,
+        limit: Int?
+    ): Result<List<Note>> {
+        return withContext(dispatcher) {
+            runSuspendCatching {
+                client.post("/api/notes/global-timeline") {
                     contentType(ContentType.Application.Json)
                     setBody(buildJsonObject {
                         maxId?.let { put("untilId", it) }
