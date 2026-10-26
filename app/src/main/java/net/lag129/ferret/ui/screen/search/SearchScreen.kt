@@ -13,14 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import net.lag129.ferret.model.Account
-import net.lag129.ferret.ui.compose.StatusCard
-import net.lag129.ferret.ui.compose.StatusCardData
-import net.lag129.ferret.ui.compose.toStatusCardData
+import net.lag129.ferret.ui.compose.PostCard
+import net.lag129.ferret.ui.model.Post
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.SearchScreen(
-    onClickDetail: (data: StatusCardData) -> Unit,
+    onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -60,8 +59,8 @@ fun SharedTransitionScope.SearchScreen(
                     items(
                         items = it.statuses,
                     ) { status ->
-                        StatusCard(
-                            data = status.toStatusCardData(),
+                        PostCard(
+                            data = status.toPost(),
                             onClickDetail = onClickDetail,
                             onClickMedia = onClickMedia,
                             onClickProfile = onClickProfile,

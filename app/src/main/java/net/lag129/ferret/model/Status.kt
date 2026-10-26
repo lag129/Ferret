@@ -105,7 +105,7 @@ data class Status(
     fun toPost(): Post {
         val target = this.reblog ?: this
         return Post(
-            id = target.account.id,
+            id = id,
             displayName = target.account.displayName,
             userName = target.account.acct,
             avatarUrl = target.account.avatar,
@@ -121,9 +121,6 @@ data class Status(
             reactions = target.emojiReactions.orEmpty()
         )
     }
-
-    private fun CustomEmoji.toPostEmoji(): Post.Emoji =
-        Post.Emoji(shortcode = shortcode, url = url)
 }
 
 @Serializable

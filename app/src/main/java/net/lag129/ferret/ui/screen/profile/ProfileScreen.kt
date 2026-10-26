@@ -9,22 +9,23 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.model.Account
-import net.lag129.ferret.ui.compose.*
+import net.lag129.ferret.model.toPostEmoji
+import net.lag129.ferret.ui.compose.OnBackTopAppBar
+import net.lag129.ferret.ui.compose.PostCard
+import net.lag129.ferret.ui.compose.ProfileTopBar
+import net.lag129.ferret.ui.model.Post
 import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SharedTransitionScope.ProfileScreen(
     id: String,
     account: Account,
     onBack: () -> Unit,
-    onClickDetail: (data: StatusCardData) -> Unit,
+    onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -42,7 +43,7 @@ fun SharedTransitionScope.ProfileScreen(
         topBar = {
             OnBackTopAppBar(
                 body = account.displayName,
-                emojis = account.emojis.toImmutableList(),
+                emojis = account.emojis.map { it.toPostEmoji() },
                 onBack = onBack,
                 scrollBehavior = scrollBehavior,
             )
@@ -66,10 +67,8 @@ fun SharedTransitionScope.ProfileScreen(
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val statusCardData = remember(status) { status.toStatusCardData() }
-
-                    StatusCard(
-                        data = statusCardData,
+                    PostCard(
+                        data = status,
                         onClickDetail = onClickDetail,
                         onClickMedia = onClickMedia,
                         onClickProfile = onClickProfile,
@@ -88,10 +87,9 @@ fun SharedTransitionScope.ProfileScreen(
 
             if (isLast.not()) {
                 item {
-                    val accountId = statuses.last().account.id
                     val maxId = statuses.last().id
                     LoadingIndicator(onFetchNext = {
-                        profileViewModel.fetchNextAccountStatuses(accountId, maxId)
+                        profileViewModel.fetchNextAccountStatuses(id, maxId)
                     })
                 }
             }

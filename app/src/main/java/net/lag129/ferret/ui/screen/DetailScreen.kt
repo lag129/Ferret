@@ -23,6 +23,7 @@ import coil3.compose.AsyncImage
 import net.lag129.ferret.R
 import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.compose.*
+import net.lag129.ferret.ui.model.Post
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 import kotlin.time.Instant
@@ -30,7 +31,7 @@ import kotlin.time.Instant
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SharedTransitionScope.DetailScreen(
-    data: StatusCardData,
+    data: Post,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     onBack: () -> Unit,
@@ -61,7 +62,7 @@ fun SharedTransitionScope.DetailScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onClickProfile(data.account) }
+                    .clickable { data.account?.let(onClickProfile) }
             ) {
                 AsyncImage(
                     model = data.avatarUrl,

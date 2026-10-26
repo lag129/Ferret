@@ -3,9 +3,6 @@ package net.lag129.ferret.ui.screen.timeline
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,22 +12,22 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatus
 import net.lag129.ferret.db.CachedStatusDao
-import net.lag129.ferret.model.Status
-import net.lag129.ferret.repository.MastodonRepository
+import net.lag129.ferret.repository.TimelineRepository
+import net.lag129.ferret.ui.model.Post
 
 enum class Timeline {
     HOME, LOCAL, FEDERATED
 }
 
 class TimelineViewModel(
-    private val mastodonRepository: MastodonRepository,
+    private val timelineRepository: TimelineRepository,
     private val cachedStatusDao: CachedStatusDao
 ) : ViewModel() {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    private val _uiState = MutableStateFlow(persistentListOf<Status>())
-    val uiState: StateFlow<ImmutableList<Status>> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(listOf<Post>())
+    val uiState: StateFlow<List<Post>> = _uiState.asStateFlow()
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
@@ -47,7 +44,7 @@ class TimelineViewModel(
             val statuses = fetchTimelineByType()
 
             statuses.onSuccess { statuses ->
-                _uiState.value = statuses.toPersistentList()
+                _uiState.value = statuses
                 saveToCache(_currentTimeline.value, statuses)
             }.onFailure { error ->
                 Napier.e("Failed to fetch timeline", error)
@@ -60,7 +57,7 @@ class TimelineViewModel(
             val statuses = fetchTimelineByType(maxId)
 
             statuses.onSuccess { statuses ->
-                _uiState.value = _uiState.value.addAll(statuses)
+                _uiState.value += statuses
                 saveToCache(_currentTimeline.value, _uiState.value)
             }.onFailure { error ->
                 Napier.e("Failed to fetch next home timeline", error)
@@ -78,7 +75,7 @@ class TimelineViewModel(
             statuses.onSuccess { statuses ->
                 val currentFirst = _uiState.value.firstOrNull()?.id
                 val newStatuses = statuses.takeWhile { it.id != currentFirst }
-                _uiState.value = newStatuses.toPersistentList().addAll(_uiState.value)
+                _uiState.value = newStatuses + _uiState.value
                 saveToCache(_currentTimeline.value, _uiState.value)
             }.onFailure { error ->
                 Napier.e("Failed to refresh home timeline", error)
@@ -91,12 +88,12 @@ class TimelineViewModel(
         if (_currentTimeline.value == timeline) return
 
         _currentTimeline.value = timeline
-        _uiState.value = persistentListOf()
+        _uiState.value = emptyList()
 
         viewModelScope.launch {
             val cached = cachedStatusDao.getCachedStatus(timeline.name)
             if (cached.isNotEmpty()) {
-                _uiState.value = restoreFromCache(cached).toPersistentList()
+                _uiState.value = restoreFromCache(cached)
             } else {
                 fetchTimeline()
             }
@@ -105,15 +102,15 @@ class TimelineViewModel(
 
     private suspend fun fetchTimelineByType(
         maxId: String? = null
-    ): Result<List<Status>> {
+    ): Result<List<Post>> {
         return when (_currentTimeline.value) {
-            Timeline.HOME -> mastodonRepository.getHomeTimeline(maxId)
-            Timeline.LOCAL -> mastodonRepository.getLocalTimeline(maxId)
-            Timeline.FEDERATED -> mastodonRepository.getFederatedTimeline(maxId)
+            Timeline.HOME -> timelineRepository.getHomeTimeline(maxId)
+            Timeline.LOCAL -> timelineRepository.getLocalTimeline(maxId)
+            Timeline.FEDERATED -> timelineRepository.getFederatedTimeline(maxId)
         }
     }
 
-    private suspend fun saveToCache(timeline: Timeline, statuses: List<Status>) {
+    private suspend fun saveToCache(timeline: Timeline, statuses: List<Post>) {
         val cachedStatuses = withContext(Dispatchers.Default) {
             statuses.mapIndexed { index, status ->
                 CachedStatus(
@@ -129,7 +126,7 @@ class TimelineViewModel(
         cachedStatusDao.insertAll(cachedStatuses)
     }
 
-    private suspend fun restoreFromCache(cached: List<CachedStatus>): List<Status> {
-        return withContext(Dispatchers.Default) { cached.map { json.decodeFromString<Status>(it.statusJson) } }
+    private suspend fun restoreFromCache(cached: List<CachedStatus>): List<Post> {
+        return withContext(Dispatchers.Default) { cached.map { json.decodeFromString<Post>(it.statusJson) } }
     }
 }

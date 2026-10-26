@@ -2,7 +2,11 @@ package net.lag129.ferret.ui.screen.timeline
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -19,14 +23,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.compose.FerretTopAppBar
-import net.lag129.ferret.ui.compose.StatusCard
-import net.lag129.ferret.ui.compose.StatusCardData
-import net.lag129.ferret.ui.compose.toStatusCardData
+import net.lag129.ferret.ui.compose.PostCard
+import net.lag129.ferret.ui.model.Post
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.TimelineScreen(
-    onClickDetail: (data: StatusCardData) -> Unit,
+    onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     onClickSetting: () -> Unit,
@@ -34,7 +37,7 @@ fun SharedTransitionScope.TimelineScreen(
     animatedVisibilityScope: AnimatedVisibilityScope = LocalNavAnimatedContentScope.current,
     timelineViewModel: TimelineViewModel = koinViewModel()
 ) {
-    val statuses by timelineViewModel.uiState.collectAsStateWithLifecycle()
+    val posts by timelineViewModel.uiState.collectAsStateWithLifecycle()
     val currentTimeline by timelineViewModel.currentTimeline.collectAsStateWithLifecycle()
     val isRefreshing by timelineViewModel.isRefreshing.collectAsStateWithLifecycle()
 
@@ -57,10 +60,10 @@ fun SharedTransitionScope.TimelineScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(
-                    items = statuses,
-                ) { status ->
-                    StatusCard(
-                        data = status.toStatusCardData(),
+                    items = posts,
+                ) { post ->
+                    PostCard(
+                        data = post,
                         onClickDetail = onClickDetail,
                         onClickMedia = onClickMedia,
                         onClickProfile = onClickProfile,
@@ -76,11 +79,11 @@ fun SharedTransitionScope.TimelineScreen(
                     )
                 }
 
-                val isLast = statuses.isEmpty()
+                val isLast = posts.isEmpty()
 
                 if (isLast.not()) {
                     item {
-                        val maxId = statuses.last().id
+                        val maxId = posts.last().id
                         LoadingIndicator(onFetchNext = {
                             timelineViewModel.fetchNextTimeline(maxId)
                         })

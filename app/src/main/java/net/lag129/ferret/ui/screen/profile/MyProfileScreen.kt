@@ -12,20 +12,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.lag129.ferret.model.Account
+import net.lag129.ferret.ui.compose.PostCard
 import net.lag129.ferret.ui.compose.ProfileTopBar
-import net.lag129.ferret.ui.compose.StatusCard
-import net.lag129.ferret.ui.compose.StatusCardData
-import net.lag129.ferret.ui.compose.toStatusCardData
+import net.lag129.ferret.ui.model.Post
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.MyProfileScreen(
-    onClickDetail: (data: StatusCardData) -> Unit,
+    onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -58,10 +56,8 @@ fun SharedTransitionScope.MyProfileScreen(
                 Column(
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    val statusCardData = remember(status) { status.toStatusCardData() }
-
-                    StatusCard(
-                        data = statusCardData,
+                    PostCard(
+                        data = status,
                         onClickDetail = onClickDetail,
                         onClickMedia = onClickMedia,
                         onClickProfile = onClickProfile,
