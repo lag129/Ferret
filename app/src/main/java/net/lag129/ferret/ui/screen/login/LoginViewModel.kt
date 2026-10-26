@@ -3,11 +3,11 @@ package net.lag129.ferret.ui.screen.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,56 +15,63 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.repository.MastodonRepositoryImpl
+import net.lag129.ferret.repository.MisskeyRepositoryImpl
+import net.lag129.ferret.repository.NodeInfoRepositoryImpl
+import net.lag129.ferret.repository.Platform
 import net.lag129.ferret.repository.PreferencesRepository
+import kotlin.uuid.Uuid
+
+sealed class AuthState {
+    object Idle : AuthState()
+    object Loading : AuthState()
+    data class Redirect(val oauthUrl: String) : AuthState()
+    object Success : AuthState()
+    data class Error(val message: String) : AuthState()
+}
 
 class LoginViewModel(
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
-
-    sealed class AuthState {
-        object Idle : AuthState()
-        object Loading : AuthState()
-        data class Redirect(val oauthUrl: String) : AuthState()
-        object Success : AuthState()
-        data class Error(val message: String) : AuthState()
-    }
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
-    private var clientId: String = ""
-    private var clientSecret: String = ""
-    private var currentServerName: String = ""
-
-    fun registerClientApp(serverName: String) {
-        currentServerName = serverName
+    fun login(serverName: String) {
         _authState.value = AuthState.Loading
-
-        val client = createHttpClient(serverName)
-        val repository = MastodonRepositoryImpl(client)
+        val nodeInfoRepository = NodeInfoRepositoryImpl(createHttpClient(serverName))
 
         viewModelScope.launch {
-            val result = repository.registerClientApp(
+            nodeInfoRepository.getSoftwareName()
+                .onSuccess {
+                    when (it) {
+                        "mastodon" -> registerClientApp(serverName)
+                        "misskey" -> registerMisskeyApp(serverName)
+                        else -> _authState.value = AuthState.Error("Unsupported server")
+                    }
+                }.onFailure { error ->
+                    _authState.value = AuthState.Error(error.message ?: "")
+                    Napier.e("Failed to fetch server name", error)
+                }
+        }
+    }
+
+    fun registerClientApp(serverName: String) {
+        val client = createHttpClient(serverName)
+        val mastodonRepository = MastodonRepositoryImpl(client)
+
+        viewModelScope.launch {
+            mastodonRepository.registerClientApp(
                 clientName = CLIENT_NAME,
                 redirectUris = REDIRECT_URI,
                 scopes = SCOPES,
-            )
-            result.onSuccess { credentialApp ->
-                clientId = credentialApp.clientId
-                clientSecret = credentialApp.clientSecret
-
+            ).onSuccess { credentialApp ->
                 preferencesRepository.saveTemporaryAuthData(
                     serverName = serverName,
-                    clientId = clientId,
-                    clientSecret = clientSecret
+                    clientId = credentialApp.clientId,
+                    clientSecret = credentialApp.clientSecret,
                 )
-
-                val oauthUrl = buildOAuthUrl(
-                    serverName = serverName,
-                    clientId = clientId
-                )
-
-                _authState.value = AuthState.Redirect(oauthUrl)
+                _authState.value =
+                    AuthState.Redirect(buildOAuthUrl(serverName, credentialApp.clientId))
             }.onFailure { error ->
                 _authState.value = AuthState.Error(error.message ?: "")
                 Napier.e("Failed to register client app", error)
@@ -72,34 +79,57 @@ class LoginViewModel(
         }
     }
 
+    private suspend fun registerMisskeyApp(serverName: String) {
+        val session = Uuid.random().toString()
+        preferencesRepository.saveMiAuthSession(serverName, session)
+        _authState.value = AuthState.Redirect(buildMiAuthUrl(serverName, session))
+    }
+
     fun obtainAccessToken(code: String) {
         viewModelScope.launch {
-            if (currentServerName.isEmpty() || clientId.isEmpty() || clientSecret.isEmpty()) {
-                val tempAuthData = preferencesRepository.temporaryAuthData.first()
-                currentServerName = tempAuthData?.serverName ?: ""
-                clientId = tempAuthData?.clientId ?: ""
-                clientSecret = tempAuthData?.clientSecret ?: ""
-            }
+            val tempAuthData = preferencesRepository.temporaryAuthData.first() ?: return@launch
+            val client = createHttpClient(tempAuthData.serverName)
+            val mastodonRepository = MastodonRepositoryImpl(client)
 
-            val client = createHttpClient(currentServerName)
-            val repository = MastodonRepositoryImpl(client)
-
-            val result = repository.obtainAccessToken(
+            mastodonRepository.obtainAccessToken(
                 code = code,
-                clientId = clientId,
-                clientSecret = clientSecret,
+                clientId = tempAuthData.clientId,
+                clientSecret = tempAuthData.clientSecret,
                 redirectUri = REDIRECT_URI
-            )
-            result.onSuccess { token ->
-                preferencesRepository.saveServerName(currentServerName)
+            ).onSuccess { token ->
                 preferencesRepository.saveBearerToken(token.accessToken)
+                preferencesRepository.savePlatform(Platform.MASTODON)
                 preferencesRepository.clearTemporaryAuthData()
                 _authState.value = AuthState.Success
-                Napier.d("Obtained access token: $token")
             }.onFailure { error ->
                 _authState.value = AuthState.Error(error.message ?: "")
                 Napier.e("Failed to obtain access token", error)
             }
+        }
+    }
+
+    fun obtainMiAuthToken() {
+        viewModelScope.launch {
+            val serverName = preferencesRepository.serverName.first()
+            val session = preferencesRepository.miAuthSession.first() ?: return@launch
+            val client = createHttpClient(serverName)
+            val misskeyRepository = MisskeyRepositoryImpl(client)
+
+            misskeyRepository.checkMiAuth(session)
+                .onSuccess { miAuth ->
+                    val token = miAuth.token
+                    if (!miAuth.ok || token == null) {
+                        _authState.value = AuthState.Error("Failed to obtain access token")
+                        return@onSuccess
+                    }
+                    preferencesRepository.saveBearerToken(token)
+                    preferencesRepository.savePlatform(Platform.MISSKEY)
+                    preferencesRepository.clearTemporaryAuthData()
+                    _authState.value = AuthState.Success
+                }.onFailure { error ->
+                    _authState.value = AuthState.Error(error.message ?: "")
+                    Napier.e("Failed to obtain access token", error)
+                }
         }
     }
 
@@ -117,15 +147,27 @@ class LoginViewModel(
         clientId: String
     ): String {
         return "https://$serverName/oauth/authorize" +
-                "?client_id=${clientId}" +
-                "&redirect_uri=${REDIRECT_URI}" +
-                "&response_type=code" +
-                "&scope=${SCOPES}"
+            "?client_id=${clientId}" +
+            "&redirect_uri=${REDIRECT_URI}" +
+            "&response_type=code" +
+            "&scope=${SCOPES}"
+    }
+
+    private fun buildMiAuthUrl(
+        serverName: String,
+        session: String
+    ): String {
+        return "https://$serverName/miauth/$session" +
+            "?name=${CLIENT_NAME}" +
+            "&callback=${MI_AUTH_CALLBACK}" +
+            "&permission=${MI_AUTH_PERMISSION}"
     }
 
     companion object {
         const val CLIENT_NAME = "Ferret"
         const val REDIRECT_URI = "ferret://oauth"
         const val SCOPES = "read write follow"
+        const val MI_AUTH_CALLBACK = "ferret://miauth"
+        const val MI_AUTH_PERMISSION = "read:account"
     }
 }

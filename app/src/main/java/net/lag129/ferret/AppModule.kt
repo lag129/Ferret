@@ -2,21 +2,32 @@ package net.lag129.ferret
 
 import android.content.Context
 import androidx.room.Room
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.api.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
-import io.ktor.client.plugins.cache.*
-import io.ktor.client.plugins.cache.storage.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.cache.HttpCache
+import io.ktor.client.plugins.cache.storage.FileStorage
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.URLProtocol
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatusDao
 import net.lag129.ferret.db.RoomDatabase
-import net.lag129.ferret.repository.*
+import net.lag129.ferret.repository.MastodonRepository
+import net.lag129.ferret.repository.MastodonRepositoryImpl
+import net.lag129.ferret.repository.MastodonTimelineRepositoryImpl
+import net.lag129.ferret.repository.MisskeyRepository
+import net.lag129.ferret.repository.MisskeyRepositoryImpl
+import net.lag129.ferret.repository.MisskeyTimelineRepositoryImpl
+import net.lag129.ferret.repository.Platform
+import net.lag129.ferret.repository.PreferencesRepository
+import net.lag129.ferret.repository.PreferencesRepositoryImpl
+import net.lag129.ferret.repository.TimelineRepository
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.screen.profile.MyProfileViewModel
 import net.lag129.ferret.ui.screen.profile.ProfileViewModel
@@ -76,9 +87,12 @@ val appModule = module {
 
     single<MisskeyRepository> { MisskeyRepositoryImpl(get()) }
 
-    single<TimelineRepository> { MastodonTimelineRepositoryImpl(get()) }
-
-//    single<TimelineRepository> { MisskeyTimelineRepositoryImpl(get()) }
+    factory<TimelineRepository> {
+        when (runBlocking { get<PreferencesRepository>().platform.first() }) {
+            Platform.MASTODON -> MastodonTimelineRepositoryImpl(get())
+            Platform.MISSKEY -> MisskeyTimelineRepositoryImpl(get())
+        }
+    }
 
     viewModel { TimelineViewModel(get(), get()) }
 

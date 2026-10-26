@@ -2,9 +2,22 @@ package net.lag129.ferret.ui.screen.login
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,9 +30,9 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    authViewModel: LoginViewModel = koinViewModel()
 ) {
-    val authViewModel: LoginViewModel = koinViewModel()
     val context = LocalContext.current
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
@@ -27,16 +40,16 @@ fun LoginScreen(
 
     LaunchedEffect(authState) {
         when (authState) {
-            is LoginViewModel.AuthState.Redirect -> {
-                val oauthUrl = (authState as LoginViewModel.AuthState.Redirect).oauthUrl
+            is AuthState.Redirect -> {
+                val oauthUrl = (authState as AuthState.Redirect).oauthUrl
                 val intent = Intent(Intent.ACTION_VIEW, oauthUrl.toUri())
                 context.startActivity(intent)
             }
 
-            is LoginViewModel.AuthState.Success -> {}
+            is AuthState.Success -> {}
 
-            is LoginViewModel.AuthState.Error -> {
-                val message = (authState as LoginViewModel.AuthState.Error).message
+            is AuthState.Error -> {
+                val message = (authState as AuthState.Error).message
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
 
@@ -57,21 +70,21 @@ fun LoginScreen(
                 onValueChange = { serverName = it },
                 label = { Text(stringResource(R.string.server_name)) },
                 singleLine = true,
-                enabled = authState !is LoginViewModel.AuthState.Loading,
+                enabled = authState !is AuthState.Loading,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             when (authState) {
-                is LoginViewModel.AuthState.Loading -> {
+                is AuthState.Loading -> {
                     CircularProgressIndicator()
                 }
 
-                is LoginViewModel.AuthState.Error -> {}
+                is AuthState.Error -> {}
                 else -> {
                     Button(
-                        onClick = { authViewModel.registerClientApp(serverName) },
+                        onClick = { authViewModel.login(serverName) },
                         modifier = Modifier
                     ) {
                         Text(stringResource(R.string.login_button))

@@ -1,14 +1,17 @@
 package net.lag129.ferret.repository
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import net.lag129.ferret.model.misskey.MiAuth
 import net.lag129.ferret.model.misskey.Note
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -31,6 +34,8 @@ interface MisskeyRepository {
         sinceId: String? = null,
         limit: Int? = 20
     ): Result<List<Note>>
+
+    suspend fun checkMiAuth(session: String): Result<MiAuth>
 }
 
 class MisskeyRepositoryImpl(
@@ -90,6 +95,17 @@ class MisskeyRepositoryImpl(
                         sinceId?.let { put("sinceId", it) }
                         limit?.let { put("limit", it) }
                     })
+                }.body()
+            }
+        }
+    }
+
+    override suspend fun checkMiAuth(session: String): Result<MiAuth> {
+        return withContext(dispatcher) {
+            runSuspendCatching {
+                client.post("/api/miauth/$session/check") {
+                    contentType(ContentType.Application.Json)
+                    setBody(buildJsonObject { })
                 }.body()
             }
         }
