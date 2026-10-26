@@ -63,7 +63,9 @@ val appModule = module {
     }
 
     single<RoomDatabase> {
-        Room.databaseBuilder(get(), RoomDatabase::class.java, "ferret_db").build()
+        Room.databaseBuilder(get(), RoomDatabase::class.java, "ferret_db")
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     single<CachedStatusDao> { get<RoomDatabase>().cachedStatusDao() }
@@ -76,7 +78,7 @@ val appModule = module {
 
     single<TimelineRepository> { MastodonTimelineRepositoryImpl(get()) }
 
-    single<TimelineRepository> { MisskeyTimelineRepositoryImpl(get()) }
+//    single<TimelineRepository> { MisskeyTimelineRepositoryImpl(get()) }
 
     viewModel { TimelineViewModel(get(), get()) }
 
