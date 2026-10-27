@@ -19,12 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import kotlinx.collections.immutable.ImmutableList
 import net.lag129.ferret.model.Reaction
 
 @Composable
 fun ReactionBar(
-    reactions: ImmutableList<Reaction>,
+    reactions: List<Reaction>,
     modifier: Modifier = Modifier,
 ) {
 

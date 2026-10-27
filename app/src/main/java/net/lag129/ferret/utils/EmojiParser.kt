@@ -11,13 +11,12 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import kotlinx.collections.immutable.ImmutableList
-import net.lag129.ferret.model.CustomEmoji
+import net.lag129.ferret.ui.model.Post
 
 @Composable
 fun emojisToAnnotatedString(
     annotatedString: AnnotatedString,
-    emojis: ImmutableList<CustomEmoji>
+    emojis: List<Post.Emoji>
 ): AnnotatedString {
 
     return parseEmojisToAnnotatedString(annotatedString, emojis)
@@ -25,7 +24,7 @@ fun emojisToAnnotatedString(
 
 fun parseEmojisToAnnotatedString(
     annotatedString: AnnotatedString,
-    emojis: List<CustomEmoji>
+    emojis: List<Post.Emoji>
 ): AnnotatedString {
 
     val plainText = annotatedString.text
@@ -65,7 +64,7 @@ fun parseEmojisToAnnotatedString(
 
 @Composable
 fun createEmojiInlineContent(
-    emojis: ImmutableList<CustomEmoji>,
+    emojis: List<Post.Emoji>,
     size: Int = 20
 ): Map<String, InlineTextContent> {
 

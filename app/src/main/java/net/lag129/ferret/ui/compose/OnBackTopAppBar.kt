@@ -7,9 +7,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.ImmutableList
 import net.lag129.ferret.R
-import net.lag129.ferret.model.CustomEmoji
+import net.lag129.ferret.ui.model.Post
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -18,7 +17,7 @@ fun OnBackTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    emojis: ImmutableList<CustomEmoji>? = null,
+    emojis: List<Post.Emoji>? = null,
 ) {
     TopAppBar(
         title = {

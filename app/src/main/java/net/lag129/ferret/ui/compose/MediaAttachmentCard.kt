@@ -24,13 +24,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.model.Attachment
 
 @Composable
 fun SharedTransitionScope.MediaAttachmentCard(
-    mediaAttachments: ImmutableList<Attachment>,
+    mediaAttachments: List<Attachment>,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
@@ -61,7 +59,7 @@ fun SharedTransitionScope.MediaAttachmentCard(
         )
 
         else -> FourMediaLayout(
-            media = mediaAttachments.take(4).toImmutableList(),
+            media = mediaAttachments.take(4),
             animatedVisibilityScope = animatedVisibilityScope,
             onClickMedia = onClickMedia,
             modifier = modifier
@@ -88,7 +86,7 @@ private fun SharedTransitionScope.SingleMediaAttachmentCard(
 
 @Composable
 private fun SharedTransitionScope.DoubleMediaAttachmentCard(
-    media: ImmutableList<Attachment>,
+    media: List<Attachment>,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
@@ -122,7 +120,7 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
 
 @Composable
 private fun SharedTransitionScope.ThreeMediaLayout(
-    media: ImmutableList<Attachment>,
+    media: List<Attachment>,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
@@ -169,7 +167,7 @@ private fun SharedTransitionScope.ThreeMediaLayout(
 
 @Composable
 private fun SharedTransitionScope.FourMediaLayout(
-    media: ImmutableList<Attachment>,
+    media: List<Attachment>,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier

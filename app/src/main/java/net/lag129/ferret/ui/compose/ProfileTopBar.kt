@@ -17,9 +17,9 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import kotlinx.collections.immutable.toImmutableList
 import net.lag129.ferret.R
 import net.lag129.ferret.model.Account
+import net.lag129.ferret.model.toPostEmoji
 
 @Composable
 fun ProfileTopBar(
@@ -53,7 +53,7 @@ fun ProfileTopBar(
 
             HtmlText(
                 body = account.displayName,
-                emojis = account.emojis.toImmutableList(),
+                emojis = account.emojis.map { it.toPostEmoji() },
                 fontWeight = FontWeight.SemiBold,
                 style = TextStyle(
                     fontSize = 24.sp
@@ -84,7 +84,7 @@ fun ProfileTopBar(
 
             HtmlText(
                 body = account.note,
-                emojis = account.emojis.toImmutableList(),
+                emojis = account.emojis.map { it.toPostEmoji() },
                 fontWeight = FontWeight.Light,
                 style = TextStyle(
                     fontSize = 16.sp,

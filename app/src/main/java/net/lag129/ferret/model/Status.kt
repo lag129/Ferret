@@ -2,6 +2,7 @@ package net.lag129.ferret.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.lag129.ferret.ui.model.Post
 
 @Serializable
 data class Status(
@@ -100,7 +101,27 @@ data class Status(
 
     @SerialName("emoji_reactions")
     val emojiReactions: List<Reaction>? = null,
-)
+) {
+    fun toPost(): Post {
+        val target = this.reblog ?: this
+        return Post(
+            id = id,
+            displayName = target.account.displayName,
+            userName = target.account.acct,
+            avatarUrl = target.account.avatar,
+            createdAt = target.createdAt,
+            content = target.content,
+            account = target.account,
+            card = target.card,
+            displayNameEmojis = target.account.emojis.map { it.toPostEmoji() },
+            emojis = target.emojis.map { it.toPostEmoji() },
+            mediaAttachments = target.mediaAttachments,
+            sensitive = target.sensitive,
+            spoilerText = target.spoilerText,
+            reactions = target.emojiReactions.orEmpty()
+        )
+    }
+}
 
 @Serializable
 data class Mention(

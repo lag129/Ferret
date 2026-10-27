@@ -1,32 +1,13 @@
 package net.lag129.ferret.ui.compose
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -39,63 +20,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.serialization.Serializable
 import net.lag129.ferret.R
-import net.lag129.ferret.model.Account
-import net.lag129.ferret.model.Attachment
-import net.lag129.ferret.model.CustomEmoji
-import net.lag129.ferret.model.PreviewCard
-import net.lag129.ferret.model.Reaction
-import net.lag129.ferret.model.Status
+import net.lag129.ferret.model.*
+import net.lag129.ferret.ui.model.Post
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-@Immutable
-@Serializable
-data class StatusCardData(
-    val displayName: String,
-    val userName: String,
-    val avatarUrl: String,
-    val createdAt: String,
-    val content: String,
-    val account: Account,
-    val card: PreviewCard? = null,
-    val displayNameEmojis: ImmutableList<CustomEmoji>? = null,
-    val emojis: ImmutableList<CustomEmoji>? = null,
-    val mediaAttachments: ImmutableList<Attachment>? = null,
-    val sensitive: Boolean,
-    val spoilerText: String,
-    val reactions: ImmutableList<Reaction> = persistentListOf()
-)
-
-fun Status.toStatusCardData(): StatusCardData {
-    val target = this.reblog ?: this
-    return StatusCardData(
-        displayName = target.account.displayName,
-        userName = target.account.acct,
-        createdAt = target.createdAt,
-        avatarUrl = target.account.avatar,
-        content = target.content,
-        account = target.account,
-        card = target.card,
-        displayNameEmojis = target.account.emojis.toImmutableList(),
-        emojis = target.emojis.toImmutableList(),
-        mediaAttachments = target.mediaAttachments.toImmutableList(),
-        sensitive = target.sensitive,
-        spoilerText = target.spoilerText,
-        reactions = target.emojiReactions?.toImmutableList() ?: persistentListOf()
-    )
-}
-
 @Composable
-fun SharedTransitionScope.StatusCard(
-    data: StatusCardData,
-    onClickDetail: (data: StatusCardData) -> Unit,
+fun SharedTransitionScope.PostCard(
+    data: Post,
+    onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (account: Account) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -116,7 +52,7 @@ fun SharedTransitionScope.StatusCard(
             modifier = Modifier
                 .size(40.dp)
                 .clip(RoundedCornerShape(30))
-                .clickable { onClickProfile.invoke(data.account) }
+                .clickable { data.account?.let(onClickProfile) }
         )
 
         Spacer(modifier = Modifier.width(6.dp))
@@ -138,7 +74,7 @@ fun SharedTransitionScope.StatusCard(
                         modifier = Modifier
                             .alignByBaseline()
                             .clickable {
-                                onClickProfile.invoke(data.account)
+                                data.account?.let(onClickProfile)
                             }
                     )
 
