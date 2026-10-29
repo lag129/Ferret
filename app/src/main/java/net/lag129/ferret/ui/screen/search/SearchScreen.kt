@@ -12,16 +12,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.compose.PostCard
 import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.ui.model.Profile
+import net.lag129.ferret.ui.model.converter.MastodonConverter.toPost
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.SearchScreen(
     onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    onClickProfile: (account: Account) -> Unit,
+    onClickProfile: (profile: Profile) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     searchViewModel: SearchViewModel = koinViewModel(),

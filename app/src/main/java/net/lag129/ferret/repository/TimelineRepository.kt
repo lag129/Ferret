@@ -1,6 +1,8 @@
 package net.lag129.ferret.repository
 
 import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.ui.model.converter.MastodonConverter.toPost
+import net.lag129.ferret.ui.model.converter.MisskeyConverter.toPost
 
 interface TimelineRepository {
 

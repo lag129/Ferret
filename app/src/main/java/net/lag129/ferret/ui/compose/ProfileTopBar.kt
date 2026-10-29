@@ -18,20 +18,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import net.lag129.ferret.R
-import net.lag129.ferret.model.Account
-import net.lag129.ferret.model.toPostEmoji
+import net.lag129.ferret.ui.model.Profile
 
 @Composable
 fun ProfileTopBar(
-    account: Account,
+    profile: Profile,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
         AsyncImage(
-            model = account.header,
-            contentDescription = account.displayName,
+            model = profile.header,
+            contentDescription = profile.displayName,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(160.dp)
@@ -42,8 +41,8 @@ fun ProfileTopBar(
             modifier = Modifier.padding(start = 12.dp, end = 12.dp)
         ) {
             AsyncImage(
-                model = account.avatar,
-                contentDescription = account.displayName,
+                model = profile.avatar,
+                contentDescription = profile.displayName,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(80.dp)
@@ -52,8 +51,8 @@ fun ProfileTopBar(
             )
 
             HtmlText(
-                body = account.displayName,
-                emojis = account.emojis.map { it.toPostEmoji() },
+                body = profile.displayName,
+                emojis = profile.emojis,
                 fontWeight = FontWeight.SemiBold,
                 style = TextStyle(
                     fontSize = 24.sp
@@ -61,7 +60,7 @@ fun ProfileTopBar(
                 modifier = Modifier.offset(y = (-8).dp)
             )
 
-            Text(account.acct)
+            Text(profile.acct)
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -75,16 +74,16 @@ fun ProfileTopBar(
                     )
                 }
 
-                Text(stringResource(R.string.follower, formatter.format(account.followersCount)))
+                Text(stringResource(R.string.follower, formatter.format(profile.followersCount)))
 
-                Text(stringResource(R.string.following, formatter.format(account.followingCount)))
+                Text(stringResource(R.string.following, formatter.format(profile.followingCount)))
 
-                Text(stringResource(R.string.posts, formatter.format(account.statusesCount)))
+                Text(stringResource(R.string.posts, formatter.format(profile.statusesCount)))
             }
 
             HtmlText(
-                body = account.note,
-                emojis = account.emojis.map { it.toPostEmoji() },
+                body = profile.note,
+                emojis = profile.emojis,
                 fontWeight = FontWeight.Light,
                 style = TextStyle(
                     fontSize = 16.sp,

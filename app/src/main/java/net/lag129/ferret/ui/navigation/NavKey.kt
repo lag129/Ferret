@@ -2,8 +2,8 @@ package net.lag129.ferret.ui.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
-import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.ui.model.Profile
 
 @Serializable
 sealed interface FerretNavKey : NavKey
@@ -36,4 +36,4 @@ data object SettingAbout : FerretNavKey
 data object SettingLicense : FerretNavKey
 
 @Serializable
-data class TimelineProfile(val id: String, val account: Account?) : FerretNavKey
+data class TimelineProfile(val id: String, val account: Profile?) : FerretNavKey

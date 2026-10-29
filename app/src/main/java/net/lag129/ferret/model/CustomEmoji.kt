@@ -2,7 +2,6 @@ package net.lag129.ferret.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.lag129.ferret.ui.model.Post
 
 @Serializable
 data class CustomEmoji(
@@ -27,6 +26,3 @@ data class CustomEmoji(
     @SerialName("category")
     val category: String? = null
 )
-
-fun CustomEmoji.toPostEmoji(): Post.Emoji =
-    Post.Emoji(shortcode = shortcode, url = url, width = width, height = height)

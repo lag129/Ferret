@@ -2,11 +2,7 @@ package net.lag129.ferret.ui.screen.timeline
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -21,17 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.compose.FerretTopAppBar
 import net.lag129.ferret.ui.compose.PostCard
 import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.ui.model.Profile
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.TimelineScreen(
     onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    onClickProfile: (account: Account) -> Unit,
+    onClickProfile: (profile: Profile) -> Unit,
     onClickSetting: () -> Unit,
     modifier: Modifier = Modifier,
     animatedVisibilityScope: AnimatedVisibilityScope = LocalNavAnimatedContentScope.current,

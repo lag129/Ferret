@@ -15,17 +15,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.compose.PostCard
 import net.lag129.ferret.ui.compose.ProfileTopBar
 import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.ui.model.Profile
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.MyProfileScreen(
     onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    onClickProfile: (account: Account) -> Unit,
+    onClickProfile: (profile: Profile) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     viewModel: MyProfileViewModel = koinViewModel()

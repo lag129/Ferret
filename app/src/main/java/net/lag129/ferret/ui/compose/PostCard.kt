@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import net.lag129.ferret.R
-import net.lag129.ferret.model.*
 import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.ui.model.Profile
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 import kotlin.time.Clock
@@ -33,7 +33,7 @@ fun SharedTransitionScope.PostCard(
     data: Post,
     onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    onClickProfile: (account: Account) -> Unit,
+    onClickProfile: (profile: Profile) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
 ) {
@@ -52,7 +52,7 @@ fun SharedTransitionScope.PostCard(
             modifier = Modifier
                 .size(40.dp)
                 .clip(RoundedCornerShape(30))
-                .clickable { data.account?.let(onClickProfile) }
+                .clickable { data.profile.let(onClickProfile) }
         )
 
         Spacer(modifier = Modifier.width(6.dp))
@@ -74,7 +74,7 @@ fun SharedTransitionScope.PostCard(
                         modifier = Modifier
                             .alignByBaseline()
                             .clickable {
-                                data.account?.let(onClickProfile)
+                                data.profile.let(onClickProfile)
                             }
                     )
 

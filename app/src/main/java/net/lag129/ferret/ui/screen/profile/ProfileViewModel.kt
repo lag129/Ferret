@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import net.lag129.ferret.repository.MastodonRepository
 import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.ui.model.converter.MastodonConverter.toPost
 
 class ProfileViewModel(
     private val mastodonRepository: MastodonRepository

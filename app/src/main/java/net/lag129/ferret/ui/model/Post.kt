@@ -3,7 +3,6 @@ package net.lag129.ferret.ui.model
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.lag129.ferret.model.Account
 import net.lag129.ferret.model.Attachment
 import net.lag129.ferret.model.PreviewCard
 import net.lag129.ferret.model.Reaction
@@ -17,7 +16,7 @@ data class Post(
     val avatarUrl: String,
     val createdAt: String,
     val content: String,
-    val account: Account? = null,
+    val profile: Profile,
     val card: PreviewCard? = null,
     val displayNameEmojis: List<Emoji>? = null,
     val emojis: List<Emoji>? = null,

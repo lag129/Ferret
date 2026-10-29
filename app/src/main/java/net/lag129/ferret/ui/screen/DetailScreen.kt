@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import net.lag129.ferret.R
-import net.lag129.ferret.model.Account
 import net.lag129.ferret.ui.compose.*
 import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.ui.model.Profile
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 import kotlin.time.Instant
@@ -33,7 +33,7 @@ import kotlin.time.Instant
 fun SharedTransitionScope.DetailScreen(
     data: Post,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    onClickProfile: (account: Account) -> Unit,
+    onClickProfile: (profile: Profile) -> Unit,
     onBack: () -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
@@ -62,7 +62,7 @@ fun SharedTransitionScope.DetailScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { data.account?.let(onClickProfile) }
+                    .clickable { data.profile.let(onClickProfile) }
             ) {
                 AsyncImage(
                     model = data.avatarUrl,

@@ -12,22 +12,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import net.lag129.ferret.model.Account
-import net.lag129.ferret.model.toPostEmoji
 import net.lag129.ferret.ui.compose.OnBackTopAppBar
 import net.lag129.ferret.ui.compose.PostCard
 import net.lag129.ferret.ui.compose.ProfileTopBar
 import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.ui.model.Profile
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun SharedTransitionScope.ProfileScreen(
     id: String,
-    account: Account,
+    profile: Profile,
     onBack: () -> Unit,
     onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    onClickProfile: (account: Account) -> Unit,
+    onClickProfile: (profile: Profile) -> Unit,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel = koinViewModel(),
@@ -42,8 +41,8 @@ fun SharedTransitionScope.ProfileScreen(
     Scaffold(
         topBar = {
             OnBackTopAppBar(
-                body = account.displayName,
-                emojis = account.emojis.map { it.toPostEmoji() },
+                body = profile.displayName,
+                emojis = profile.emojis,
                 onBack = onBack,
                 scrollBehavior = scrollBehavior,
             )
@@ -57,7 +56,7 @@ fun SharedTransitionScope.ProfileScreen(
         ) {
 
             item {
-                ProfileTopBar(account)
+                ProfileTopBar(profile)
             }
 
             items(

@@ -134,7 +134,7 @@ fun FerretNavDisplay(
                         is TimelineProfile -> NavEntry(key) {
                             ProfileScreen(
                                 id = key.id,
-                                account = key.account!!,
+                                profile = key.account!!,
                                 onBack = { backStack.removeLastOrNull() },
                                 onClickDetail = { data ->
                                     backStack.add(Detail(data))
