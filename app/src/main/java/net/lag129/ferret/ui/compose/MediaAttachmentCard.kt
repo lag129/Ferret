@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import net.lag129.ferret.model.Attachment
+import net.lag129.ferret.model.mastodon.Attachment
 
 @Composable
 fun SharedTransitionScope.MediaAttachmentCard(

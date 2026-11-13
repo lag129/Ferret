@@ -1,4 +1,4 @@
-package net.lag129.ferret.model
+package net.lag129.ferret.model.mastodon
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

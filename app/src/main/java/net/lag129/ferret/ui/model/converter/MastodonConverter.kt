@@ -1,8 +1,8 @@
 package net.lag129.ferret.ui.model.converter
 
-import net.lag129.ferret.model.Account
-import net.lag129.ferret.model.CustomEmoji
-import net.lag129.ferret.model.Status
+import net.lag129.ferret.model.mastodon.Account
+import net.lag129.ferret.model.mastodon.CustomEmoji
+import net.lag129.ferret.model.mastodon.Status
 import net.lag129.ferret.ui.model.Post
 import net.lag129.ferret.ui.model.Profile
 

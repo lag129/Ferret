@@ -3,9 +3,9 @@ package net.lag129.ferret.ui.model
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.lag129.ferret.model.Attachment
-import net.lag129.ferret.model.PreviewCard
-import net.lag129.ferret.model.Reaction
+import net.lag129.ferret.model.mastodon.Attachment
+import net.lag129.ferret.model.mastodon.PreviewCard
+import net.lag129.ferret.model.mastodon.Reaction
 
 @Immutable
 @Serializable

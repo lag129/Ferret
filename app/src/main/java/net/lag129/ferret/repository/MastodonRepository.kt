@@ -1,14 +1,19 @@
 package net.lag129.ferret.repository
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.forms.submitForm
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.http.parameters
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import net.lag129.ferret.model.*
+import net.lag129.ferret.model.mastodon.Account
+import net.lag129.ferret.model.mastodon.CredentialApplication
+import net.lag129.ferret.model.mastodon.Search
+import net.lag129.ferret.model.mastodon.Status
+import net.lag129.ferret.model.mastodon.Token
 import kotlin.coroutines.cancellation.CancellationException
 
 interface MastodonRepository {

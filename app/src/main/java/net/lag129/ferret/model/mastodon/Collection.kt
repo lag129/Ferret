@@ -1,4 +1,4 @@
-package net.lag129.ferret.model
+package net.lag129.ferret.model.mastodon
 
 import androidx.compose.runtime.Immutable
 import kotlinx.serialization.SerialName

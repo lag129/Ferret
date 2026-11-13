@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import net.lag129.ferret.model.Search
+import net.lag129.ferret.model.mastodon.Search
 import net.lag129.ferret.repository.MastodonRepository
 
 class SearchViewModel(
