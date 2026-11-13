@@ -7,12 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import net.lag129.ferret.ui.LoginState
+import net.lag129.ferret.ui.PreferencesViewModel
 import net.lag129.ferret.ui.navigation.FerretNavDisplay
 import net.lag129.ferret.ui.screen.SplashScreen
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.theme.FerretTheme
-import net.lag129.ferret.viewmodel.LoginState
-import net.lag129.ferret.viewmodel.PreferencesViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.viewmodel.koinViewModel
 

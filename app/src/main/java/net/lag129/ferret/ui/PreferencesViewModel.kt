@@ -1,4 +1,4 @@
-package net.lag129.ferret.viewmodel
+package net.lag129.ferret.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

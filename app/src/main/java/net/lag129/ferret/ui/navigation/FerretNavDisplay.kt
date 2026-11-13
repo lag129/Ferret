@@ -14,6 +14,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.serialization.NavBackStackSerializer
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
+import net.lag129.ferret.ui.LoginState
 import net.lag129.ferret.ui.compose.BottomAppBarItem
 import net.lag129.ferret.ui.compose.FerretBottomAppBar
 import net.lag129.ferret.ui.screen.DetailScreen
@@ -26,7 +27,6 @@ import net.lag129.ferret.ui.screen.setting.SettingAboutScreen
 import net.lag129.ferret.ui.screen.setting.SettingLicenseScreen
 import net.lag129.ferret.ui.screen.setting.SettingScreen
 import net.lag129.ferret.ui.screen.timeline.TimelineScreen
-import net.lag129.ferret.viewmodel.LoginState
 
 @Composable
 fun FerretNavDisplay(

@@ -31,6 +31,7 @@ import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.repository.PreferencesRepositoryImpl
 import net.lag129.ferret.repository.ProfileRepository
 import net.lag129.ferret.repository.TimelineRepository
+import net.lag129.ferret.ui.PreferencesViewModel
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.screen.profile.MyProfileViewModel
 import net.lag129.ferret.ui.screen.profile.ProfileViewModel
@@ -38,7 +39,6 @@ import net.lag129.ferret.ui.screen.search.SearchViewModel
 import net.lag129.ferret.ui.screen.timeline.TimelineViewModel
 import net.lag129.ferret.utils.DateUtils
 import net.lag129.ferret.utils.DateUtilsImpl
-import net.lag129.ferret.viewmodel.PreferencesViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import java.io.File
