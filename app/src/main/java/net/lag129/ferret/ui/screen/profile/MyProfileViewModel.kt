@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import net.lag129.ferret.model.Post
+import net.lag129.ferret.model.Profile
+import net.lag129.ferret.model.converter.MastodonConverter.toPost
+import net.lag129.ferret.model.converter.MastodonConverter.toProfile
 import net.lag129.ferret.repository.MastodonRepository
-import net.lag129.ferret.ui.model.Post
-import net.lag129.ferret.ui.model.Profile
-import net.lag129.ferret.ui.model.converter.MastodonConverter.toPost
-import net.lag129.ferret.ui.model.converter.MastodonConverter.toProfile
 
 class MyProfileViewModel(
     private val mastodonRepository: MastodonRepository

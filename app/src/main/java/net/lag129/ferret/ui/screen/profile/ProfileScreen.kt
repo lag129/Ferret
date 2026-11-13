@@ -2,21 +2,31 @@ package net.lag129.ferret.ui.screen.profile
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import net.lag129.ferret.model.Post
+import net.lag129.ferret.model.Profile
 import net.lag129.ferret.ui.compose.OnBackTopAppBar
 import net.lag129.ferret.ui.compose.PostCard
 import net.lag129.ferret.ui.compose.ProfileTopBar
-import net.lag129.ferret.ui.model.Post
-import net.lag129.ferret.ui.model.Profile
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

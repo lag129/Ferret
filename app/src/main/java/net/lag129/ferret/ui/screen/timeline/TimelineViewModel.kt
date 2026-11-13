@@ -12,8 +12,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatus
 import net.lag129.ferret.db.CachedStatusDao
+import net.lag129.ferret.model.Post
 import net.lag129.ferret.repository.TimelineRepository
-import net.lag129.ferret.ui.model.Post
 
 enum class Timeline {
     HOME, LOCAL, FEDERATED

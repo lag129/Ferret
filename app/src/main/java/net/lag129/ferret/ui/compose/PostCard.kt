@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import net.lag129.ferret.R
-import net.lag129.ferret.ui.model.Post
-import net.lag129.ferret.ui.model.Profile
+import net.lag129.ferret.model.Post
+import net.lag129.ferret.model.Profile
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 import kotlin.time.Clock

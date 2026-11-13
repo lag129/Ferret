@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.model.Post
 import net.lag129.ferret.utils.createEmojiInlineContent
 import net.lag129.ferret.utils.emojisToAnnotatedString
 import net.lag129.ferret.utils.htmlToAnnotatedString

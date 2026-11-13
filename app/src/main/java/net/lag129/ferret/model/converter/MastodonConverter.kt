@@ -1,10 +1,10 @@
-package net.lag129.ferret.ui.model.converter
+package net.lag129.ferret.model.converter
 
+import net.lag129.ferret.model.Post
+import net.lag129.ferret.model.Profile
 import net.lag129.ferret.model.mastodon.Account
 import net.lag129.ferret.model.mastodon.CustomEmoji
 import net.lag129.ferret.model.mastodon.Status
-import net.lag129.ferret.ui.model.Post
-import net.lag129.ferret.ui.model.Profile
 
 object MastodonConverter {
     fun Status.toPost(): Post {

@@ -2,8 +2,8 @@ package net.lag129.ferret.ui.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
-import net.lag129.ferret.ui.model.Post
-import net.lag129.ferret.ui.model.Profile
+import net.lag129.ferret.model.Post
+import net.lag129.ferret.model.Profile
 
 @Serializable
 sealed interface FerretNavKey : NavKey

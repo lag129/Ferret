@@ -1,9 +1,9 @@
-package net.lag129.ferret.ui.model.converter
+package net.lag129.ferret.model.converter
 
+import net.lag129.ferret.model.Post
+import net.lag129.ferret.model.Profile
 import net.lag129.ferret.model.misskey.Note
 import net.lag129.ferret.model.misskey.UserLite
-import net.lag129.ferret.ui.model.Post
-import net.lag129.ferret.ui.model.Profile
 
 object MisskeyConverter {
     fun Note.toPost(): Post {
@@ -11,7 +11,8 @@ object MisskeyConverter {
         return Post(
             id = id,
             displayName = target.user.name ?: target.user.username,
-            userName = target.user.host?.let { "${target.user.username}@$it" } ?: target.user.username,
+            userName = target.user.host?.let { "${target.user.username}@$it" }
+                ?: target.user.username,
             avatarUrl = target.user.avatarUrl,
             createdAt = target.createdAt,
             content = target.text.orEmpty(),

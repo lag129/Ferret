@@ -19,8 +19,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import net.lag129.ferret.ui.compose.FerretTopAppBar
 import net.lag129.ferret.ui.compose.PostCard
-import net.lag129.ferret.ui.model.Post
-import net.lag129.ferret.ui.model.Profile
+import net.lag129.ferret.model.Post
+import net.lag129.ferret.model.Profile
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

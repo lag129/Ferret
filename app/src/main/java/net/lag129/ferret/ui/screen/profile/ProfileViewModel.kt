@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import net.lag129.ferret.model.Post
 import net.lag129.ferret.repository.ProfileRepository
-import net.lag129.ferret.ui.model.Post
 
 class ProfileViewModel(
     private val profileRepository: ProfileRepository

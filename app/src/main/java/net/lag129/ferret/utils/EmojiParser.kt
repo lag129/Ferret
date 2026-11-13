@@ -11,7 +11,7 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import net.lag129.ferret.ui.model.Post
+import net.lag129.ferret.model.Post
 
 @Composable
 fun emojisToAnnotatedString(
