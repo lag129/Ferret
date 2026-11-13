@@ -3,7 +3,7 @@ package net.lag129.ferret
 import androidx.compose.ui.text.AnnotatedString
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import net.lag129.ferret.model.mastodon.CustomEmoji
+import net.lag129.ferret.model.Post
 import net.lag129.ferret.utils.parseEmojisToAnnotatedString
 
 class EmojiParserTest : StringSpec() {
@@ -12,7 +12,7 @@ class EmojiParserTest : StringSpec() {
 
         "empty emojis list" {
             val text = ":smile:"
-            val emojis = emptyList<CustomEmoji>()
+            val emojis = emptyList<Post.Emoji>()
             val result = parseEmojisToAnnotatedString(AnnotatedString(text), emojis)
             result.text shouldBe text
         }
@@ -20,11 +20,9 @@ class EmojiParserTest : StringSpec() {
         "emojis list" {
             val text = ":smile:"
             val emojis = listOf(
-                CustomEmoji(
+                Post.Emoji(
                     shortcode = "smile",
                     url = "https://example.com/smile.png",
-                    staticUrl = "https://example.com/smile.png",
-                    visibleInPicker = true
                 )
             )
             val result = parseEmojisToAnnotatedString(AnnotatedString(text), emojis)
