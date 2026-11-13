@@ -66,7 +66,7 @@ class MisskeyTimelineRepositoryImpl(
         sinceId: String?,
         limit: Int?
     ): Result<List<Post>> {
-        return misskeyRepository.getHomeTimeline(maxId, sinceId, limit)
+        return misskeyRepository.getHomeTimeline(sinceId, maxId, limit)
             .map { note -> note.map { it.toPost() } }
     }
 
@@ -75,7 +75,7 @@ class MisskeyTimelineRepositoryImpl(
         sinceId: String?,
         limit: Int?
     ): Result<List<Post>> {
-        return misskeyRepository.getLocalTimeline(maxId, sinceId, limit)
+        return misskeyRepository.getLocalTimeline(sinceId, maxId, limit)
             .map { statuses -> statuses.map { it.toPost() } }
     }
 
@@ -84,7 +84,7 @@ class MisskeyTimelineRepositoryImpl(
         sinceId: String?,
         limit: Int?
     ): Result<List<Post>> {
-        return misskeyRepository.getFederatedTimeline(maxId, sinceId, limit)
+        return misskeyRepository.getFederatedTimeline(sinceId, maxId, limit)
             .map { statuses -> statuses.map { it.toPost() } }
     }
 }

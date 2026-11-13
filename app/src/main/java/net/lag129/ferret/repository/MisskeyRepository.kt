@@ -18,20 +18,20 @@ import kotlin.coroutines.cancellation.CancellationException
 interface MisskeyRepository {
 
     suspend fun getHomeTimeline(
-        maxId: String? = null,
         sinceId: String? = null,
+        untilId: String? = null,
         limit: Int? = 20
     ): Result<List<Note>>
 
     suspend fun getLocalTimeline(
-        maxId: String? = null,
         sinceId: String? = null,
+        untilId: String? = null,
         limit: Int? = 20
     ): Result<List<Note>>
 
     suspend fun getFederatedTimeline(
-        maxId: String? = null,
         sinceId: String? = null,
+        untilId: String? = null,
         limit: Int? = 20
     ): Result<List<Note>>
 
@@ -51,8 +51,8 @@ class MisskeyRepositoryImpl(
 ) : MisskeyRepository {
 
     override suspend fun getHomeTimeline(
-        maxId: String?,
         sinceId: String?,
+        untilId: String?,
         limit: Int?
     ): Result<List<Note>> {
         return withContext(dispatcher) {
@@ -60,8 +60,8 @@ class MisskeyRepositoryImpl(
                 client.post("/api/notes/timeline") {
                     contentType(ContentType.Application.Json)
                     setBody(buildJsonObject {
-                        maxId?.let { put("untilId", it) }
                         sinceId?.let { put("sinceId", it) }
+                        untilId?.let { put("untilId", it) }
                         limit?.let { put("limit", it) }
                     })
                 }.body()
@@ -70,8 +70,8 @@ class MisskeyRepositoryImpl(
     }
 
     override suspend fun getLocalTimeline(
-        maxId: String?,
         sinceId: String?,
+        untilId: String?,
         limit: Int?
     ): Result<List<Note>> {
         return withContext(dispatcher) {
@@ -79,8 +79,8 @@ class MisskeyRepositoryImpl(
                 client.post("/api/notes/local-timeline") {
                     contentType(ContentType.Application.Json)
                     setBody(buildJsonObject {
-                        maxId?.let { put("untilId", it) }
                         sinceId?.let { put("sinceId", it) }
+                        untilId?.let { put("untilId", it) }
                         limit?.let { put("limit", it) }
                     })
                 }.body()
@@ -89,8 +89,8 @@ class MisskeyRepositoryImpl(
     }
 
     override suspend fun getFederatedTimeline(
-        maxId: String?,
         sinceId: String?,
+        untilId: String?,
         limit: Int?
     ): Result<List<Note>> {
         return withContext(dispatcher) {
@@ -98,8 +98,8 @@ class MisskeyRepositoryImpl(
                 client.post("/api/notes/global-timeline") {
                     contentType(ContentType.Application.Json)
                     setBody(buildJsonObject {
-                        maxId?.let { put("untilId", it) }
                         sinceId?.let { put("sinceId", it) }
+                        untilId?.let { put("untilId", it) }
                         limit?.let { put("limit", it) }
                     })
                 }.body()
