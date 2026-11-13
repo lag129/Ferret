@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import net.lag129.ferret.model.Post
-import net.lag129.ferret.repository.ProfileRepository
+import net.lag129.ferret.repository.FediverseRepository
 
 class ProfileViewModel(
-    private val profileRepository: ProfileRepository
+    private val fediverseRepository: FediverseRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(listOf<Post>())
@@ -27,7 +27,7 @@ class ProfileViewModel(
         clearStatuses()
 
         viewModelScope.launch {
-            profileRepository.getProfile(accountId)
+            fediverseRepository.getAccountPosts(accountId)
                 .onSuccess { statuses ->
                     _uiState.value = statuses
                 }.onFailure { error ->
@@ -41,7 +41,7 @@ class ProfileViewModel(
         maxId: String
     ) {
         viewModelScope.launch {
-            profileRepository.getProfile(accountId, maxId)
+            fediverseRepository.getAccountPosts(accountId, maxId)
                 .onSuccess { statuses ->
                     _uiState.value += statuses
                 }.onFailure { error ->

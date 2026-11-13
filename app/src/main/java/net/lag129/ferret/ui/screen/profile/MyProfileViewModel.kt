@@ -9,12 +9,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import net.lag129.ferret.model.Post
 import net.lag129.ferret.model.Profile
-import net.lag129.ferret.model.converter.MastodonConverter.toPost
-import net.lag129.ferret.model.converter.MastodonConverter.toProfile
-import net.lag129.ferret.repository.MastodonRepository
+import net.lag129.ferret.repository.FediverseRepository
 
 class MyProfileViewModel(
-    private val mastodonRepository: MastodonRepository
+    private val fediverseRepository: FediverseRepository
 ) : ViewModel() {
 
     private val _statuses = MutableStateFlow(listOf<Post>())
@@ -25,13 +23,13 @@ class MyProfileViewModel(
 
     fun fetchMyStatuses() {
         viewModelScope.launch {
-            val account = mastodonRepository.getMyCredential()
+            val account = fediverseRepository.getMyCredential()
                 .onFailure { Napier.e("Failed to fetch my credential", it) }
                 .getOrNull() ?: return@launch
-            _account.value = account.toProfile()
+            _account.value = account
 
-            mastodonRepository.getAccountStatuses(account.id)
-                .onSuccess { statuses -> _statuses.value = statuses.map { it.toPost() } }
+            fediverseRepository.getAccountPosts(account.id)
+                .onSuccess { statuses -> _statuses.value = statuses }
                 .onFailure { error -> Napier.e("Failed to fetch account statuses", error) }
         }
     }
@@ -39,8 +37,8 @@ class MyProfileViewModel(
     fun fetchNextStatusesById(maxId: String) {
         val accountId = account.value?.id ?: return
         viewModelScope.launch {
-            mastodonRepository.getAccountStatuses(accountId, maxId)
-                .onSuccess { statuses -> _statuses.value += statuses.map { it.toPost() } }
+            fediverseRepository.getAccountPosts(accountId, maxId)
+                .onSuccess { statuses -> _statuses.value += statuses }
                 .onFailure { error -> Napier.e("Failed to fetch next account statuses", error) }
         }
     }

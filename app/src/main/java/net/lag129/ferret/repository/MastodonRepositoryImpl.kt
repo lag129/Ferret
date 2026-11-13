@@ -2,6 +2,7 @@ package net.lag129.ferret.repository
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
@@ -9,6 +10,10 @@ import io.ktor.http.parameters
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import net.lag129.ferret.model.Post
+import net.lag129.ferret.model.Profile
+import net.lag129.ferret.model.converter.MastodonConverter.toPost
+import net.lag129.ferret.model.converter.MastodonConverter.toProfile
 import net.lag129.ferret.model.mastodon.Account
 import net.lag129.ferret.model.mastodon.CredentialApplication
 import net.lag129.ferret.model.mastodon.Search
@@ -16,153 +21,78 @@ import net.lag129.ferret.model.mastodon.Status
 import net.lag129.ferret.model.mastodon.Token
 import kotlin.coroutines.cancellation.CancellationException
 
-interface MastodonRepository {
-
-    suspend fun getHomeTimeline(
-        maxId: String? = null,
-        sinceId: String? = null,
-        limit: Int? = 20
-    ): Result<List<Status>>
-
-    suspend fun getLocalTimeline(
-        maxId: String? = null,
-        sinceId: String? = null,
-        limit: Int? = 20
-    ): Result<List<Status>>
-
-    suspend fun getFederatedTimeline(
-        maxId: String? = null,
-        sinceId: String? = null,
-        limit: Int? = 20
-    ): Result<List<Status>>
-
-    suspend fun getAccountStatuses(
-        accountId: String,
-        maxId: String? = null,
-        sinceId: String? = null,
-        limit: Int? = 20
-    ): Result<List<Status>>
-
-    suspend fun getMyCredential(): Result<Account>
-
-    suspend fun search(
-        query: String,
-        limit: Int? = 20,
-    ): Result<Search>
-
-    suspend fun registerClientApp(
-        clientName: String,
-        redirectUris: String,
-        scopes: String,
-        website: String? = null
-    ): Result<CredentialApplication>
-
-    suspend fun obtainAccessToken(
-        code: String,
-        clientId: String,
-        clientSecret: String,
-        redirectUri: String
-    ): Result<Token>
-}
-
 class MastodonRepositoryImpl(
     private val client: HttpClient,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
-) : MastodonRepository {
+) : FediverseRepository {
 
     override suspend fun getHomeTimeline(
         maxId: String?,
         sinceId: String?,
         limit: Int?
-    ): Result<List<Status>> {
-        return withContext(dispatcher) {
-            runSuspendCatching {
-                client.get("/api/v1/timelines/home") {
-                    parameter("max_id", maxId)
-                    parameter("since_id", sinceId)
-                    parameter("limit", limit)
-                }.body()
-            }
-        }
-    }
+    ): Result<List<Post>> =
+        getStatuses("/api/v1/timelines/home", maxId, sinceId, limit)
 
     override suspend fun getLocalTimeline(
         maxId: String?,
         sinceId: String?,
         limit: Int?
-    ): Result<List<Status>> {
-        return withContext(dispatcher) {
-            runSuspendCatching {
-                client.get("/api/v1/timelines/public") {
-                    parameter("local", true)
-                    parameter("max_id", maxId)
-                    parameter("since_id", sinceId)
-                    parameter("limit", limit)
-                }.body()
-            }
+    ): Result<List<Post>> =
+        getStatuses("/api/v1/timelines/public", maxId, sinceId, limit) {
+            parameter("local", true)
         }
-    }
 
     override suspend fun getFederatedTimeline(
         maxId: String?,
         sinceId: String?,
         limit: Int?
-    ): Result<List<Status>> {
-        return withContext(dispatcher) {
-            runSuspendCatching {
-                client.get("/api/v1/timelines/public") {
-                    parameter("max_id", maxId)
-                    parameter("since_id", sinceId)
-                    parameter("limit", limit)
-                }.body()
-            }
-        }
-    }
+    ): Result<List<Post>> =
+        getStatuses("/api/v1/timelines/public", maxId, sinceId, limit)
 
-    override suspend fun getAccountStatuses(
+    override suspend fun getAccountPosts(
         accountId: String,
         maxId: String?,
         sinceId: String?,
         limit: Int?
-    ): Result<List<Status>> {
+    ): Result<List<Post>> {
         return withContext(dispatcher) {
             runSuspendCatching {
                 client.get("/api/v1/accounts/${accountId}/statuses") {
                     parameter("max_id", maxId)
                     parameter("since_id", sinceId)
                     parameter("limit", limit)
-                }.body()
+                }.body<List<Status>>()
             }
-        }
+        }.map { statuses -> statuses.map { it.toPost() } }
     }
 
-    override suspend fun getMyCredential(): Result<Account> {
+    override suspend fun getMyCredential(): Result<Profile> {
         return withContext(dispatcher) {
             runSuspendCatching {
-                client.get("/api/v1/accounts/verify_credentials").body()
+                client.get("/api/v1/accounts/verify_credentials").body<Account>()
             }
-        }
+        }.map { it.toProfile() }
     }
 
     override suspend fun search(
-        query: String,
+        keyword: String,
         limit: Int?
-    ): Result<Search> {
+    ): Result<List<Post>> {
         return withContext(dispatcher) {
             runSuspendCatching {
                 client.get("/api/v2/search") {
-                    parameter("q", query)
+                    parameter("q", keyword)
                     parameter("limit", limit)
-                }.body()
+                }.body<Search>()
             }
-        }
+        }.map { result -> result.statuses.map { it.toPost() } }
     }
 
-    override suspend fun registerClientApp(
+    suspend fun registerClientApp(
         clientName: String,
         redirectUris: String,
         scopes: String,
-        website: String?
+        website: String? = null
     ): Result<CredentialApplication> {
         return withContext(dispatcher) {
             runSuspendCatching {
@@ -179,7 +109,7 @@ class MastodonRepositoryImpl(
         }
     }
 
-    override suspend fun obtainAccessToken(
+    suspend fun obtainAccessToken(
         code: String,
         clientId: String,
         clientSecret: String,
@@ -199,6 +129,25 @@ class MastodonRepositoryImpl(
                 ).body()
             }
         }
+    }
+
+    private suspend fun getStatuses(
+        url: String,
+        maxId: String?,
+        sinceId: String?,
+        limit: Int?,
+        extra: HttpRequestBuilder.() -> Unit = {}
+    ): Result<List<Post>> {
+        return withContext(dispatcher) {
+            runSuspendCatching {
+                client.get(url) {
+                    parameter("max_id", maxId)
+                    parameter("since_id", sinceId)
+                    parameter("limit", limit)
+                    extra()
+                }.body<List<Status>>()
+            }
+        }.map { statuses -> statuses.map { it.toPost() } }
     }
 
     inline fun <T> runSuspendCatching(block: () -> T): Result<T> =

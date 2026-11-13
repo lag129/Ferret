@@ -13,14 +13,14 @@ import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatus
 import net.lag129.ferret.db.CachedStatusDao
 import net.lag129.ferret.model.Post
-import net.lag129.ferret.repository.TimelineRepository
+import net.lag129.ferret.repository.FediverseRepository
 
 enum class Timeline {
     HOME, LOCAL, FEDERATED
 }
 
 class TimelineViewModel(
-    private val timelineRepository: TimelineRepository,
+    private val fediverseRepository: FediverseRepository,
     private val cachedStatusDao: CachedStatusDao
 ) : ViewModel() {
 
@@ -104,9 +104,9 @@ class TimelineViewModel(
         maxId: String? = null
     ): Result<List<Post>> {
         return when (_currentTimeline.value) {
-            Timeline.HOME -> timelineRepository.getHomeTimeline(maxId)
-            Timeline.LOCAL -> timelineRepository.getLocalTimeline(maxId)
-            Timeline.FEDERATED -> timelineRepository.getFederatedTimeline(maxId)
+            Timeline.HOME -> fediverseRepository.getHomeTimeline(maxId)
+            Timeline.LOCAL -> fediverseRepository.getLocalTimeline(maxId)
+            Timeline.FEDERATED -> fediverseRepository.getFederatedTimeline(maxId)
         }
     }
 

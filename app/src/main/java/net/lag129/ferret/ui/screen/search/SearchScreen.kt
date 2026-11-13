@@ -28,7 +28,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import net.lag129.ferret.model.Post
 import net.lag129.ferret.model.Profile
-import net.lag129.ferret.model.converter.MastodonConverter.toPost
 import net.lag129.ferret.ui.compose.PostCard
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -67,29 +66,27 @@ fun SharedTransitionScope.SearchScreen(
                 )
             }
 
-            uiState?.let {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    items(
-                        items = it.statuses,
-                    ) { status ->
-                        PostCard(
-                            data = status.toPost(),
-                            onClickDetail = onClickDetail,
-                            onClickMedia = onClickMedia,
-                            onClickProfile = onClickProfile,
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp)
-                        )
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                items(
+                    items = uiState,
+                ) { post ->
+                    PostCard(
+                        data = post,
+                        onClickDetail = onClickDetail,
+                        onClickMedia = onClickMedia,
+                        onClickProfile = onClickProfile,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                    )
 
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            thickness = 0.2.dp
-                        )
-                    }
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        thickness = 0.2.dp
+                    )
                 }
             }
         }

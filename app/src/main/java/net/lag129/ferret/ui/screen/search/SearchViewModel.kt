@@ -7,18 +7,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import net.lag129.ferret.model.mastodon.Search
-import net.lag129.ferret.repository.MastodonRepository
+import net.lag129.ferret.model.Post
+import net.lag129.ferret.repository.FediverseRepository
 
 class SearchViewModel(
-    private val mastodonRepository: MastodonRepository,
+    private val fediverseRepository: FediverseRepository,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<Search?>(null)
-    val uiState: StateFlow<Search?> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<List<Post>>(emptyList())
+    val uiState: StateFlow<List<Post>> = _uiState.asStateFlow()
 
     fun searchByKeyword(keyword: String) {
         viewModelScope.launch {
-            mastodonRepository.search(keyword)
+            fediverseRepository.search(keyword)
                 .onSuccess { result -> _uiState.value = result }
                 .onFailure { error -> Napier.e("Failed to search: $keyword", error) }
         }
