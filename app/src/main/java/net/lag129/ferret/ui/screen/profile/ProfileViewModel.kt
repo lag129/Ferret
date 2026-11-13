@@ -7,12 +7,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import net.lag129.ferret.repository.MastodonRepository
+import net.lag129.ferret.repository.ProfileRepository
 import net.lag129.ferret.ui.model.Post
-import net.lag129.ferret.ui.model.converter.MastodonConverter.toPost
 
 class ProfileViewModel(
-    private val mastodonRepository: MastodonRepository
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(listOf<Post>())
@@ -28,9 +27,9 @@ class ProfileViewModel(
         clearStatuses()
 
         viewModelScope.launch {
-            mastodonRepository.getAccountStatuses(accountId)
+            profileRepository.getProfile(accountId)
                 .onSuccess { statuses ->
-                    _uiState.value = statuses.map { it.toPost() }
+                    _uiState.value = statuses
                 }.onFailure { error ->
                     Napier.e("Failed to fetch account statuses", error)
                 }
@@ -42,9 +41,9 @@ class ProfileViewModel(
         maxId: String
     ) {
         viewModelScope.launch {
-            mastodonRepository.getAccountStatuses(accountId, maxId)
+            profileRepository.getProfile(accountId, maxId)
                 .onSuccess { statuses ->
-                    _uiState.value += statuses.map { it.toPost() }
+                    _uiState.value += statuses
                 }.onFailure { error ->
                     Napier.e("Failed to fetch next account statuses", error)
                 }

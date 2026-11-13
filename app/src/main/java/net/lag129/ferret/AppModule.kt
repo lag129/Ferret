@@ -18,15 +18,18 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatusDao
 import net.lag129.ferret.db.RoomDatabase
+import net.lag129.ferret.repository.MastodonProfileRepositoryImpl
 import net.lag129.ferret.repository.MastodonRepository
 import net.lag129.ferret.repository.MastodonRepositoryImpl
 import net.lag129.ferret.repository.MastodonTimelineRepositoryImpl
+import net.lag129.ferret.repository.MisskeyProfileRepositoryImpl
 import net.lag129.ferret.repository.MisskeyRepository
 import net.lag129.ferret.repository.MisskeyRepositoryImpl
 import net.lag129.ferret.repository.MisskeyTimelineRepositoryImpl
 import net.lag129.ferret.repository.Platform
 import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.repository.PreferencesRepositoryImpl
+import net.lag129.ferret.repository.ProfileRepository
 import net.lag129.ferret.repository.TimelineRepository
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.screen.profile.MyProfileViewModel
@@ -91,6 +94,13 @@ val appModule = module {
         when (runBlocking { get<PreferencesRepository>().platform.first() }) {
             Platform.MASTODON -> MastodonTimelineRepositoryImpl(get())
             Platform.MISSKEY -> MisskeyTimelineRepositoryImpl(get())
+        }
+    }
+
+    factory<ProfileRepository> {
+        when (runBlocking { get<PreferencesRepository>().platform.first() }) {
+            Platform.MASTODON -> MastodonProfileRepositoryImpl(get())
+            Platform.MISSKEY -> MisskeyProfileRepositoryImpl(get())
         }
     }
 

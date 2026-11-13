@@ -35,6 +35,13 @@ interface MisskeyRepository {
         limit: Int? = 20
     ): Result<List<Note>>
 
+    suspend fun getUserNotes(
+        userId: String,
+        sinceId: String? = null,
+        untilId: String? = null,
+        limit: Int? = 20
+    ): Result<List<Note>>
+
     suspend fun checkMiAuth(session: String): Result<MiAuth>
 }
 
@@ -93,6 +100,27 @@ class MisskeyRepositoryImpl(
                     setBody(buildJsonObject {
                         maxId?.let { put("untilId", it) }
                         sinceId?.let { put("sinceId", it) }
+                        limit?.let { put("limit", it) }
+                    })
+                }.body()
+            }
+        }
+    }
+
+    override suspend fun getUserNotes(
+        userId: String,
+        sinceId: String?,
+        untilId: String?,
+        limit: Int?
+    ): Result<List<Note>> {
+        return withContext(dispatcher) {
+            runSuspendCatching {
+                client.post("/api/users/notes") {
+                    contentType(ContentType.Application.Json)
+                    setBody(buildJsonObject {
+                        put("userId", userId)
+                        sinceId?.let { put("sinceId", it) }
+                        untilId?.let { put("untilId", it) }
                         limit?.let { put("limit", it) }
                     })
                 }.body()
