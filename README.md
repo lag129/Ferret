@@ -15,6 +15,21 @@ Ferret は Android向けの軽量な [Mastodon](https://joinmastodon.org/)
 - 検索機能 (Mastodon)
 - OAuth 対応
 
+## 使用技術
+
+| 分類           | 技術                        |
+|:---------------|-----------------------------|
+| 言語           | Kotlin                      |
+| UI             | Jetpack Compose, Material 3 |
+| 画面遷移       | Navigation 3                |
+| DI             | Koin                        |
+| HTTP 通信      | Ktor                        |
+| データ永続化   | Room, DataStore             |
+| 画像表示       | Coil 3                      |
+| HTML 解析      | Ksoup                       |
+| パフォーマンス | Baseline Profile            |
+| テスト         | Kotest, MockK               |
+
 ## ディレクトリ構成
 
 ```
