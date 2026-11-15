@@ -4,8 +4,11 @@
 [![Android API](https://img.shields.io/badge/API-30%2B-brightgreen.svg?style=flat)](https://developer.android.com/tools/releases/platforms?hl=ja#11)
 [![Build Status](https://github.com/lag129/Ferret/workflows/Android%20CI/badge.svg)](https://github.com/lag129/Ferret/actions)
 
-Ferret は Android向けの軽量な [Mastodon](https://joinmastodon.org/)
-クライアントアプリです。一部の機能では [Misskey](https://misskey-hub.net/) の操作にも対応しています。
+Ferret は Android 向けの軽量な [Mastodon](https://joinmastodon.org/)
+クライアントアプリです。Mastodon
+は分散型のSNSサービスであり、Ferret
+はそのクライアントアプリとして動作します。一部の機能では [Misskey](https://misskey-hub.net/)
+の操作にも対応しています。
 
 ## 実装機能
 
@@ -13,7 +16,8 @@ Ferret は Android向けの軽量な [Mastodon](https://joinmastodon.org/)
 - プロフィールの表示 (Mastodon / Misskey)
 - カスタム絵文字の表示 (Mastodon)
 - 検索機能 (Mastodon)
-- OAuth 対応
+
+実装機能の詳細や動作画面については[機能概要](/docs/機能概要.md)に記述しています。
 
 ## 使用技術
 

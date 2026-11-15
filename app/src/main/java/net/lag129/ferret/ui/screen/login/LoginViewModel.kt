@@ -45,6 +45,7 @@ class LoginViewModel(
                 .onSuccess {
                     when (it) {
                         "mastodon" -> registerClientApp(serverName)
+                        "fedibird" -> registerClientApp(serverName)
                         "misskey" -> registerMisskeyApp(serverName)
                         else -> _authState.value = AuthState.Error("Unsupported server")
                     }
