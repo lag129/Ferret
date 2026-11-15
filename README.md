@@ -10,11 +10,13 @@ Ferret は Android 向けの軽量な [Mastodon](https://joinmastodon.org/)
 はそのクライアントアプリとして動作します。一部の機能では [Misskey](https://misskey-hub.net/)
 の操作にも対応しています。
 
+絵文字やリアクションの表示が行えるシンプルな見た目のアプリを目指して開発しています。
+
 ## 実装機能
 
 - タイムラインの表示 (Mastodon / Misskey)
 - プロフィールの表示 (Mastodon / Misskey)
-- カスタム絵文字の表示 (Mastodon)
+- 絵文字, リアクションの表示 (Mastodon)
 - 検索機能 (Mastodon)
 
 実装機能の詳細や動作画面については[機能概要](/docs/機能概要.md)に記述しています。
