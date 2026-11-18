@@ -3,11 +3,11 @@ package net.lag129.ferret.ui.screen.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,12 +21,12 @@ import net.lag129.ferret.repository.Platform
 import net.lag129.ferret.repository.PreferencesRepository
 import kotlin.uuid.Uuid
 
-sealed class AuthState {
-    object Idle : AuthState()
-    object Loading : AuthState()
-    data class Redirect(val oauthUrl: String) : AuthState()
-    object Success : AuthState()
-    data class Error(val message: String) : AuthState()
+sealed interface AuthState {
+    object Idle : AuthState
+    object Loading : AuthState
+    data class Redirect(val oauthUrl: String) : AuthState
+    object Success : AuthState
+    data class Error(val message: String) : AuthState
 }
 
 class LoginViewModel(
@@ -148,10 +148,10 @@ class LoginViewModel(
         clientId: String
     ): String {
         return "https://$serverName/oauth/authorize" +
-            "?client_id=${clientId}" +
-            "&redirect_uri=${REDIRECT_URI}" +
-            "&response_type=code" +
-            "&scope=${SCOPES}"
+                "?client_id=${clientId}" +
+                "&redirect_uri=${REDIRECT_URI}" +
+                "&response_type=code" +
+                "&scope=${SCOPES}"
     }
 
     private fun buildMiAuthUrl(
@@ -159,9 +159,9 @@ class LoginViewModel(
         session: String
     ): String {
         return "https://$serverName/miauth/$session" +
-            "?name=${CLIENT_NAME}" +
-            "&callback=${MI_AUTH_CALLBACK}" +
-            "&permission=${MI_AUTH_PERMISSION}"
+                "?name=${CLIENT_NAME}" +
+                "&callback=${MI_AUTH_CALLBACK}" +
+                "&permission=${MI_AUTH_PERMISSION}"
     }
 
     companion object {
