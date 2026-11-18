@@ -89,9 +89,13 @@ class LoginViewModel(
         _authState.value = AuthState.Redirect(buildMiAuthUrl(serverName, session))
     }
 
-    fun obtainAccessToken(code: String) {
+    fun obtainAccessToken(code: String, state: String?) {
         viewModelScope.launch {
             val tempAuthData = preferencesRepository.temporaryAuthData.first() ?: return@launch
+            if (state != tempAuthData.state) {
+                _authState.value = AuthState.Error("Invalid state")
+                return@launch
+            }
             val client = createHttpClient(tempAuthData.serverName)
             val mastodonRepository = MastodonRepositoryImpl(client)
 
