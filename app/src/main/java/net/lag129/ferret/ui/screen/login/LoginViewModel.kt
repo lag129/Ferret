@@ -3,11 +3,13 @@ package net.lag129.ferret.ui.screen.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.serialization.kotlinx.json.json
+import java.security.SecureRandom
+import kotlin.io.encoding.Base64
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +21,6 @@ import net.lag129.ferret.repository.MisskeyRepositoryImpl
 import net.lag129.ferret.repository.NodeInfoRepositoryImpl
 import net.lag129.ferret.repository.Platform
 import net.lag129.ferret.repository.PreferencesRepository
-import kotlin.uuid.Uuid
 
 sealed interface AuthState {
     object Idle : AuthState
@@ -58,6 +59,7 @@ class LoginViewModel(
 
     fun registerClientApp(serverName: String) {
         val client = createHttpClient(serverName)
+        val state = generateSecureToken(32)
         val mastodonRepository = MastodonRepositoryImpl(client)
 
         viewModelScope.launch {
@@ -70,9 +72,10 @@ class LoginViewModel(
                     serverName = serverName,
                     clientId = credentialApp.clientId,
                     clientSecret = credentialApp.clientSecret,
+                    state = state,
                 )
                 _authState.value =
-                    AuthState.Redirect(buildOAuthUrl(serverName, credentialApp.clientId))
+                    AuthState.Redirect(buildOAuthUrl(serverName, credentialApp.clientId, state))
             }.onFailure { error ->
                 _authState.value = AuthState.Error(error.message ?: "")
                 Napier.e("Failed to register client app", error)
@@ -81,7 +84,7 @@ class LoginViewModel(
     }
 
     private suspend fun registerMisskeyApp(serverName: String) {
-        val session = Uuid.random().toString()
+        val session = generateSecureToken(32)
         preferencesRepository.saveMiAuthSession(serverName, session)
         _authState.value = AuthState.Redirect(buildMiAuthUrl(serverName, session))
     }
@@ -145,13 +148,15 @@ class LoginViewModel(
 
     private fun buildOAuthUrl(
         serverName: String,
-        clientId: String
+        clientId: String,
+        state: String
     ): String {
         return "https://$serverName/oauth/authorize" +
                 "?client_id=${clientId}" +
                 "&redirect_uri=${REDIRECT_URI}" +
                 "&response_type=code" +
-                "&scope=${SCOPES}"
+                "&scope=${SCOPES}" +
+                "&state=${state}"
     }
 
     private fun buildMiAuthUrl(
@@ -162,6 +167,14 @@ class LoginViewModel(
                 "?name=${CLIENT_NAME}" +
                 "&callback=${MI_AUTH_CALLBACK}" +
                 "&permission=${MI_AUTH_PERMISSION}"
+    }
+
+    private fun generateSecureToken(byteSize: Int): String {
+        val rand = SecureRandom.getInstanceStrong()
+        val randomBytes = ByteArray(byteSize)
+        rand.nextBytes(randomBytes)
+
+        return Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(randomBytes)
     }
 
     companion object {
