@@ -57,29 +57,27 @@ class LoginViewModel(
         }
     }
 
-    fun registerClientApp(serverName: String) {
+    private suspend fun registerClientApp(serverName: String) {
         val client = createHttpClient(serverName)
         val state = generateSecureToken(32)
         val mastodonRepository = MastodonRepositoryImpl(client)
 
-        viewModelScope.launch {
-            mastodonRepository.registerClientApp(
-                clientName = CLIENT_NAME,
-                redirectUris = REDIRECT_URI,
-                scopes = SCOPES,
-            ).onSuccess { credentialApp ->
-                preferencesRepository.saveTemporaryAuthData(
-                    serverName = serverName,
-                    clientId = credentialApp.clientId,
-                    clientSecret = credentialApp.clientSecret,
-                    state = state,
-                )
-                _authState.value =
-                    AuthState.Redirect(buildOAuthUrl(serverName, credentialApp.clientId, state))
-            }.onFailure { error ->
-                _authState.value = AuthState.Error(error.message ?: "")
-                Napier.e("Failed to register client app", error)
-            }
+        mastodonRepository.registerClientApp(
+            clientName = CLIENT_NAME,
+            redirectUris = REDIRECT_URI,
+            scopes = SCOPES,
+        ).onSuccess { credentialApp ->
+            preferencesRepository.saveTemporaryAuthData(
+                serverName = serverName,
+                clientId = credentialApp.clientId,
+                clientSecret = credentialApp.clientSecret,
+                state = state,
+            )
+            _authState.value =
+                AuthState.Redirect(buildOAuthUrl(serverName, credentialApp.clientId, state))
+        }.onFailure { error ->
+            _authState.value = AuthState.Error(error.message ?: "")
+            Napier.e("Failed to register client app", error)
         }
     }
 
