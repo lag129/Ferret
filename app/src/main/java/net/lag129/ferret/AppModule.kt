@@ -13,6 +13,7 @@ import io.ktor.client.plugins.cache.storage.FileStorage
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
+import java.io.File
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -24,7 +25,7 @@ import net.lag129.ferret.repository.MisskeyRepositoryImpl
 import net.lag129.ferret.repository.Platform
 import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.repository.PreferencesRepositoryImpl
-import net.lag129.ferret.ui.PreferencesViewModel
+import net.lag129.ferret.ui.MainViewModel
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.screen.profile.MyProfileViewModel
 import net.lag129.ferret.ui.screen.profile.ProfileViewModel
@@ -34,7 +35,6 @@ import net.lag129.ferret.utils.DateUtils
 import net.lag129.ferret.utils.DateUtilsImpl
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import java.io.File
 
 val appModule = module {
 
@@ -94,7 +94,7 @@ val appModule = module {
 
     viewModel { LoginViewModel(get()) }
 
-    viewModel { PreferencesViewModel(get()) }
+    viewModel { MainViewModel(get()) }
 
     viewModel { SearchViewModel(get()) }
 

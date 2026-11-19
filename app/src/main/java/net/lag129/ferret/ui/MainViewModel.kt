@@ -14,7 +14,7 @@ sealed class LoginState {
     object Loading : LoginState()
 }
 
-class PreferencesViewModel(
+class MainViewModel(
     private val repository: PreferencesRepository,
 ) : ViewModel() {
     val loginState: StateFlow<LoginState> =
