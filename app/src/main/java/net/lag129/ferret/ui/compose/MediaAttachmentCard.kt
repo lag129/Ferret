@@ -1,7 +1,5 @@
 package net.lag129.ferret.ui.compose
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -29,10 +27,9 @@ import net.lag129.ferret.model.mastodon.Attachment
 import net.lag129.ferret.ui.navigation.LocalSharedTransitionScope
 
 @Composable
-fun SharedTransitionScope.MediaAttachmentCard(
+fun MediaAttachmentCard(
     mediaAttachments: List<Attachment>,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     val attachmentsSize = mediaAttachments.size
@@ -41,28 +38,24 @@ fun SharedTransitionScope.MediaAttachmentCard(
         0 -> return
         1 -> SingleMediaAttachmentCard(
             media = mediaAttachments[0],
-            animatedVisibilityScope = animatedVisibilityScope,
             onClickMedia = onClickMedia,
             modifier = modifier
         )
 
         2 -> DoubleMediaAttachmentCard(
             media = mediaAttachments,
-            animatedVisibilityScope = animatedVisibilityScope,
             onClickMedia = onClickMedia,
             modifier = modifier
         )
 
         3 -> ThreeMediaLayout(
             media = mediaAttachments,
-            animatedVisibilityScope = animatedVisibilityScope,
             onClickMedia = onClickMedia,
             modifier = modifier
         )
 
         else -> FourMediaLayout(
             media = mediaAttachments.take(4),
-            animatedVisibilityScope = animatedVisibilityScope,
             onClickMedia = onClickMedia,
             modifier = modifier
         )
@@ -70,15 +63,13 @@ fun SharedTransitionScope.MediaAttachmentCard(
 }
 
 @Composable
-private fun SharedTransitionScope.SingleMediaAttachmentCard(
+private fun SingleMediaAttachmentCard(
     media: Attachment,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     MediaImage(
         media = media,
-        animatedVisibilityScope = animatedVisibilityScope,
         modifier = modifier
             .aspectRatio(ratio = 1.618f)
             .fillMaxWidth(),
@@ -87,10 +78,9 @@ private fun SharedTransitionScope.SingleMediaAttachmentCard(
 }
 
 @Composable
-private fun SharedTransitionScope.DoubleMediaAttachmentCard(
+private fun DoubleMediaAttachmentCard(
     media: List<Attachment>,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -100,7 +90,6 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
     ) {
         MediaImage(
             media = media[0],
-            animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -111,7 +100,6 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
 
         MediaImage(
             media = media[1],
-            animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -121,10 +109,9 @@ private fun SharedTransitionScope.DoubleMediaAttachmentCard(
 }
 
 @Composable
-private fun SharedTransitionScope.ThreeMediaLayout(
+private fun ThreeMediaLayout(
     media: List<Attachment>,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -134,7 +121,6 @@ private fun SharedTransitionScope.ThreeMediaLayout(
     ) {
         MediaImage(
             media = media[0],
-            animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -150,7 +136,6 @@ private fun SharedTransitionScope.ThreeMediaLayout(
         ) {
             MediaImage(
                 media = media[1],
-                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onClickMedia = onClickMedia
             )
@@ -159,7 +144,6 @@ private fun SharedTransitionScope.ThreeMediaLayout(
 
             MediaImage(
                 media = media[2],
-                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onClickMedia = onClickMedia
             )
@@ -168,10 +152,9 @@ private fun SharedTransitionScope.ThreeMediaLayout(
 }
 
 @Composable
-private fun SharedTransitionScope.FourMediaLayout(
+private fun FourMediaLayout(
     media: List<Attachment>,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -186,7 +169,6 @@ private fun SharedTransitionScope.FourMediaLayout(
         ) {
             MediaImage(
                 media = media[0],
-                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onClickMedia = onClickMedia
             )
@@ -195,7 +177,6 @@ private fun SharedTransitionScope.FourMediaLayout(
 
             MediaImage(
                 media = media[1],
-                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onClickMedia = onClickMedia
             )
@@ -210,7 +191,6 @@ private fun SharedTransitionScope.FourMediaLayout(
         ) {
             MediaImage(
                 media = media[2],
-                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onClickMedia = onClickMedia
             )
@@ -219,7 +199,6 @@ private fun SharedTransitionScope.FourMediaLayout(
 
             MediaImage(
                 media = media[3],
-                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = Modifier.weight(1f),
                 onClickMedia = onClickMedia
             )
