@@ -17,7 +17,6 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.serialization.NavBackStackSerializer
-import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import net.lag129.ferret.ui.LoginState
 import net.lag129.ferret.ui.compose.BottomAppBarItem
@@ -125,8 +124,7 @@ fun FerretNavDisplay(
                                     onClickProfile = { account ->
                                         backStack.add(TimelineProfile(account.id, account))
                                     },
-                                    onBack = { backStack.removeLastOrNull() },
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                    onBack = { backStack.removeLastOrNull() }
                                 )
                             }
 
@@ -140,8 +138,7 @@ fun FerretNavDisplay(
                                     },
                                     onClickProfile = { account ->
                                         backStack.add(TimelineProfile(account.id, account))
-                                    },
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                    }
                                 )
                             }
 
@@ -158,8 +155,7 @@ fun FerretNavDisplay(
                                     },
                                     onClickProfile = { account ->
                                         backStack.add(TimelineProfile(account.id, account))
-                                    },
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                    }
                                 )
                             }
 
@@ -173,16 +169,14 @@ fun FerretNavDisplay(
                                     },
                                     onClickProfile = { account ->
                                         backStack.add(TimelineProfile(account.id, account))
-                                    },
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                    }
                                 )
                             }
 
                             is Media -> NavEntry(key) {
                                 MediaScreen(
                                     mediaUrl = key.url,
-                                    description = key.description,
-                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                                    description = key.description
                                 )
                             }
 
