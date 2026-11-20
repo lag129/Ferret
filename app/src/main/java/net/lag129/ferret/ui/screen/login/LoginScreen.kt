@@ -32,10 +32,10 @@ import org.koin.compose.viewmodel.koinActivityViewModel
 fun LoginScreen(
     modifier: Modifier = Modifier,
     // MainActivity とインスタンスを共有するため `koinActivityViewModel()` で取得する
-    authViewModel: LoginViewModel = koinActivityViewModel()
+    loginViewModel: LoginViewModel = koinActivityViewModel()
 ) {
     val context = LocalContext.current
-    val authState by authViewModel.authState.collectAsStateWithLifecycle()
+    val authState by loginViewModel.authState.collectAsStateWithLifecycle()
 
     var serverName by remember { mutableStateOf("") }
 
@@ -85,7 +85,7 @@ fun LoginScreen(
                 is AuthState.Error -> {}
                 else -> {
                     Button(
-                        onClick = { authViewModel.login(serverName) },
+                        onClick = { loginViewModel.login(serverName) },
                         modifier = Modifier
                     ) {
                         Text(stringResource(R.string.login_button))

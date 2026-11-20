@@ -19,7 +19,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val authViewModel: LoginViewModel by viewModel()
+    private val loginViewModel: LoginViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +50,11 @@ class MainActivity : ComponentActivity() {
         if (uri.scheme == "ferret" && uri.host == "oauth") {
             val code = uri.getQueryParameter("code")
             val state = uri.getQueryParameter("state")
-            if (code != null) authViewModel.obtainAccessToken(code, state)
+            if (code != null) loginViewModel.obtainAccessToken(code, state)
         }
 
         if (uri.scheme == "ferret" && uri.host == "miauth") {
-            authViewModel.obtainMiAuthToken()
+            loginViewModel.obtainMiAuthToken()
         }
     }
 }
