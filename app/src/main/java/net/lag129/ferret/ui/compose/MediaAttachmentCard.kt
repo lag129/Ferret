@@ -22,9 +22,11 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import net.lag129.ferret.model.mastodon.Attachment
+import net.lag129.ferret.ui.navigation.LocalSharedTransitionScope
 
 @Composable
 fun SharedTransitionScope.MediaAttachmentCard(
@@ -226,38 +228,41 @@ private fun SharedTransitionScope.FourMediaLayout(
 }
 
 @Composable
-private fun SharedTransitionScope.MediaImage(
+private fun MediaImage(
     media: Attachment,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     val surfaceVariant = MaterialTheme.colorScheme.surfaceVariant
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    val animatedVisibilityScope = LocalNavAnimatedContentScope.current
 
-    AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(media.previewUrl)
-            .placeholderMemoryCacheKey("${media.url}-key")
-            .memoryCacheKey("${media.url}-key")
-            .build(),
-        contentDescription = media.description,
-        contentScale = ContentScale.Crop,
-        placeholder = ColorPainter(surfaceVariant),
-        modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .border(
-                BorderStroke(0.4.dp, MaterialTheme.colorScheme.outlineVariant),
-                RoundedCornerShape(10.dp)
-            )
-            .clickable {
-                onClickMedia.invoke(media.url, media.description)
-            }
-            .sharedElement(
-                sharedContentState = rememberSharedContentState(key = media.url),
-                animatedVisibilityScope = animatedVisibilityScope,
-                boundsTransform = { _, _ ->
-                    tween(durationMillis = 300)
+    with(sharedTransitionScope) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(media.previewUrl)
+                .placeholderMemoryCacheKey("${media.url}-key")
+                .memoryCacheKey("${media.url}-key")
+                .build(),
+            contentDescription = media.description,
+            contentScale = ContentScale.Crop,
+            placeholder = ColorPainter(surfaceVariant),
+            modifier = modifier
+                .clip(RoundedCornerShape(10.dp))
+                .border(
+                    BorderStroke(0.4.dp, MaterialTheme.colorScheme.outlineVariant),
+                    RoundedCornerShape(10.dp)
+                )
+                .clickable {
+                    onClickMedia.invoke(media.url, media.description)
                 }
-            )
-    )
+                .sharedElement(
+                    sharedContentState = rememberSharedContentState(key = media.url),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 300)
+                    }
+                )
+        )
+    }
 }
