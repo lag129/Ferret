@@ -1,7 +1,5 @@
 package net.lag129.ferret.ui.screen.profile
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,14 +28,13 @@ import net.lag129.ferret.ui.compose.ProfileTopBar
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SharedTransitionScope.ProfileScreen(
+fun ProfileScreen(
     id: String,
     profile: Profile,
     onBack: () -> Unit,
     onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (profile: Profile) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel = koinViewModel(),
 ) {
@@ -81,7 +78,6 @@ fun SharedTransitionScope.ProfileScreen(
                         onClickDetail = onClickDetail,
                         onClickMedia = onClickMedia,
                         onClickProfile = onClickProfile,
-                        animatedVisibilityScope = animatedVisibilityScope,
                         modifier = Modifier.padding(start = 12.dp, end = 12.dp)
                     )
 

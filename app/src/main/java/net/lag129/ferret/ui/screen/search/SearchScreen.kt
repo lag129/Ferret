@@ -1,7 +1,5 @@
 package net.lag129.ferret.ui.screen.search
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -32,11 +30,10 @@ import net.lag129.ferret.ui.compose.PostCard
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun SharedTransitionScope.SearchScreen(
+fun SearchScreen(
     onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (profile: Profile) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
     searchViewModel: SearchViewModel = koinViewModel(),
 ) {
@@ -77,7 +74,6 @@ fun SharedTransitionScope.SearchScreen(
                         onClickDetail = onClickDetail,
                         onClickMedia = onClickMedia,
                         onClickProfile = onClickProfile,
-                        animatedVisibilityScope = animatedVisibilityScope,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp)
