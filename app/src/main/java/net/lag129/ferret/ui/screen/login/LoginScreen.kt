@@ -26,12 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.lag129.ferret.R
-import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.viewmodel.koinActivityViewModel
 
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    authViewModel: LoginViewModel = koinViewModel()
+    // MainActivity とインスタンスを共有するため `koinActivityViewModel()` で取得する
+    authViewModel: LoginViewModel = koinActivityViewModel()
 ) {
     val context = LocalContext.current
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
