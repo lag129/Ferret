@@ -39,14 +39,15 @@ class LoginViewModel(
 
     fun login(serverName: String) {
         _authState.value = AuthState.Loading
-        val nodeInfoRepository = NodeInfoRepositoryImpl(createHttpClient(serverName))
+        val client = createHttpClient(serverName)
+        val nodeInfoRepository = NodeInfoRepositoryImpl(client)
 
         viewModelScope.launch {
             nodeInfoRepository.getSoftwareName()
                 .onSuccess {
                     when (it) {
-                        "mastodon" -> registerClientApp(serverName)
-                        "fedibird" -> registerClientApp(serverName)
+                        "mastodon" -> registerClientApp(client, serverName)
+                        "fedibird" -> registerClientApp(client, serverName)
                         "misskey" -> registerMisskeyApp(serverName)
                         else -> _authState.value = AuthState.Error("Unsupported server")
                     }
@@ -57,9 +58,8 @@ class LoginViewModel(
         }
     }
 
-    private suspend fun registerClientApp(serverName: String) {
-        val client = createHttpClient(serverName)
-        val state = generateSecureToken(32)
+    private suspend fun registerClientApp(client: HttpClient, serverName: String) {
+        val state = generateSecureToken()
         val mastodonRepository = MastodonRepositoryImpl(client)
 
         mastodonRepository.registerClientApp(
