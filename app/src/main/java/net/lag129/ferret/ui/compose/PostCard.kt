@@ -45,12 +45,11 @@ import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
 
 @Composable
-fun SharedTransitionScope.PostCard(
+fun PostCard(
     data: Post,
     onClickDetail: (data: Post) -> Unit,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (profile: Profile) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
 ) {
     val currentTime = Clock.System.now().toEpochMilliseconds()
@@ -162,7 +161,6 @@ fun SharedTransitionScope.PostCard(
                         MediaAttachmentCard(
                             mediaAttachments = data.mediaAttachments,
                             onClickMedia = onClickMedia,
-                            animatedVisibilityScope = animatedVisibilityScope,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
                                 .blur(radius = if (isBlurred) 40.dp else 0.dp)
@@ -180,7 +178,6 @@ fun SharedTransitionScope.PostCard(
                     MediaAttachmentCard(
                         mediaAttachments = data.mediaAttachments,
                         onClickMedia = onClickMedia,
-                        animatedVisibilityScope = animatedVisibilityScope
                     )
                 }
             }

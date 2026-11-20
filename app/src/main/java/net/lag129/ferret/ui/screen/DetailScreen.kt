@@ -1,7 +1,5 @@
 package net.lag129.ferret.ui.screen
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import kotlin.time.Instant
 import net.lag129.ferret.R
 import net.lag129.ferret.model.Post
 import net.lag129.ferret.model.Profile
@@ -48,16 +46,13 @@ import net.lag129.ferret.ui.compose.OnBackTopAppBar
 import net.lag129.ferret.ui.compose.ReactionBar
 import net.lag129.ferret.utils.DateUtils
 import org.koin.compose.koinInject
-import kotlin.time.Instant
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SharedTransitionScope.DetailScreen(
+fun DetailScreen(
     data: Post,
     onClickMedia: (mediaUrl: String, description: String?) -> Unit,
     onClickProfile: (profile: Profile) -> Unit,
     onBack: () -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -137,7 +132,6 @@ fun SharedTransitionScope.DetailScreen(
                         MediaAttachmentCard(
                             mediaAttachments = data.mediaAttachments,
                             onClickMedia = onClickMedia,
-                            animatedVisibilityScope = animatedVisibilityScope,
                             modifier = Modifier
                                 .clip(RoundedCornerShape(10.dp))
                                 .blur(radius = if (isBlurred) 40.dp else 0.dp)
@@ -155,7 +149,6 @@ fun SharedTransitionScope.DetailScreen(
                     MediaAttachmentCard(
                         mediaAttachments = data.mediaAttachments,
                         onClickMedia = onClickMedia,
-                        animatedVisibilityScope = animatedVisibilityScope
                     )
                 }
             }
