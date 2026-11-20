@@ -49,7 +49,8 @@ class MainActivity : ComponentActivity() {
 
         if (uri.scheme == "ferret" && uri.host == "oauth") {
             val code = uri.getQueryParameter("code")
-            if (code != null) authViewModel.obtainAccessToken(code)
+            val state = uri.getQueryParameter("state")
+            if (code != null) authViewModel.obtainAccessToken(code, state)
         }
 
         if (uri.scheme == "ferret" && uri.host == "miauth") {

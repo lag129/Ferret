@@ -21,7 +21,8 @@ enum class Platform {
 data class TemporaryAuthData(
     val serverName: String,
     val clientId: String,
-    val clientSecret: String
+    val clientSecret: String,
+    val state: String,
 )
 
 interface PreferencesRepository {
@@ -38,7 +39,8 @@ interface PreferencesRepository {
     suspend fun saveTemporaryAuthData(
         serverName: String,
         clientId: String,
-        clientSecret: String
+        clientSecret: String,
+        state: String,
     ): Preferences
 
     suspend fun clearTemporaryAuthData(): Preferences
@@ -58,12 +60,14 @@ class PreferencesRepositoryImpl(
         val serverName = preferences[SERVER_NAME]
         val clientId = preferences[CLIENT_ID]
         val clientSecret = preferences[CLIENT_SECRET]
+        val state = preferences[OAUTH_STATE]
 
-        if (serverName != null && clientId != null && clientSecret != null) {
+        if (serverName != null && clientId != null && clientSecret != null && state != null) {
             TemporaryAuthData(
                 serverName = serverName,
                 clientId = clientId,
-                clientSecret = clientSecret
+                clientSecret = clientSecret,
+                state = state,
             )
         } else {
             null
@@ -102,16 +106,19 @@ class PreferencesRepositoryImpl(
     override suspend fun saveTemporaryAuthData(
         serverName: String,
         clientId: String,
-        clientSecret: String
+        clientSecret: String,
+        state: String,
     ) = context.dataStore.edit { preferences ->
         preferences[SERVER_NAME] = serverName
         preferences[CLIENT_ID] = clientId
         preferences[CLIENT_SECRET] = clientSecret
+        preferences[OAUTH_STATE] = state
     }
 
     override suspend fun clearTemporaryAuthData() = context.dataStore.edit { preferences ->
         preferences.remove(CLIENT_ID)
         preferences.remove(CLIENT_SECRET)
+        preferences.remove(OAUTH_STATE)
         preferences.remove(MI_AUTH_SESSION)
     }
 
@@ -120,6 +127,7 @@ class PreferencesRepositoryImpl(
         val BEARER_TOKEN = stringPreferencesKey("bearer_token")
         val CLIENT_ID = stringPreferencesKey("client_id")
         val CLIENT_SECRET = stringPreferencesKey("client_secret")
+        val OAUTH_STATE = stringPreferencesKey("oauth_state")
         val PLATFORM = stringPreferencesKey("platform")
         val MI_AUTH_SESSION = stringPreferencesKey("mi_auth_session")
     }

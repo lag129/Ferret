@@ -8,6 +8,8 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.serialization.kotlinx.json.json
+import java.security.SecureRandom
+import kotlin.io.encoding.Base64
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,14 +21,13 @@ import net.lag129.ferret.repository.MisskeyRepositoryImpl
 import net.lag129.ferret.repository.NodeInfoRepositoryImpl
 import net.lag129.ferret.repository.Platform
 import net.lag129.ferret.repository.PreferencesRepository
-import kotlin.uuid.Uuid
 
-sealed class AuthState {
-    object Idle : AuthState()
-    object Loading : AuthState()
-    data class Redirect(val oauthUrl: String) : AuthState()
-    object Success : AuthState()
-    data class Error(val message: String) : AuthState()
+sealed interface AuthState {
+    object Idle : AuthState
+    object Loading : AuthState
+    data class Redirect(val oauthUrl: String) : AuthState
+    object Success : AuthState
+    data class Error(val message: String) : AuthState
 }
 
 class LoginViewModel(
@@ -38,14 +39,15 @@ class LoginViewModel(
 
     fun login(serverName: String) {
         _authState.value = AuthState.Loading
-        val nodeInfoRepository = NodeInfoRepositoryImpl(createHttpClient(serverName))
+        val client = createHttpClient(serverName)
+        val nodeInfoRepository = NodeInfoRepositoryImpl(client)
 
         viewModelScope.launch {
             nodeInfoRepository.getSoftwareName()
                 .onSuccess {
                     when (it) {
-                        "mastodon" -> registerClientApp(serverName)
-                        "fedibird" -> registerClientApp(serverName)
+                        "mastodon" -> registerClientApp(client, serverName)
+                        "fedibird" -> registerClientApp(client, serverName)
                         "misskey" -> registerMisskeyApp(serverName)
                         else -> _authState.value = AuthState.Error("Unsupported server")
                     }
@@ -56,39 +58,42 @@ class LoginViewModel(
         }
     }
 
-    fun registerClientApp(serverName: String) {
-        val client = createHttpClient(serverName)
+    private suspend fun registerClientApp(client: HttpClient, serverName: String) {
+        val state = generateSecureToken()
         val mastodonRepository = MastodonRepositoryImpl(client)
 
-        viewModelScope.launch {
-            mastodonRepository.registerClientApp(
-                clientName = CLIENT_NAME,
-                redirectUris = REDIRECT_URI,
-                scopes = SCOPES,
-            ).onSuccess { credentialApp ->
-                preferencesRepository.saveTemporaryAuthData(
-                    serverName = serverName,
-                    clientId = credentialApp.clientId,
-                    clientSecret = credentialApp.clientSecret,
-                )
-                _authState.value =
-                    AuthState.Redirect(buildOAuthUrl(serverName, credentialApp.clientId))
-            }.onFailure { error ->
-                _authState.value = AuthState.Error(error.message ?: "")
-                Napier.e("Failed to register client app", error)
-            }
+        mastodonRepository.registerClientApp(
+            clientName = CLIENT_NAME,
+            redirectUris = REDIRECT_URI,
+            scopes = SCOPES,
+        ).onSuccess { credentialApp ->
+            preferencesRepository.saveTemporaryAuthData(
+                serverName = serverName,
+                clientId = credentialApp.clientId,
+                clientSecret = credentialApp.clientSecret,
+                state = state,
+            )
+            _authState.value =
+                AuthState.Redirect(buildOAuthUrl(serverName, credentialApp.clientId, state))
+        }.onFailure { error ->
+            _authState.value = AuthState.Error(error.message ?: "")
+            Napier.e("Failed to register client app", error)
         }
     }
 
     private suspend fun registerMisskeyApp(serverName: String) {
-        val session = Uuid.random().toString()
+        val session = generateSecureToken()
         preferencesRepository.saveMiAuthSession(serverName, session)
         _authState.value = AuthState.Redirect(buildMiAuthUrl(serverName, session))
     }
 
-    fun obtainAccessToken(code: String) {
+    fun obtainAccessToken(code: String, state: String?) {
         viewModelScope.launch {
             val tempAuthData = preferencesRepository.temporaryAuthData.first() ?: return@launch
+            if (state != tempAuthData.state) {
+                _authState.value = AuthState.Error("Invalid state")
+                return@launch
+            }
             val client = createHttpClient(tempAuthData.serverName)
             val mastodonRepository = MastodonRepositoryImpl(client)
 
@@ -145,13 +150,15 @@ class LoginViewModel(
 
     private fun buildOAuthUrl(
         serverName: String,
-        clientId: String
+        clientId: String,
+        state: String
     ): String {
         return "https://$serverName/oauth/authorize" +
-            "?client_id=${clientId}" +
-            "&redirect_uri=${REDIRECT_URI}" +
-            "&response_type=code" +
-            "&scope=${SCOPES}"
+                "?client_id=${clientId}" +
+                "&redirect_uri=${REDIRECT_URI}" +
+                "&response_type=code" +
+                "&scope=${SCOPES}" +
+                "&state=${state}"
     }
 
     private fun buildMiAuthUrl(
@@ -159,9 +166,17 @@ class LoginViewModel(
         session: String
     ): String {
         return "https://$serverName/miauth/$session" +
-            "?name=${CLIENT_NAME}" +
-            "&callback=${MI_AUTH_CALLBACK}" +
-            "&permission=${MI_AUTH_PERMISSION}"
+                "?name=${CLIENT_NAME}" +
+                "&callback=${MI_AUTH_CALLBACK}" +
+                "&permission=${MI_AUTH_PERMISSION}"
+    }
+
+    private fun generateSecureToken(): String {
+        val rand = SecureRandom.getInstanceStrong()
+        val randomBytes = ByteArray(32)
+        rand.nextBytes(randomBytes)
+
+        return Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(randomBytes)
     }
 
     companion object {
