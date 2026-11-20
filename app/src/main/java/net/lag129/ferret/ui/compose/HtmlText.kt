@@ -1,17 +1,20 @@
 package net.lag129.ferret.ui.compose
 
-import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import net.lag129.ferret.model.Post
 import net.lag129.ferret.utils.createEmojiInlineContent
-import net.lag129.ferret.utils.emojisToAnnotatedString
-import net.lag129.ferret.utils.htmlToAnnotatedString
+import net.lag129.ferret.utils.parseEmojisToAnnotatedString
+import net.lag129.ferret.utils.parseHtmlToAnnotatedString
 
 @Composable
 fun HtmlText(
@@ -23,22 +26,20 @@ fun HtmlText(
     maxLines: Int = Int.MAX_VALUE,
     style: TextStyle = LocalTextStyle.current
 ) {
-    val annotatedString = emojis?.let {
-        emojisToAnnotatedString(
-            htmlToAnnotatedString(body),
-            it
+    val linkColor = MaterialTheme.colorScheme.primary
+
+    val annotatedString = remember(body, emojis, linkColor) {
+        val html = parseHtmlToAnnotatedString(
+            html = body,
+            urlSpanStyle = SpanStyle(
+                color = linkColor,
+                textDecoration = TextDecoration.Underline
+            )
         )
-    } ?: run {
-        htmlToAnnotatedString(body)
+        emojis?.let { parseEmojisToAnnotatedString(html, it) } ?: html
     }
 
-    val inlineContent = mutableMapOf<String, InlineTextContent>()
-
-    emojis?.let {
-        inlineContent.putAll(
-            createEmojiInlineContent(it, 20)
-        )
-    }
+    val inlineContent = createEmojiInlineContent(emojis.orEmpty())
 
     Text(
         text = annotatedString,

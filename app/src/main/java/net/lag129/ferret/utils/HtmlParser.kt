@@ -1,27 +1,11 @@
 package net.lag129.ferret.utils
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.AnnotatedString.Builder
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.TextDecoration
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
-
-@Composable
-@ReadOnlyComposable
-fun htmlToAnnotatedString(
-    html: String,
-    urlSpanStyle: SpanStyle = SpanStyle(
-        color = MaterialTheme.colorScheme.primary,
-        textDecoration = TextDecoration.Underline
-    )
-): AnnotatedString {
-    return parseHtmlToAnnotatedString(html, urlSpanStyle)
-}
 
 private enum class SpanState {
     INVISIBLE, ELLIPSIS, NORMAL

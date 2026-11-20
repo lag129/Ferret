@@ -3,7 +3,6 @@ package net.lag129.ferret.utils
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Placeholder
@@ -13,14 +12,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import net.lag129.ferret.model.Post
 
-@Composable
-fun emojisToAnnotatedString(
-    annotatedString: AnnotatedString,
-    emojis: List<Post.Emoji>
-): AnnotatedString {
-
-    return parseEmojisToAnnotatedString(annotatedString, emojis)
-}
+private val shortcodePattern = Regex(":([a-zA-Z0-9_]+):")
 
 fun parseEmojisToAnnotatedString(
     annotatedString: AnnotatedString,
@@ -28,8 +20,6 @@ fun parseEmojisToAnnotatedString(
 ): AnnotatedString {
 
     val plainText = annotatedString.text
-    val shortcodePattern = Regex(":([a-zA-Z0-9_]+):")
-
     val emojiMap = emojis.associateBy { it.shortcode }
 
     return buildAnnotatedString {
@@ -62,7 +52,6 @@ fun parseEmojisToAnnotatedString(
     }
 }
 
-@Composable
 fun createEmojiInlineContent(
     emojis: List<Post.Emoji>,
     size: Int = 20
