@@ -8,13 +8,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import net.lag129.ferret.repository.PreferencesRepository
 
-sealed class LoginState {
-    object LoggedIn : LoginState()
-    object LoggedOut : LoginState()
-    object Loading : LoginState()
+sealed interface LoginState {
+    object LoggedIn : LoginState
+    object LoggedOut : LoginState
+    object Loading : LoginState
 }
 
-class PreferencesViewModel(
+class MainViewModel(
     private val repository: PreferencesRepository,
 ) : ViewModel() {
     val loginState: StateFlow<LoginState> =

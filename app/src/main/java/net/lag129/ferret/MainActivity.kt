@@ -8,7 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import net.lag129.ferret.ui.LoginState
-import net.lag129.ferret.ui.PreferencesViewModel
+import net.lag129.ferret.ui.MainViewModel
 import net.lag129.ferret.ui.navigation.FerretNavDisplay
 import net.lag129.ferret.ui.screen.SplashScreen
 import net.lag129.ferret.ui.screen.login.LoginViewModel
@@ -27,8 +27,8 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
 
         setContent {
-            val preferencesViewModel: PreferencesViewModel = koinViewModel()
-            val loginState by preferencesViewModel.loginState.collectAsStateWithLifecycle()
+            val mainViewModel: MainViewModel = koinViewModel()
+            val loginState by mainViewModel.loginState.collectAsStateWithLifecycle()
 
             FerretTheme {
                 when (loginState) {
