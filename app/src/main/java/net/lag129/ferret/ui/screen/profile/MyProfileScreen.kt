@@ -38,10 +38,6 @@ fun SharedTransitionScope.MyProfileScreen(
     val account by viewModel.account.collectAsStateWithLifecycle()
     val statuses by viewModel.statuses.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchMyStatuses()
-    }
-
     Scaffold(
         contentWindowInsets = WindowInsets.statusBars
     ) { innerPadding ->

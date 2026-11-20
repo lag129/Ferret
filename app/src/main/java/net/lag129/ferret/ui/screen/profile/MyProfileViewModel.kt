@@ -21,7 +21,11 @@ class MyProfileViewModel(
     private val _account = MutableStateFlow<Profile?>(null)
     val account: StateFlow<Profile?> = _account.asStateFlow()
 
-    fun fetchMyStatuses() {
+    init {
+        fetchMyStatuses()
+    }
+
+    private fun fetchMyStatuses() {
         viewModelScope.launch {
             val account = fediverseRepository.getMyCredential()
                 .onFailure { Napier.e("Failed to fetch my credential", it) }
