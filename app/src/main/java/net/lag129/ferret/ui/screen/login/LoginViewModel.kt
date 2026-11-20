@@ -82,7 +82,7 @@ class LoginViewModel(
     }
 
     private suspend fun registerMisskeyApp(serverName: String) {
-        val session = generateSecureToken(32)
+        val session = generateSecureToken()
         preferencesRepository.saveMiAuthSession(serverName, session)
         _authState.value = AuthState.Redirect(buildMiAuthUrl(serverName, session))
     }
@@ -171,9 +171,9 @@ class LoginViewModel(
                 "&permission=${MI_AUTH_PERMISSION}"
     }
 
-    private fun generateSecureToken(byteSize: Int): String {
+    private fun generateSecureToken(): String {
         val rand = SecureRandom.getInstanceStrong()
-        val randomBytes = ByteArray(byteSize)
+        val randomBytes = ByteArray(32)
         rand.nextBytes(randomBytes)
 
         return Base64.UrlSafe.withPadding(Base64.PaddingOption.ABSENT).encode(randomBytes)
