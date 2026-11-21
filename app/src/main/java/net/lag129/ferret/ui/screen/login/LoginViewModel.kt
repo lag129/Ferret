@@ -52,7 +52,7 @@ class LoginViewModel(
                         else -> _authState.value = AuthState.Error("Unsupported server")
                     }
                 }.onFailure { error ->
-                    _authState.value = AuthState.Error(error.message ?: "")
+                    _authState.value = AuthState.Error("Failed to fetch server name")
                     Napier.e("Failed to fetch server name", error)
                 }
         }
@@ -76,7 +76,7 @@ class LoginViewModel(
             _authState.value =
                 AuthState.Redirect(buildOAuthUrl(serverName, credentialApp.clientId, state))
         }.onFailure { error ->
-            _authState.value = AuthState.Error(error.message ?: "")
+            _authState.value = AuthState.Error("Failed to register client app")
             Napier.e("Failed to register client app", error)
         }
     }
@@ -108,7 +108,7 @@ class LoginViewModel(
                 preferencesRepository.clearTemporaryAuthData()
                 _authState.value = AuthState.Success
             }.onFailure { error ->
-                _authState.value = AuthState.Error(error.message ?: "")
+                _authState.value = AuthState.Error("Failed to obtain access token")
                 Napier.e("Failed to obtain access token", error)
             }
         }
@@ -133,7 +133,7 @@ class LoginViewModel(
                     preferencesRepository.clearTemporaryAuthData()
                     _authState.value = AuthState.Success
                 }.onFailure { error ->
-                    _authState.value = AuthState.Error(error.message ?: "")
+                    _authState.value = AuthState.Error("Failed to obtain access token")
                     Napier.e("Failed to obtain access token", error)
                 }
         }
