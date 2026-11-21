@@ -1,7 +1,19 @@
 package net.lag129.ferret
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.PreferencesFileSerializer
+import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.datastore.tink.AeadSerializer
 import androidx.room.Room
+import com.google.crypto.tink.Aead
+import com.google.crypto.tink.KeyTemplate
+import com.google.crypto.tink.RegistryConfiguration
+import com.google.crypto.tink.aead.AeadConfig
+import com.google.crypto.tink.aead.PredefinedAeadParameters
+import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.api.createClientPlugin
@@ -99,4 +111,26 @@ val appModule = module {
     viewModel { SearchViewModel(get()) }
 
     single<DateUtils> { DateUtilsImpl(get()) }
+
+    single<DataStore<Preferences>> {
+        val context = get<Context>()
+        val fileName = "preferences"
+        AeadConfig.register()
+
+        val keysetHandle = AndroidKeysetManager.Builder()
+            .withSharedPref(context, "keyset", "keyset_prefs")
+            .withKeyTemplate(KeyTemplate.createFrom(PredefinedAeadParameters.AES256_GCM))
+            .withMasterKeyUri("android-keystore://master_key")
+            .build()
+            .keysetHandle
+
+        DataStoreFactory.create(
+            serializer = AeadSerializer(
+                aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead::class.java),
+                wrappedSerializer = PreferencesFileSerializer,
+                associatedData = fileName.encodeToByteArray(),
+            ),
+            produceFile = { context.preferencesDataStoreFile(fileName) }
+        )
+    }
 }

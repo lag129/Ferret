@@ -1,20 +1,9 @@
 package net.lag129.ferret.repository
 
-import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.PreferencesFileSerializer
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStoreFile
-import androidx.datastore.tink.AeadSerializer
-import com.google.crypto.tink.Aead
-import com.google.crypto.tink.KeyTemplate
-import com.google.crypto.tink.RegistryConfiguration
-import com.google.crypto.tink.aead.AeadConfig
-import com.google.crypto.tink.aead.PredefinedAeadParameters
-import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -52,28 +41,8 @@ interface PreferencesRepository {
 }
 
 class PreferencesRepositoryImpl(
-    private val context: Context
+    private val dataStore: DataStore<Preferences>,
 ) : PreferencesRepository {
-
-    init {
-        AeadConfig.register()
-    }
-
-    private val keysetHandle = AndroidKeysetManager.Builder()
-        .withSharedPref(context, "keyset", "keyset_prefs")
-        .withKeyTemplate(KeyTemplate.createFrom(PredefinedAeadParameters.AES256_GCM))
-        .withMasterKeyUri("android-keystore://master_key")
-        .build()
-        .keysetHandle
-
-    private val dataStore: DataStore<Preferences> = DataStoreFactory.create(
-        serializer = AeadSerializer(
-            aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead::class.java),
-            wrappedSerializer = PreferencesFileSerializer,
-            associatedData = "preferences".encodeToByteArray(),
-        ),
-        produceFile = { context.preferencesDataStoreFile("preferences") }
-    )
 
     override val serverName: Flow<String> = dataStore.data
         .map { preferences -> preferences[SERVER_NAME] ?: "" }
