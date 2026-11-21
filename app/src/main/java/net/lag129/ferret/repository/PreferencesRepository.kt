@@ -1,17 +1,22 @@
 package net.lag129.ferret.repository
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.PreferencesFileSerializer
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.cybozu.datastore.crypto.preferences.encryptedPreferencesDataStore
+import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.datastore.tink.AeadSerializer
+import com.google.crypto.tink.Aead
+import com.google.crypto.tink.KeyTemplate
+import com.google.crypto.tink.RegistryConfiguration
+import com.google.crypto.tink.aead.AeadConfig
+import com.google.crypto.tink.aead.PredefinedAeadParameters
+import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-
-private val Context.dataStore by encryptedPreferencesDataStore(
-    name = "preferences",
-    masterKeyAlias = "preferences_master_key"
-)
 
 enum class Platform {
     MASTODON,
@@ -50,13 +55,33 @@ class PreferencesRepositoryImpl(
     private val context: Context
 ) : PreferencesRepository {
 
-    override val serverName: Flow<String> = context.dataStore.data
+    init {
+        AeadConfig.register()
+    }
+
+    private val keysetHandle = AndroidKeysetManager.Builder()
+        .withSharedPref(context, "keyset", "keyset_prefs")
+        .withKeyTemplate(KeyTemplate.createFrom(PredefinedAeadParameters.AES256_GCM))
+        .withMasterKeyUri("android-keystore://master_key")
+        .build()
+        .keysetHandle
+
+    private val dataStore: DataStore<Preferences> = DataStoreFactory.create(
+        serializer = AeadSerializer(
+            aead = keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead::class.java),
+            wrappedSerializer = PreferencesFileSerializer,
+            associatedData = "preferences".encodeToByteArray(),
+        ),
+        produceFile = { context.preferencesDataStoreFile("preferences") }
+    )
+
+    override val serverName: Flow<String> = dataStore.data
         .map { preferences -> preferences[SERVER_NAME] ?: "" }
 
-    override val bearerToken: Flow<String> = context.dataStore.data
+    override val bearerToken: Flow<String> = dataStore.data
         .map { preferences -> preferences[BEARER_TOKEN] ?: "" }
 
-    override val temporaryAuthData = context.dataStore.data.map { preferences ->
+    override val temporaryAuthData = dataStore.data.map { preferences ->
         val serverName = preferences[SERVER_NAME]
         val clientId = preferences[CLIENT_ID]
         val clientSecret = preferences[CLIENT_SECRET]
@@ -74,31 +99,31 @@ class PreferencesRepositoryImpl(
         }
     }
 
-    override val platform: Flow<Platform> = context.dataStore.data
+    override val platform: Flow<Platform> = dataStore.data
         .map { preferences ->
             preferences[PLATFORM]?.let { Platform.valueOf(it) } ?: Platform.MASTODON
         }
 
-    override val miAuthSession: Flow<String?> = context.dataStore.data
+    override val miAuthSession: Flow<String?> = dataStore.data
         .map { preferences -> preferences[MI_AUTH_SESSION] }
 
     override suspend fun saveServerName(serverName: String) =
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[SERVER_NAME] = serverName
         }
 
     override suspend fun saveBearerToken(bearerToken: String) =
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[BEARER_TOKEN] = bearerToken
         }
 
     override suspend fun savePlatform(platform: Platform) =
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[PLATFORM] = platform.name
         }
 
     override suspend fun saveMiAuthSession(serverName: String, session: String) =
-        context.dataStore.edit { preferences ->
+        dataStore.edit { preferences ->
             preferences[SERVER_NAME] = serverName
             preferences[MI_AUTH_SESSION] = session
         }
@@ -108,14 +133,14 @@ class PreferencesRepositoryImpl(
         clientId: String,
         clientSecret: String,
         state: String,
-    ) = context.dataStore.edit { preferences ->
+    ) = dataStore.edit { preferences ->
         preferences[SERVER_NAME] = serverName
         preferences[CLIENT_ID] = clientId
         preferences[CLIENT_SECRET] = clientSecret
         preferences[OAUTH_STATE] = state
     }
 
-    override suspend fun clearTemporaryAuthData() = context.dataStore.edit { preferences ->
+    override suspend fun clearTemporaryAuthData() = dataStore.edit { preferences ->
         preferences.remove(CLIENT_ID)
         preferences.remove(CLIENT_SECRET)
         preferences.remove(OAUTH_STATE)
