@@ -98,8 +98,9 @@ dependencies {
     implementation(libs.aboutlibraries.compose.core)
     implementation(libs.aboutlibraries.compose.m3)
 
-    // androidx.datastore:datastore-preferences
+    // androidx.datastore
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.tink)
 
     // androidx.navigation3
     implementation(libs.androidx.navigation3.runtime)
@@ -110,9 +111,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.ktor3)
     implementation(libs.coil.gif)
-
-    // DataStore Crypto
-    implementation(libs.datastore.crypto.preferences)
 
     // Koin
     implementation(platform(libs.koin.bom))
@@ -151,6 +149,9 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+
+    // Tink
+    implementation(libs.tink.android)
 
     // Zoomable
     implementation(libs.zoomable)
