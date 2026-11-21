@@ -125,9 +125,6 @@ dependencies {
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)
 
-    // kotlinx.collections.immutable
-    implementation(libs.kotlinx.collections.immutable)
-
     // kotlinx.datetime
     implementation(libs.kotlinx.datetime)
 
