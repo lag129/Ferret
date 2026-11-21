@@ -82,7 +82,6 @@ fun LoginScreen(
                     CircularProgressIndicator()
                 }
 
-                is AuthState.Error -> {}
                 else -> {
                     Button(
                         onClick = { loginViewModel.login(serverName) },
