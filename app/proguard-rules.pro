@@ -12,5 +12,4 @@
     public *** e(...);
     public *** wtf(...);
 }
--dontwarn com.google.crypto.tink.**
 -keep class * implements androidx.navigation3.runtime.NavKey { *; }
