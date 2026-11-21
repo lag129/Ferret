@@ -20,12 +20,9 @@ import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
-import io.ktor.client.plugins.cache.HttpCache
-import io.ktor.client.plugins.cache.storage.FileStorage
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
-import java.io.File
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -57,17 +54,12 @@ val appModule = module {
                 bearer {
                     loadTokens {
                         val bearerToken = preferencesRepository.bearerToken.first()
-                        BearerTokens(bearerToken, bearerToken)
+                        BearerTokens(bearerToken, null)
                     }
                 }
             }
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
-            }
-            install(HttpCache) {
-                val context = get<Context>()
-                publicStorage(FileStorage(File(context.cacheDir, "ktor_cache")))
-                privateStorage(FileStorage(File(context.cacheDir, "ktor_private_cache")))
             }
             install(createClientPlugin("BaseUrl") {
                 onRequest { request, _ ->
