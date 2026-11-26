@@ -55,13 +55,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    //noinspection WrongGradleMethod
-    composeCompiler {
-        stabilityConfigurationFiles.addAll(
-            project.layout.projectDirectory.file("stability_config.conf"),
-        )
-    }
-
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()
