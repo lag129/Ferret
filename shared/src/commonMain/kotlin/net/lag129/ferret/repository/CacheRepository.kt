@@ -22,8 +22,13 @@ internal class CacheRepositoryImpl(
 
     override suspend fun getPosts(timelineType: String): List<Post> {
         val cached = dao.getCachedPosts(timelineType)
-        return withContext(Dispatchers.Default) {
-            cached.map { json.decodeFromString<Post>(it.postJson) }
+        return try {
+            withContext(Dispatchers.Default) {
+                cached.map { json.decodeFromString<Post>(it.postJson) }
+            }
+        } catch (_: IllegalArgumentException) {
+            dao.clearTimeline(timelineType)
+            emptyList()
         }
     }
 
