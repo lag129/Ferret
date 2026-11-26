@@ -40,7 +40,7 @@ interface PreferencesRepository {
     suspend fun clearTemporaryAuthData()
 }
 
-class PreferencesRepositoryImpl(
+internal class PreferencesRepositoryImpl(
     private val dataStore: DataStore<Preferences>,
 ) : PreferencesRepository {
 

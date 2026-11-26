@@ -20,7 +20,7 @@ class FerretApp : Application(), SingletonImageLoader.Factory {
 
         startKoin {
             androidContext(this@FerretApp)
-            modules(appModule)
+            modules(appModule, sharedModule)
         }
     }
 

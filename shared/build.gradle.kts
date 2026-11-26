@@ -23,8 +23,10 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project.dependencies.platform(libs.androidx.compose.bom))
+            implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.androidx.compose.runtime.annotation)
             implementation(libs.androidx.datastore.preferences.core)
+            implementation(libs.koin.core)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.ktor.client.core)
