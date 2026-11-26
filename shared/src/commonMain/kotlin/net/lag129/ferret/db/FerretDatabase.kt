@@ -8,7 +8,7 @@ import androidx.room.RoomDatabaseConstructor
 @Database(entities = [CachedPost::class], version = 2)
 @ConstructedBy(FerretDatabaseConstructor::class)
 abstract class FerretDatabase : RoomDatabase() {
-    abstract fun cachedPostDao(): CachedPostDao
+    internal abstract fun cachedPostDao(): CachedPostDao
 }
 
 @Suppress("KotlinNoActualForExpect")

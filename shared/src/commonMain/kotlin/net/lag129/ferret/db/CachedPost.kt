@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 
 @Entity(tableName = "cached_statuses", primaryKeys = ["status_id"])
-data class CachedPost(
+internal data class CachedPost(
 
     @ColumnInfo(name = "status_id")
     val postId: String,
