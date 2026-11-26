@@ -9,7 +9,7 @@ import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 
 class DateUtilsTest : StringSpec() {
-    val dateUtils = DateUtilsImpl { TimeZone.of("Asia/Tokyo") }
+    private val dateUtils = DateUtilsImpl { TimeZone.of("Asia/Tokyo") }
 
     init {
         "now" {
