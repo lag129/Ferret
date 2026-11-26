@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.PreferencesFileSerializer
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.datastore.tink.AeadSerializer
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.google.crypto.tink.Aead
 import com.google.crypto.tink.KeyTemplate
 import com.google.crypto.tink.RegistryConfiguration
@@ -16,7 +17,6 @@ import com.google.crypto.tink.aead.PredefinedAeadParameters
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.cio.CIO
-import net.lag129.ferret.db.CachedPostDao
 import net.lag129.ferret.db.FerretDatabase
 import net.lag129.ferret.ui.MainViewModel
 import net.lag129.ferret.ui.screen.login.LoginViewModel
@@ -31,13 +31,13 @@ val appModule = module {
 
     single<HttpClientEngine> { CIO.create() }
 
-    single<FerretDatabase> {
-        Room.databaseBuilder(get(), FerretDatabase::class.java, "ferret_db")
-            .fallbackToDestructiveMigration(dropAllTables = true)
-            .build()
+    single<RoomDatabase.Builder<FerretDatabase>> {
+        val context = get<Context>()
+        Room.databaseBuilder<FerretDatabase>(
+            context = context,
+            name = context.getDatabasePath("ferret_db").absolutePath,
+        )
     }
-
-    single<CachedPostDao> { get<FerretDatabase>().cachedPostDao() }
 
     viewModel { TimelineViewModel(get(), get()) }
 
