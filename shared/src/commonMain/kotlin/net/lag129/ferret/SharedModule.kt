@@ -18,6 +18,8 @@ import net.lag129.ferret.repository.MisskeyRepositoryImpl
 import net.lag129.ferret.repository.Platform
 import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.repository.PreferencesRepositoryImpl
+import net.lag129.ferret.utils.DateUtils
+import net.lag129.ferret.utils.DateUtilsImpl
 import org.koin.dsl.module
 
 val sharedModule = module {
@@ -56,4 +58,6 @@ val sharedModule = module {
             Platform.MISSKEY -> MisskeyRepositoryImpl(get())
         }
     }
+
+    single<DateUtils> { DateUtilsImpl() }
 }

@@ -27,7 +27,7 @@ interface DateUtils {
     ): RelativeTime
 }
 
-class DateUtilsImpl(
+internal class DateUtilsImpl(
     private val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() }
 ) : DateUtils {
 

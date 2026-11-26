@@ -24,8 +24,6 @@ import net.lag129.ferret.ui.screen.profile.MyProfileViewModel
 import net.lag129.ferret.ui.screen.profile.ProfileViewModel
 import net.lag129.ferret.ui.screen.search.SearchViewModel
 import net.lag129.ferret.ui.screen.timeline.TimelineViewModel
-import net.lag129.ferret.utils.DateUtils
-import net.lag129.ferret.utils.DateUtilsImpl
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -52,8 +50,6 @@ val appModule = module {
     viewModel { MainViewModel(get()) }
 
     viewModel { SearchViewModel(get()) }
-
-    single<DateUtils> { DateUtilsImpl() }
 
     single<DataStore<Preferences>> {
         val context = get<Context>()
