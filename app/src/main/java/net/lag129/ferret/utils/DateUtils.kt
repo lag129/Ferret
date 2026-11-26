@@ -1,5 +1,8 @@
 package net.lag129.ferret.utils
 
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
@@ -15,12 +18,12 @@ sealed interface RelativeTime {
 interface DateUtils {
 
     fun formatDateTime(
-        time: Long,
+        time: Instant,
     ): String
 
     fun getRelativeTime(
-        currentTime: Long,
-        postedTime: Long
+        currentTime: Instant,
+        postedTime: Instant
     ): RelativeTime
 }
 
@@ -28,10 +31,8 @@ class DateUtilsImpl(
     private val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() }
 ) : DateUtils {
 
-    override fun formatDateTime(time: Long): String {
-        val dateTime =
-            Instant.fromEpochMilliseconds(time).toLocalDateTime(timeZone())
-
+    override fun formatDateTime(time: Instant): String {
+        val dateTime = time.toLocalDateTime(timeZone())
         val hour = dateTime.hour.toString().padStart(2, '0')
         val minute = dateTime.minute.toString().padStart(2, '0')
 
@@ -39,30 +40,20 @@ class DateUtilsImpl(
     }
 
     override fun getRelativeTime(
-        currentTime: Long,
-        postedTime: Long
+        currentTime: Instant,
+        postedTime: Instant
     ): RelativeTime {
 
         val diffTime = currentTime - postedTime
 
         return when {
-            diffTime < ONE_MINUTE_MILLIS -> RelativeTime.Now
+            diffTime < 1.minutes -> RelativeTime.Now
+            diffTime < 1.hours -> RelativeTime.Minutes(diffTime.inWholeMinutes)
+            diffTime < 1.days -> RelativeTime.Hours(diffTime.inWholeHours)
 
-            diffTime < ONE_HOUR_MILLIS -> RelativeTime.Minutes(diffTime / ONE_MINUTE_MILLIS)
-
-            diffTime < ONE_DAY_MILLIS -> RelativeTime.Hours(diffTime / ONE_HOUR_MILLIS)
-
-            else -> Instant.fromEpochMilliseconds(postedTime)
-                .toLocalDateTime(timeZone())
-                .let { dateTime ->
-                    RelativeTime.Date("${dateTime.year}/${dateTime.month.number}/${dateTime.day}")
-                }
+            else -> postedTime.toLocalDateTime(timeZone()).let { dateTime ->
+                RelativeTime.Date("${dateTime.year}/${dateTime.month.number}/${dateTime.day}")
+            }
         }
-    }
-
-    companion object {
-        private const val ONE_MINUTE_MILLIS = 60000L
-        private const val ONE_HOUR_MILLIS = 3600000L
-        private const val ONE_DAY_MILLIS = 86400000L
     }
 }

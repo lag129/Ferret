@@ -176,7 +176,7 @@ fun DetailScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            val time = Instant.parse(data.createdAt).toEpochMilliseconds()
+            val time = Instant.parse(data.createdAt)
 
             Text(
                 text = dateUtils.formatDateTime(time),

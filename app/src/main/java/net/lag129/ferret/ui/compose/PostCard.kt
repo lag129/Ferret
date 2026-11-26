@@ -52,7 +52,7 @@ fun PostCard(
     onClickProfile: (profile: Profile) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val currentTime = Clock.System.now().toEpochMilliseconds()
+    val currentTime = Clock.System.now()
     val dateUtils: DateUtils = koinInject()
 
     Row(
@@ -105,7 +105,7 @@ fun PostCard(
                     )
                 }
 
-                val postedTime = Instant.parse(data.createdAt).toEpochMilliseconds()
+                val postedTime = Instant.parse(data.createdAt)
 
                 Text(
                     text = dateUtils.getRelativeTime(currentTime, postedTime).toText(),
