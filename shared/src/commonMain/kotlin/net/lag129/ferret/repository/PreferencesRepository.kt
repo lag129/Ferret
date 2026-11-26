@@ -25,19 +25,19 @@ interface PreferencesRepository {
     val temporaryAuthData: Flow<TemporaryAuthData?>
     val platform: Flow<Platform>
     val miAuthSession: Flow<String?>
-    suspend fun saveServerName(serverName: String): Preferences
-    suspend fun saveBearerToken(bearerToken: String): Preferences
-    suspend fun savePlatform(platform: Platform): Preferences
-    suspend fun saveMiAuthSession(serverName: String, session: String): Preferences
+    suspend fun saveServerName(serverName: String)
+    suspend fun saveBearerToken(bearerToken: String)
+    suspend fun savePlatform(platform: Platform)
+    suspend fun saveMiAuthSession(serverName: String, session: String)
 
     suspend fun saveTemporaryAuthData(
         serverName: String,
         clientId: String,
         clientSecret: String,
         state: String,
-    ): Preferences
+    )
 
-    suspend fun clearTemporaryAuthData(): Preferences
+    suspend fun clearTemporaryAuthData()
 }
 
 class PreferencesRepositoryImpl(
@@ -76,53 +76,61 @@ class PreferencesRepositoryImpl(
     override val miAuthSession: Flow<String?> = dataStore.data
         .map { preferences -> preferences[MI_AUTH_SESSION] }
 
-    override suspend fun saveServerName(serverName: String) =
+    override suspend fun saveServerName(serverName: String) {
         dataStore.edit { preferences ->
             preferences[SERVER_NAME] = serverName
         }
+    }
 
-    override suspend fun saveBearerToken(bearerToken: String) =
+    override suspend fun saveBearerToken(bearerToken: String) {
         dataStore.edit { preferences ->
             preferences[BEARER_TOKEN] = bearerToken
         }
+    }
 
-    override suspend fun savePlatform(platform: Platform) =
+    override suspend fun savePlatform(platform: Platform) {
         dataStore.edit { preferences ->
             preferences[PLATFORM] = platform.name
         }
+    }
 
-    override suspend fun saveMiAuthSession(serverName: String, session: String) =
+    override suspend fun saveMiAuthSession(serverName: String, session: String) {
         dataStore.edit { preferences ->
             preferences[SERVER_NAME] = serverName
             preferences[MI_AUTH_SESSION] = session
         }
+    }
 
     override suspend fun saveTemporaryAuthData(
         serverName: String,
         clientId: String,
         clientSecret: String,
         state: String,
-    ) = dataStore.edit { preferences ->
-        preferences[SERVER_NAME] = serverName
-        preferences[CLIENT_ID] = clientId
-        preferences[CLIENT_SECRET] = clientSecret
-        preferences[OAUTH_STATE] = state
+    ) {
+        dataStore.edit { preferences ->
+            preferences[SERVER_NAME] = serverName
+            preferences[CLIENT_ID] = clientId
+            preferences[CLIENT_SECRET] = clientSecret
+            preferences[OAUTH_STATE] = state
+        }
     }
 
-    override suspend fun clearTemporaryAuthData() = dataStore.edit { preferences ->
-        preferences.remove(CLIENT_ID)
-        preferences.remove(CLIENT_SECRET)
-        preferences.remove(OAUTH_STATE)
-        preferences.remove(MI_AUTH_SESSION)
+    override suspend fun clearTemporaryAuthData() {
+        dataStore.edit { preferences ->
+            preferences.remove(CLIENT_ID)
+            preferences.remove(CLIENT_SECRET)
+            preferences.remove(OAUTH_STATE)
+            preferences.remove(MI_AUTH_SESSION)
+        }
     }
 
     companion object {
-        val SERVER_NAME = stringPreferencesKey("server_name")
-        val BEARER_TOKEN = stringPreferencesKey("bearer_token")
-        val CLIENT_ID = stringPreferencesKey("client_id")
-        val CLIENT_SECRET = stringPreferencesKey("client_secret")
-        val OAUTH_STATE = stringPreferencesKey("oauth_state")
-        val PLATFORM = stringPreferencesKey("platform")
-        val MI_AUTH_SESSION = stringPreferencesKey("mi_auth_session")
+        private val SERVER_NAME = stringPreferencesKey("server_name")
+        private val BEARER_TOKEN = stringPreferencesKey("bearer_token")
+        private val CLIENT_ID = stringPreferencesKey("client_id")
+        private val CLIENT_SECRET = stringPreferencesKey("client_secret")
+        private val OAUTH_STATE = stringPreferencesKey("oauth_state")
+        private val PLATFORM = stringPreferencesKey("platform")
+        private val MI_AUTH_SESSION = stringPreferencesKey("mi_auth_session")
     }
 }
