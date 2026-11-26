@@ -119,7 +119,7 @@ fun DetailScreen(
                 )
             }
 
-            if (!data.mediaAttachments.isNullOrEmpty()) {
+            if (data.mediaAttachments.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(8.dp))
 
                 if (data.sensitive) {
@@ -153,14 +153,14 @@ fun DetailScreen(
                 }
             }
 
-            if (data.card != null) {
+            data.card?.let { card ->
                 Spacer(modifier = Modifier.height(8.dp))
 
                 LinkPreviewCard(
-                    url = data.card.url,
-                    imageUrl = data.card.image,
-                    title = data.card.title,
-                    desc = data.card.description,
+                    url = card.url,
+                    imageUrl = card.image,
+                    title = card.title,
+                    desc = card.description,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

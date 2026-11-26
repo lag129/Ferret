@@ -18,9 +18,9 @@ data class Post(
     val content: String,
     val profile: Profile,
     val card: PreviewCard? = null,
-    val displayNameEmojis: List<Emoji>? = null,
-    val emojis: List<Emoji>? = null,
-    val mediaAttachments: List<Attachment>? = null,
+    val displayNameEmojis: List<Emoji> = emptyList(),
+    val emojis: List<Emoji> = emptyList(),
+    val mediaAttachments: List<Attachment> = emptyList(),
     val sensitive: Boolean,
     val spoilerText: String,
     val reactions: List<Reaction> = emptyList()
