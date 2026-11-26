@@ -1,11 +1,16 @@
 package net.lag129.ferret.utils
 
-import android.content.Context
+import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
-import net.lag129.ferret.R
-import kotlin.time.Instant
+
+sealed interface RelativeTime {
+    data object Now : RelativeTime
+    data class Minutes(val value: Long) : RelativeTime
+    data class Hours(val value: Long) : RelativeTime
+    data class Date(val text: String) : RelativeTime
+}
 
 interface DateUtils {
 
@@ -13,50 +18,42 @@ interface DateUtils {
         time: Long,
     ): String
 
-    fun getRelativeTimeSpanString(
+    fun getRelativeTime(
         currentTime: Long,
         postedTime: Long
-    ): String
+    ): RelativeTime
 }
 
-class DateUtilsImpl(
-    private val context: Context
-) : DateUtils {
+class DateUtilsImpl : DateUtils {
 
     override fun formatDateTime(time: Long): String {
         val dateTime =
             Instant.fromEpochMilliseconds(time).toLocalDateTime(TimeZone.currentSystemDefault())
 
-        val hour = "%02d".format(dateTime.hour)
-        val minute = "%02d".format(dateTime.minute)
+        val hour = dateTime.hour.toString().padStart(2, '0')
+        val minute = dateTime.minute.toString().padStart(2, '0')
 
         return "${dateTime.year}/${dateTime.month.number}/${dateTime.day} ${hour}:${minute}"
     }
 
-    override fun getRelativeTimeSpanString(
+    override fun getRelativeTime(
         currentTime: Long,
         postedTime: Long
-    ): String {
+    ): RelativeTime {
 
         val diffTime = currentTime - postedTime
 
         return when {
-            diffTime < ONE_MINUTE_MILLIS -> context.getString(R.string.now)
+            diffTime < ONE_MINUTE_MILLIS -> RelativeTime.Now
 
-            diffTime < ONE_HOUR_MILLIS -> context.getString(
-                R.string.minute_abbreviation,
-                (diffTime / ONE_MINUTE_MILLIS).toString()
-            )
+            diffTime < ONE_HOUR_MILLIS -> RelativeTime.Minutes(diffTime / ONE_MINUTE_MILLIS)
 
-            diffTime < ONE_DAY_MILLIS -> context.getString(
-                R.string.hour_abbreviation,
-                (diffTime / ONE_HOUR_MILLIS).toString()
-            )
+            diffTime < ONE_DAY_MILLIS -> RelativeTime.Hours(diffTime / ONE_HOUR_MILLIS)
 
             else -> Instant.fromEpochMilliseconds(postedTime)
                 .toLocalDateTime(TimeZone.currentSystemDefault())
                 .let { dateTime ->
-                    "${dateTime.year}/${dateTime.month.number}/${dateTime.day}"
+                    RelativeTime.Date("${dateTime.year}/${dateTime.month.number}/${dateTime.day}")
                 }
         }
     }

@@ -108,7 +108,7 @@ fun PostCard(
                 val postedTime = Instant.parse(data.createdAt).toEpochMilliseconds()
 
                 Text(
-                    text = dateUtils.getRelativeTimeSpanString(currentTime, postedTime),
+                    text = dateUtils.getRelativeTime(currentTime, postedTime).toText(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp,
                     maxLines = 1,

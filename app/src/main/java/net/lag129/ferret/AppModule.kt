@@ -53,7 +53,7 @@ val appModule = module {
 
     viewModel { SearchViewModel(get()) }
 
-    single<DateUtils> { DateUtilsImpl(get()) }
+    single<DateUtils> { DateUtilsImpl() }
 
     single<DataStore<Preferences>> {
         val context = get<Context>()

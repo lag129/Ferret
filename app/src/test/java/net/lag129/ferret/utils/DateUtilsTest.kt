@@ -1,55 +1,38 @@
 package net.lag129.ferret.utils
 
-import android.content.Context
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import io.mockk.every
-import io.mockk.mockk
 
 class DateUtilsTest : StringSpec() {
-
-    val mockContext = mockk<Context>()
-    val dateUtils = DateUtilsImpl(mockContext)
+    val dateUtils = DateUtilsImpl()
 
     init {
-
         "now" {
-            every { mockContext.getString(any()) } returns "now"
-            dateUtils.getRelativeTimeSpanString(
+            dateUtils.getRelativeTime(
                 CURRENT_TIME,
                 CURRENT_TIME
-            ) shouldBe "now"
+            ) shouldBe RelativeTime.Now
         }
 
         "3 minutes ago" {
-            every { mockContext.getString(any(), any()) } answers {
-                val format = "%sm"
-                val args = secondArg<Array<Any>>()
-                format.format(*args)
-            }
-            dateUtils.getRelativeTimeSpanString(
+            dateUtils.getRelativeTime(
                 CURRENT_TIME,
                 CURRENT_TIME - 3L * ONE_MINUTE_MILLIS
-            ) shouldBe "3m"
+            ) shouldBe RelativeTime.Minutes(3)
         }
 
         "3 hours ago" {
-            every { mockContext.getString(any(), any()) } answers {
-                val format = "%sh"
-                val args = secondArg<Array<Any>>()
-                format.format(*args)
-            }
-            dateUtils.getRelativeTimeSpanString(
+            dateUtils.getRelativeTime(
                 CURRENT_TIME,
                 CURRENT_TIME - 3L * ONE_HOUR_MILLIS
-            ) shouldBe "3h"
+            ) shouldBe RelativeTime.Hours(3)
         }
 
         "3 days ago" {
-            dateUtils.getRelativeTimeSpanString(
+            dateUtils.getRelativeTime(
                 CURRENT_TIME,
                 CURRENT_TIME - 3L * ONE_DAY_MILLIS
-            ) shouldBe "2025/12/29"
+            ) shouldBe RelativeTime.Date("2025/12/29")
         }
     }
 
