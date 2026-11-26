@@ -3,16 +3,12 @@ package net.lag129.ferret.ui.screen.timeline
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.aakira.napier.Napier
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
-import net.lag129.ferret.db.CachedPost
-import net.lag129.ferret.db.CachedPostDao
 import net.lag129.ferret.model.Post
+import net.lag129.ferret.repository.CacheRepository
 import net.lag129.ferret.repository.FediverseRepository
 
 enum class Timeline {
@@ -21,10 +17,8 @@ enum class Timeline {
 
 class TimelineViewModel(
     private val fediverseRepository: FediverseRepository,
-    private val cachedStatusDao: CachedPostDao
+    private val cacheRepository: CacheRepository
 ) : ViewModel() {
-
-    private val json = Json { ignoreUnknownKeys = true }
 
     private val _uiState = MutableStateFlow(listOf<Post>())
     val uiState: StateFlow<List<Post>> = _uiState.asStateFlow()
@@ -45,7 +39,7 @@ class TimelineViewModel(
 
             statuses.onSuccess { statuses ->
                 _uiState.value = statuses
-                saveToCache(_currentTimeline.value, statuses)
+                cacheRepository.savePosts(_currentTimeline.value.name, statuses)
             }.onFailure { error ->
                 Napier.e("Failed to fetch timeline", error)
             }
@@ -58,7 +52,7 @@ class TimelineViewModel(
 
             statuses.onSuccess { statuses ->
                 _uiState.value += statuses
-                saveToCache(_currentTimeline.value, _uiState.value)
+                cacheRepository.savePosts(_currentTimeline.value.name, _uiState.value)
             }.onFailure { error ->
                 Napier.e("Failed to fetch next home timeline", error)
             }
@@ -76,7 +70,7 @@ class TimelineViewModel(
                 val currentFirst = _uiState.value.firstOrNull()?.id
                 val newStatuses = statuses.takeWhile { it.id != currentFirst }
                 _uiState.value = newStatuses + _uiState.value
-                saveToCache(_currentTimeline.value, _uiState.value)
+                cacheRepository.savePosts(_currentTimeline.value.name, _uiState.value)
             }.onFailure { error ->
                 Napier.e("Failed to refresh home timeline", error)
             }
@@ -91,9 +85,9 @@ class TimelineViewModel(
         _uiState.value = emptyList()
 
         viewModelScope.launch {
-            val cached = cachedStatusDao.getCachedPosts(timeline.name)
+            val cached = cacheRepository.getPosts(timeline.name)
             if (cached.isNotEmpty()) {
-                _uiState.value = restoreFromCache(cached)
+                _uiState.value = cached
             } else {
                 fetchTimeline()
             }
@@ -108,25 +102,5 @@ class TimelineViewModel(
             Timeline.LOCAL -> fediverseRepository.getLocalTimeline(maxId)
             Timeline.FEDERATED -> fediverseRepository.getFederatedTimeline(maxId)
         }
-    }
-
-    private suspend fun saveToCache(timeline: Timeline, statuses: List<Post>) {
-        val cachedStatuses = withContext(Dispatchers.Default) {
-            statuses.mapIndexed { index, status ->
-                CachedPost(
-                    postId = status.id,
-                    timelineType = timeline.name,
-                    postJson = json.encodeToString(status),
-                    orderIndex = index
-                )
-            }
-        }
-
-        cachedStatusDao.clearTimeline(timeline.name)
-        cachedStatusDao.insertAll(cachedStatuses)
-    }
-
-    private suspend fun restoreFromCache(cached: List<CachedPost>): List<Post> {
-        return withContext(Dispatchers.Default) { cached.map { json.decodeFromString<Post>(it.postJson) } }
     }
 }
