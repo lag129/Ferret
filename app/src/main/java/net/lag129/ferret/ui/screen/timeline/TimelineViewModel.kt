@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import net.lag129.ferret.db.CachedStatus
-import net.lag129.ferret.db.CachedStatusDao
+import net.lag129.ferret.db.CachedPost
+import net.lag129.ferret.db.CachedPostDao
 import net.lag129.ferret.model.Post
 import net.lag129.ferret.repository.FediverseRepository
 
@@ -21,7 +21,7 @@ enum class Timeline {
 
 class TimelineViewModel(
     private val fediverseRepository: FediverseRepository,
-    private val cachedStatusDao: CachedStatusDao
+    private val cachedStatusDao: CachedPostDao
 ) : ViewModel() {
 
     private val json = Json { ignoreUnknownKeys = true }
@@ -91,7 +91,7 @@ class TimelineViewModel(
         _uiState.value = emptyList()
 
         viewModelScope.launch {
-            val cached = cachedStatusDao.getCachedStatus(timeline.name)
+            val cached = cachedStatusDao.getCachedPosts(timeline.name)
             if (cached.isNotEmpty()) {
                 _uiState.value = restoreFromCache(cached)
             } else {
@@ -113,10 +113,10 @@ class TimelineViewModel(
     private suspend fun saveToCache(timeline: Timeline, statuses: List<Post>) {
         val cachedStatuses = withContext(Dispatchers.Default) {
             statuses.mapIndexed { index, status ->
-                CachedStatus(
-                    statusId = status.id,
+                CachedPost(
+                    postId = status.id,
                     timelineType = timeline.name,
-                    statusJson = json.encodeToString(status),
+                    postJson = json.encodeToString(status),
                     orderIndex = index
                 )
             }
@@ -126,7 +126,7 @@ class TimelineViewModel(
         cachedStatusDao.insertAll(cachedStatuses)
     }
 
-    private suspend fun restoreFromCache(cached: List<CachedStatus>): List<Post> {
-        return withContext(Dispatchers.Default) { cached.map { json.decodeFromString<Post>(it.statusJson) } }
+    private suspend fun restoreFromCache(cached: List<CachedPost>): List<Post> {
+        return withContext(Dispatchers.Default) { cached.map { json.decodeFromString<Post>(it.postJson) } }
     }
 }

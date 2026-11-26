@@ -6,14 +6,14 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
-interface CachedStatusDao {
+interface CachedPostDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(statuses: List<CachedStatus>)
+    suspend fun insertAll(posts: List<CachedPost>)
 
     @Query("DELETE FROM cached_statuses WHERE timeline_type = :type")
     suspend fun clearTimeline(type: String)
 
     @Query("SELECT * FROM cached_statuses WHERE timeline_type = :type ORDER BY order_index ASC")
-    suspend fun getCachedStatus(type: String): List<CachedStatus>
+    suspend fun getCachedPosts(type: String): List<CachedPost>
 }

@@ -4,16 +4,16 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 
 @Entity(tableName = "cached_statuses", primaryKeys = ["status_id"])
-data class CachedStatus(
+data class CachedPost(
 
     @ColumnInfo(name = "status_id")
-    val statusId: String,
+    val postId: String,
 
     @ColumnInfo(name = "timeline_type")
     val timelineType: String,
 
     @ColumnInfo(name = "status_json")
-    val statusJson: String,
+    val postJson: String,
 
     @ColumnInfo(name = "order_index")
     val orderIndex: Int,

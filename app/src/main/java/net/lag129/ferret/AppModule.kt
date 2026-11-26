@@ -16,8 +16,8 @@ import com.google.crypto.tink.aead.PredefinedAeadParameters
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.cio.CIO
-import net.lag129.ferret.db.CachedStatusDao
-import net.lag129.ferret.db.RoomDatabase
+import net.lag129.ferret.db.CachedPostDao
+import net.lag129.ferret.db.FerretDatabase
 import net.lag129.ferret.ui.MainViewModel
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.screen.profile.MyProfileViewModel
@@ -31,13 +31,13 @@ val appModule = module {
 
     single<HttpClientEngine> { CIO.create() }
 
-    single<RoomDatabase> {
-        Room.databaseBuilder(get(), RoomDatabase::class.java, "ferret_db")
+    single<FerretDatabase> {
+        Room.databaseBuilder(get(), FerretDatabase::class.java, "ferret_db")
             .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
     }
 
-    single<CachedStatusDao> { get<RoomDatabase>().cachedStatusDao() }
+    single<CachedPostDao> { get<FerretDatabase>().cachedPostDao() }
 
     viewModel { TimelineViewModel(get(), get()) }
 
