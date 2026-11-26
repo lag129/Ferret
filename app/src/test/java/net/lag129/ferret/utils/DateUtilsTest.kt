@@ -2,9 +2,10 @@ package net.lag129.ferret.utils
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import kotlinx.datetime.TimeZone
 
 class DateUtilsTest : StringSpec() {
-    val dateUtils = DateUtilsImpl()
+    val dateUtils = DateUtilsImpl { TimeZone.of("Asia/Tokyo") }
 
     init {
         "now" {

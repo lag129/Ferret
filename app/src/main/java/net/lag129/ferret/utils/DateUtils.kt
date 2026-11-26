@@ -24,11 +24,13 @@ interface DateUtils {
     ): RelativeTime
 }
 
-class DateUtilsImpl : DateUtils {
+class DateUtilsImpl(
+    private val timeZone: () -> TimeZone = { TimeZone.currentSystemDefault() }
+) : DateUtils {
 
     override fun formatDateTime(time: Long): String {
         val dateTime =
-            Instant.fromEpochMilliseconds(time).toLocalDateTime(TimeZone.currentSystemDefault())
+            Instant.fromEpochMilliseconds(time).toLocalDateTime(timeZone())
 
         val hour = dateTime.hour.toString().padStart(2, '0')
         val minute = dateTime.minute.toString().padStart(2, '0')
@@ -51,7 +53,7 @@ class DateUtilsImpl : DateUtils {
             diffTime < ONE_DAY_MILLIS -> RelativeTime.Hours(diffTime / ONE_HOUR_MILLIS)
 
             else -> Instant.fromEpochMilliseconds(postedTime)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
+                .toLocalDateTime(timeZone())
                 .let { dateTime ->
                     RelativeTime.Date("${dateTime.year}/${dateTime.month.number}/${dateTime.day}")
                 }
