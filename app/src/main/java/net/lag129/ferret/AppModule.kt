@@ -14,20 +14,10 @@ import com.google.crypto.tink.RegistryConfiguration
 import com.google.crypto.tink.aead.AeadConfig
 import com.google.crypto.tink.aead.PredefinedAeadParameters
 import com.google.crypto.tink.integration.android.AndroidKeysetManager
-import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.api.createClientPlugin
-import io.ktor.client.plugins.auth.Auth
-import io.ktor.client.plugins.auth.providers.BearerTokens
-import io.ktor.client.plugins.auth.providers.bearer
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.http.URLProtocol
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.flow.first
-import kotlinx.serialization.json.Json
 import net.lag129.ferret.db.CachedStatusDao
 import net.lag129.ferret.db.RoomDatabase
-import net.lag129.ferret.repository.PreferencesRepository
 import net.lag129.ferret.ui.MainViewModel
 import net.lag129.ferret.ui.screen.login.LoginViewModel
 import net.lag129.ferret.ui.screen.profile.MyProfileViewModel
@@ -41,31 +31,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single<HttpClient> {
-        val preferencesRepository = get<PreferencesRepository>()
-        HttpClient(CIO) {
-            install(Auth) {
-                bearer {
-                    loadTokens {
-                        val bearerToken = preferencesRepository.bearerToken.first()
-                        BearerTokens(bearerToken, null)
-                    }
-                }
-            }
-            install(ContentNegotiation) {
-                json(Json { ignoreUnknownKeys = true })
-            }
-            install(createClientPlugin("BaseUrl") {
-                onRequest { request, _ ->
-                    val serverName = preferencesRepository.serverName.first()
-                    request.url {
-                        protocol = URLProtocol.HTTPS
-                        host = serverName
-                    }
-                }
-            })
-        }
-    }
+    single<HttpClientEngine> { CIO.create() }
 
     single<RoomDatabase> {
         Room.databaseBuilder(get(), RoomDatabase::class.java, "ferret_db")
