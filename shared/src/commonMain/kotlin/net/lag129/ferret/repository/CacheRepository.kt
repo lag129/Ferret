@@ -15,13 +15,13 @@ interface CacheRepository {
 }
 
 internal class CacheRepositoryImpl(
-    private val cachedPostDao: CachedPostDao,
+    private val dao: CachedPostDao,
 ) : CacheRepository {
 
     private val json = Json { ignoreUnknownKeys = true }
 
     override suspend fun getPosts(timelineType: String): List<Post> {
-        val cached = cachedPostDao.getCachedPosts(timelineType)
+        val cached = dao.getCachedPosts(timelineType)
         return withContext(Dispatchers.Default) {
             cached.map { json.decodeFromString<Post>(it.postJson) }
         }
@@ -39,7 +39,6 @@ internal class CacheRepositoryImpl(
             }
         }
 
-        cachedPostDao.clearTimeline(timelineType)
-        cachedPostDao.insertAll(cachedPosts)
+        dao.replaceTimeline(timelineType, cachedPosts)
     }
 }
