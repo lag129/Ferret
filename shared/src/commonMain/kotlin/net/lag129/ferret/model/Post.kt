@@ -25,6 +25,7 @@ data class Post(
     val spoilerText: String,
     val reactions: List<Reaction> = emptyList()
 ) {
+    @Immutable
     @Serializable
     data class Emoji(
         @SerialName("shortcode")
