@@ -113,9 +113,6 @@ dependencies {
     // kotlinx.serialization
     implementation(libs.kotlinx.serialization.json)
 
-    // Ksoup
-    implementation(libs.ksoup.html)
-
     // Ktor
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)

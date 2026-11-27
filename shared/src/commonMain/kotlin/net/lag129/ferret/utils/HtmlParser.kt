@@ -1,23 +1,31 @@
 package net.lag129.ferret.utils
 
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.AnnotatedString.Builder
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlHandler
 import com.mohamedrejeb.ksoup.html.parser.KsoupHtmlParser
+
+sealed interface HtmlTag {
+    data class Text(val text: String) : HtmlTag
+    data class Link(val text: String, val url: String) : HtmlTag
+    data object Break : HtmlTag
+}
 
 private enum class SpanState {
     INVISIBLE, ELLIPSIS, NORMAL
 }
 
-fun parseHtmlToAnnotatedString(
-    html: String,
-    urlSpanStyle: SpanStyle = SpanStyle()
-): AnnotatedString {
-    val builder = Builder()
-    val linkStack = mutableListOf<Boolean>()
+fun parseHtml(html: String): List<HtmlTag> {
+    val tags = mutableListOf<HtmlTag>()
     val spanStack = mutableListOf<SpanState>()
+    var linkUrl: String? = null
+    val linkText = StringBuilder()
+
+    fun appendText(text: String) {
+        if (linkUrl != null) {
+            linkText.append(text)
+        } else {
+            tags.add(HtmlTag.Text(text))
+        }
+    }
 
     val handler = object : KsoupHtmlHandler {
         override fun onOpenTag(
@@ -27,20 +35,17 @@ fun parseHtmlToAnnotatedString(
         ) {
             when (name.lowercase()) {
                 "p" -> {
-                    if (builder.length > 0) {
-                        builder.append("\n")
+                    if (tags.isNotEmpty()) {
+                        tags.add(HtmlTag.Break)
                     }
                 }
 
-                "br" -> builder.append('\n')
+                "br" -> tags.add(HtmlTag.Break)
                 "a" -> {
                     val href = attributes["href"]
                     if (!href.isNullOrBlank()) {
-                        builder.pushLink(LinkAnnotation.Url(href))
-                        builder.pushStyle(urlSpanStyle)
-                        linkStack.add(true)
-                    } else {
-                        linkStack.add(false)
+                        linkUrl = href
+                        linkText.clear()
                     }
                 }
 
@@ -60,26 +65,22 @@ fun parseHtmlToAnnotatedString(
             if (text.isBlank()) return
             if (spanStack.lastOrNull() == SpanState.INVISIBLE) return
 
-            builder.append(text)
+            appendText(text)
         }
 
         override fun onCloseTag(name: String, isImplied: Boolean) {
             when (name.lowercase()) {
                 "a" -> {
-                    if (linkStack.isNotEmpty()) {
-                        val hadLink = linkStack.removeAt(linkStack.size - 1)
-                        if (hadLink) {
-                            builder.pop()
-                            builder.pop()
-                        }
-                    }
+                    val url = linkUrl ?: return
+                    tags.add(HtmlTag.Link(linkText.toString(), url))
+                    linkUrl = null
                 }
 
                 "span" -> {
                     if (spanStack.isNotEmpty()) {
                         val state = spanStack.removeAt(spanStack.size - 1)
                         if (state == SpanState.ELLIPSIS) {
-                            builder.append("...")
+                            appendText("...")
                         }
                     }
                 }
@@ -91,5 +92,5 @@ fun parseHtmlToAnnotatedString(
     parser.write(html)
     parser.end()
 
-    return builder.toAnnotatedString()
+    return tags
 }
